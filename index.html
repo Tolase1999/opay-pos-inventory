@@ -669,7 +669,7 @@ select.input{cursor:pointer;background:#fff;}
           <div class="clock-box" id="r-clock">—</div>
           <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="r-f-merchant" placeholder="e.g. AGG-001234"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="r-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>Logging As</span></div><div class="input" style="opacity:.6;cursor:not-allowed;" id="r-officer-display">—</div></div>
           <div class="form-grid"><div class="fg"><div class="fl"><span>Return Reason <span class="optional">(optional)</span></span></div><input class="input" id="r-f-reason" placeholder="End of lease, upgrade, faulty swap…"></div><div class="fg"><div class="fl"><span>POS Type <span class="optional">(optional)</span></span></div><select class="input" id="r-f-model"><option value="">Select type…</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div></div>
-          <div class="fg"><div class="fl"><span>Condition</span></div><div class="toggle-row"><button class="toggle-btn active" onclick="rSetCondition('normal',this)">↩ R&R Working Good</button><button class="toggle-btn" onclick="rSetCondition('working',this)">📦 R&R Brand New</button><button class="toggle-btn" onclick="rSetCondition('repaired',this)">🔧 Repaired</button><button class="toggle-btn" onclick="rSetCondition('faulty',this)">⚠️ R&R Faulty</button></div></div>
+          <div class="fg"><div class="fl"><span>Condition</span></div><div class="toggle-row"><button class="toggle-btn active" onclick="rSetCondition('normal',this)">↩ R&R Working Good</button><button class="toggle-btn" onclick="rSetCondition('working',this)">📦 R&R Brand New</button><button class="toggle-btn" onclick="rSetCondition('faulty',this)">⚠️ R&R Faulty</button></div></div>
           <div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Entry Mode</span><div class="divider-line"></div></div>
           <div class="mode-toggle"><button class="mode-btn active" onclick="rSetMode('single')">Single Entry</button><button class="mode-btn" onclick="rSetMode('bulk')">Bulk Entry</button></div>
           <div id="r-single-mode"><div id="r-sn-rows"></div><button class="add-btn" onclick="rAddRow()"><div class="add-plus">+</div>Add Serial Number</button></div>
@@ -874,7 +874,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="card"><div class="card-header sup"><div class="card-icon sup">📊</div><div><h2>Officer Operations</h2><p>View and edit all officer operations across your branches</p></div></div>
       <div class="card-body">
         <div class="ed-filter-bar"><button class="ed-filter-btn active" data-filter="all" onclick="supOpsFilter('all')">All</button><button class="ed-filter-btn" data-filter="Issue" onclick="supOpsFilter('Issue')">🚀 Issue</button><button class="ed-filter-btn" data-filter="Assign" onclick="supOpsFilter('Assign')">📋 Assign</button><button class="ed-filter-btn" data-filter="Return" onclick="supOpsFilter('Return')">↩ Return</button><button class="ed-filter-btn" data-filter="Swap" onclick="supOpsFilter('Swap')">🔄 Swap</button><button class="ed-filter-btn" data-filter="ATFS" onclick="supOpsFilter('ATFS')">⚡ ATFS</button><input class="ed-search" id="sup-ops-search" placeholder="Search SN or officer…" oninput="supOpsRender()"><span class="ed-count" id="sup-ops-count">0 ops</span></div>
-        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:flex-end;flex-wrap:wrap;"><div class="fg" style="margin:0;min-width:130px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">From</span></div><input type="date" class="input" id="sup-ops-from" style="padding:6px 10px;"></div><div class="fg" style="margin:0;min-width:130px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">To</span></div><input type="date" class="input" id="sup-ops-to" style="padding:6px 10px;"></div><select class="input" id="sup-ops-officer-filter" style="width:150px;padding:6px 10px;" onchange="supOpsRender()"><option value="">👤 All Officers</option></select><select class="input" id="sup-ops-op-filter" style="width:150px;padding:6px 10px;" onchange="supOpsRender()"><option value="">📋 All Operations</option><option value="Issue">🚀 Issue</option><option value="Assign">📋 Assign</option><option value="Swap">🔄 Swap</option><option value="Return">↩ Return</option><option value="ATFS">⚡ ATFS</option><option value="Unassign">↩ Unassign</option><option value="Receive Stock">📥 Receive Stock</option></select><select class="input" id="sup-ops-sort" style="width:140px;padding:6px 10px;" onchange="supOpsRender()"><option value="time_desc">⏱ Newest First</option><option value="time_asc">⏱ Oldest First</option><option value="officer">👤 By Officer</option><option value="sn">🔢 By SN</option></select><button class="act-btn act-edit" onclick="supLoadOps()" style="padding:8px 14px;">↺ Load</button><button class="act-btn act-edit" onclick="supOpsExport()" style="padding:8px 14px;">⬇ CSV</button></div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;align-items:flex-end;flex-wrap:wrap;"><div class="fg" style="margin:0;min-width:130px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">From</span></div><input type="date" class="input" id="sup-ops-from" style="padding:6px 10px;"></div><div class="fg" style="margin:0;min-width:130px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">To</span></div><input type="date" class="input" id="sup-ops-to" style="padding:6px 10px;"></div><select class="input" id="sup-ops-officer-filter" style="width:150px;padding:6px 10px;" onchange="supOpsRender()"><option value="">👤 All Officers</option></select><select class="input" id="sup-ops-op-filter" style="width:150px;padding:6px 10px;" onchange="supOpsRender()"><option value="">📋 All Operations</option><option value="Issue">🚀 Issue</option><option value="Assign">📋 Assign</option><option value="Swap">🔄 Swap</option><option value="Return">↩ Return</option><option value="ATFS">⚡ ATFS</option><option value="Unassign">↩ Unassign</option><option value="Receive Stock">📥 Receive Stock</option></select><select class="input" id="sup-ops-sort" style="width:140px;padding:6px 10px;" onchange="supOpsRender()"><option value="time_desc">⏱ Newest First</option><option value="time_asc">⏱ Oldest First</option><option value="officer">👤 By Officer</option><option value="sn">🔢 By SN</option></select><button class="act-btn act-edit" onclick="supLoadOps()" style="padding:8px 14px;">↺ Load</button><button class="act-btn act-edit" onclick="supOpsExport()" style="padding:8px 14px;">⬇ CSV</button></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;"><div id="sup-ops-count-bar" style="font-size:11px;color:var(--muted);font-weight:600;"></div><div style="display:flex;align-items:center;gap:6px;"><button class="act-btn act-edit" id="sup-ops-prev-btn" onclick="supOpsPageNav(-1)" style="padding:4px 10px;" disabled>‹ Prev</button><span id="sup-ops-page-lbl" style="font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap;">Page 1</span><button class="act-btn act-edit" id="sup-ops-next-btn" onclick="supOpsPageNav(1)" style="padding:4px 10px;" disabled>Next ›</button></div></div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">💡 Leave dates empty to load all operations</div>
         <div class="ops-wrap" id="sup-ops-wrap"><div class="ops-empty">Click Refresh to load operations.</div></div>
       </div></div>
@@ -1004,7 +1004,7 @@ function assets() { return APP_CONFIG.assetPlural; }
 // ════════════════════════════════════════════════════════════
 
 function sf(path, opts) {
-  var headers = { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY, "Content-Type": "application/json" };
+  var headers = { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY, "Content-Type": "application/json", "Accept-Encoding": "gzip, deflate, br" };
   if (opts && opts.headers) Object.assign(headers, opts.headers);
   var fetchOpts = Object.assign({}, opts || {});
   fetchOpts.headers = headers;
@@ -1177,11 +1177,11 @@ async function cacheFetch(suffix) {
   if (c) return c;
   var t = branchTables(suffix);
   var results = await Promise.all([
-    sf(t.bn  + "?select=sn,model,status&limit=25000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
-    sf(t.rp  + "?select=sn,model,status&limit=25000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
-    sf(t.rt  + "?select=sn,model,status&limit=25000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
-    sf(t.ft  + "?select=sn,reason&limit=25000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
-    sf(t.rbn + "?select=sn,model,status&limit=25000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; })
+    sf(t.bn  + "?select=sn,model,status&limit=5000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
+    sf(t.rp  + "?select=sn,model,status&limit=5000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
+    sf(t.rt  + "?select=sn,model,status&limit=5000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
+    sf(t.ft  + "?select=sn,reason&limit=5000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; }),
+    sf(t.rbn + "?select=sn,model,status&limit=5000").then(function(r) { return r.json(); }).then(function(a) { return Array.isArray(a) ? a : []; }).catch(function() { return []; })
   ]);
   var entry = { ts: Date.now(), bn: results[0], rp: results[1], rt: results[2], faulty: results[3], rbn: results[4] };
   BRANCH_CACHE[suffix] = entry;
@@ -1387,7 +1387,7 @@ async function validateSNForReturn(sn) {
     var rows = await res.json();
     if (rows && rows.length) {
       var r = rows[0];
-      var condLblR = { normal: "R&R Working Good", working: "R&R Brand New", repaired: "Repaired", faulty: "R&R Faulty" };
+      var condLblR = { normal: "R&R Working Good", working: "R&R Brand New", faulty: "R&R Faulty" };
       var curCondR = (typeof R !== "undefined" && R.condition) ? R.condition : "normal";
       return { ok: true, msg: condLblR[curCondR] + " · " + escHtml(r.source || "Issued"), sn: r.sn, source: r.source, model: r.model || "" };
     }
@@ -1438,7 +1438,7 @@ async function validateSnRow(prefix, idx, requiredStatus) {
   st.className = "sn-status";
   st.textContent = "…";
   if (prefix === "r") {
-    var condLbl = { normal: "R&R Working Good", working: "R&R Brand New", repaired: "Repaired", faulty: "R&R Faulty" };
+    var condLbl = { normal: "R&R Working Good", working: "R&R Brand New", faulty: "R&R Faulty" };
     var curCond = (typeof R !== "undefined" && R.condition) ? R.condition : "normal";
     st.className = "sn-status ok"; st.textContent = "✓ " + (condLbl[curCond] || "Accepted");
     inp.dataset.validatedSn = sn; if (row) { row.dataset.source = ""; row.dataset.model = ""; } return;
@@ -1885,7 +1885,7 @@ async function edtRefresh() {
       "&branch_id=eq." + SUPA_BRANCH.id +
       "&officer=eq." + encodeURIComponent(SUPA_OFFICER.full_name) +
       "&date=eq." + today +
-      "&order=time.asc&limit=500"
+      "&order=time.asc&limit=200"
     );
     var dbRows = await res.json();
     if (!Array.isArray(dbRows) || !dbRows.length) {
@@ -2186,7 +2186,7 @@ function rSetCondition(c, btn) {
   document.querySelectorAll("#panel-ret .toggle-btn").forEach(function(b) { b.classList.remove("active"); });
   if (btn) btn.classList.add("active");
   // Update all already-validated SN status labels to reflect new condition
-  var condLbl = { normal: "R&R Working Good", working: "R&R Brand New", repaired: "Repaired", faulty: "R&R Faulty" };
+  var condLbl = { normal: "R&R Working Good", working: "R&R Brand New", faulty: "R&R Faulty" };
   var lbl = condLbl[c] || c;
   document.querySelectorAll("#r-sn-rows .sn-status.ok, #r-bulk-rows-container .sn-status.ok").forEach(function(el) {
     el.textContent = "✓ " + lbl;
@@ -2233,8 +2233,8 @@ async function rSubmit() {
     var suffix = SUPA_BRANCH.table_suffix || "hq";
     var branchId = SUPA_BRANCH.id;
     var t = branchTables(suffix);
-    var condLabels = { normal: "R&R Working Good", working: "R&R Brand New", repaired: "Repaired", faulty: "R&R Faulty" };
-    var destTbl = cond === "working" ? t.rbn : cond === "repaired" ? t.rp : cond === "faulty" ? t.ft : t.rt;
+    var condLabels = { normal: "R&R Working Good", working: "R&R Brand New", faulty: "R&R Faulty" };
+    var destTbl = cond === "working" ? t.rbn : cond === "faulty" ? t.ft : t.rt;
     var destStatus = cond === "faulty" ? "Faulty" : "Available";
     setConn("loading", "Verifying on-field POSs…");
     var returnConflicts = [];
@@ -2421,7 +2421,7 @@ function uaSetMode(m) {
   document.querySelectorAll("#panel-unassign .mode-btn").forEach(function(b) { b.classList.toggle("active", (m === "single" && b.textContent.includes("Single")) || (m === "bulk" && b.textContent.includes("Bulk"))); });
 }
 
-async function uaParseAndValidate() { var rawText = document.getElementById("ua-bulk-paste-area").value || ""; var sns = rawText.split(/[\n,]+/).map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean); if (!sns.length) { alert("Paste at least one SN first."); return; } var container = document.getElementById("ua-bulk-rows-container"); container.innerHTML = "<div style='padding:20px; text-align:center;'>Validating " + sns.length + " SNs...</div>"; var assigned = {}; try { var r = await sf("deployed_assigned?select=sn,source,model,agent_id,operation&branch_id=eq." + SUPA_BRANCH.id + "&limit=25000"); var rows = await r.json(); rows.forEach(function(row) { var op = (row.operation || "").toLowerCase(); if (!op.includes("deploy") && !op.includes("issue")) assigned[row.sn] = row; }); } catch (e) {} UA_BULK_ROWS = sns.map(function(sn) { var hit = assigned[sn]; return { sn: sn, valid: !!hit, msg: hit ? "✓ Assigned" + (hit.agent_id ? " · " + hit.agent_id : "") : "✗ Not found in assigned POSs", source: hit ? hit.source || "" : "", model: hit ? hit.model || "" : "", agentId: hit ? hit.agent_id || "" : "" }; }); uaRenderBulkRows(); }
+async function uaParseAndValidate() { var rawText = document.getElementById("ua-bulk-paste-area").value || ""; var sns = rawText.split(/[\n,]+/).map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean); if (!sns.length) { alert("Paste at least one SN first."); return; } var container = document.getElementById("ua-bulk-rows-container"); container.innerHTML = "<div style='padding:20px; text-align:center;'>Validating " + sns.length + " SNs...</div>"; var assigned = {}; try { var r = await sf("deployed_assigned?select=sn,source,model,agent_id,operation&branch_id=eq." + SUPA_BRANCH.id + "&limit=5000"); var rows = await r.json(); rows.forEach(function(row) { var op = (row.operation || "").toLowerCase(); if (!op.includes("deploy") && !op.includes("issue")) assigned[row.sn] = row; }); } catch (e) {} UA_BULK_ROWS = sns.map(function(sn) { var hit = assigned[sn]; return { sn: sn, valid: !!hit, msg: hit ? "✓ Assigned" + (hit.agent_id ? " · " + hit.agent_id : "") : "✗ Not found in assigned POSs", source: hit ? hit.source || "" : "", model: hit ? hit.model || "" : "", agentId: hit ? hit.agent_id || "" : "" }; }); uaRenderBulkRows(); }
 
 function uaRenderBulkRows() { var container = document.getElementById("ua-bulk-rows-container"); var summaryEl = document.getElementById("ua-bulk-summary"); if (!container) return; if (!UA_BULK_ROWS.length) { container.innerHTML = "<div style='padding:20px; text-align:center; color:var(--muted);'>No SNs loaded. Paste and validate.</div>"; if (summaryEl) summaryEl.innerHTML = ""; return; } var validRows = UA_BULK_ROWS.filter(function(r) { return r.valid; }); var invalidRows = UA_BULK_ROWS.filter(function(r) { return !r.valid; }); container.innerHTML = UA_BULK_ROWS.map(function(row, idx) { return "<div class='sn-row' data-idx='" + idx + "' style='border-left: 3px solid " + (row.valid ? "var(--green2)" : "var(--rose)") + ";'><input class='sn-inp' value='" + escHtml(row.sn) + "' onchange='uaUpdateSn(" + idx + ", this.value)' style='flex:2; font-weight:" + (row.valid ? "normal" : "bold") + "; color:" + (row.valid ? "var(--text)" : "var(--rose)") + ";'><span class='sn-status " + (row.valid ? "ok" : "err") + "' style='flex:1; text-align:center;'>" + row.msg + "</span><button class='remove-btn' onclick='uaRemoveBulkRow(" + idx + ")'>×</button></div>"; }).join(""); if (summaryEl) { summaryEl.innerHTML = "<div style='display:flex; justify-content:space-between; align-items:center;'><span>✅ <strong>" + validRows.length + "</strong> valid assigned SNs | ❌ <strong>" + invalidRows.length + "</strong> invalid | 📦 <strong>" + UA_BULK_ROWS.length + "</strong> total</span><button class='act-btn act-del' onclick='uaRemoveAllInvalid()' style='padding:4px 12px; font-size:11px;' " + (invalidRows.length === 0 ? "disabled" : "") + ">Remove All Invalid</button></div>" + (validRows.length > 0 ? "<div style='margin-top:8px; font-size:11px; color:var(--green2);'>Ready to unassign " + validRows.length + " POS" + (validRows.length === 1 ? "" : "s") + "</div>" : "<div style='margin-top:8px; font-size:11px; color:var(--rose);'>No valid assigned SNs. Please check and try again.</div>"); } var subBtn = document.getElementById("ua-sub-btn"); if (subBtn) { subBtn.disabled = validRows.length === 0; subBtn.textContent = validRows.length > 0 ? "↩ Unassign " + validRows.length + " POS" + (validRows.length === 1 ? "" : "s") : "↩ Confirm Unassign"; } }
 
@@ -2856,7 +2856,7 @@ function _invCatCard(label, avail, total, color, bg) {
 
 var INV_DATA      = [];
 var INV_PAGE      = 0;
-var INV_PAGE_SIZE = 200; // rows shown per page in inventory table
+var INV_PAGE_SIZE = 100; // rows shown per page in inventory table
 var INV_TOTAL     = 0;
 var INV_FILTER_Q  = "";
 var INV_FILTER_MODEL = ""; // POS type filter
@@ -3237,7 +3237,7 @@ async function stockInvFetchAll() {
         try {
           // For office stock categories (bn/rp/rt), only show Available
           var availQ = (cat !== "ft") ? "&status=eq.Available" : "";
-          var res  = await sf(tbl + "?select=" + cols + snFilter + availQ + modelQ + "&limit=25000&order=sn.asc");
+          var res  = await sf(tbl + "?select=" + cols + snFilter + availQ + modelQ + "&limit=2000&order=sn.asc");
           var rows = await res.json();
           if (Array.isArray(rows)) {
             rows.forEach(function(r) {
@@ -3859,8 +3859,18 @@ function _downloadCsv(filename, rows) {
 // ════════════════════════════════════════════════════════════════════════
 
 var SUP_KPI_PERIOD   = "day";
-var SUP_OPS_DATA     = [];
-var SUP_OPS_FILTER   = "all";
+var SUP_OPS_DATA      = [];
+var SUP_OPS_FILTER    = "all";
+var SUP_OPS_PAGE      = 0;
+var SUP_OPS_PAGE_SIZE = 100;
+var SUP_OPS_TOTAL     = 0;
+var _supOpsBranchIds  = [];
+var _supOpsDateFilter = "";
+var SUP_OPS_PAGE     = 0;
+var SUP_OPS_PAGE_SIZE = 100;
+var SUP_OPS_TOTAL    = 0;
+var _supOpsBranchIds = [];
+var _supOpsDateFilter = "";
 var SUP_CHART_BAR    = null;
 var SUP_CHART_DOUGH  = null;
 var SUP_CHART_LINE   = null;
@@ -3989,26 +3999,59 @@ async function supRejectOfficer(id) {
 // ── Officer Operations ─────────────────────────────────────────────────
 
 async function supLoadOps() {
+  SUP_OPS_PAGE = 0;
   var wrap = document.getElementById("sup-ops-wrap");
   if (!wrap) return;
   wrap.innerHTML = "<div class='ops-empty'>Loading…</div>";
-  var branchIds = await getSupBranchIds();
-  if (!branchIds.length) {
+  _supOpsBranchIds = await getSupBranchIds();
+  if (!_supOpsBranchIds.length) {
     wrap.innerHTML = "<div class='ops-empty'>No branches assigned.</div>";
     return;
   }
-  var fromDate = document.getElementById("sup-ops-from")?.value || "";
-  var toDate = document.getElementById("sup-ops-to")?.value || "";
-  var dateFilter = "";
-  if (fromDate) dateFilter += "&date=gte." + fromDate;
-  if (toDate) dateFilter += "&date=lte." + toDate;
+  var fromDate = (document.getElementById("sup-ops-from") || {}).value || "";
+  var toDate   = (document.getElementById("sup-ops-to")   || {}).value || "";
+  _supOpsDateFilter = "";
+  if (fromDate) _supOpsDateFilter += "&date=gte." + fromDate;
+  if (toDate)   _supOpsDateFilter += "&date=lte." + toDate;
+  await _supOpsPageFetch();
+}
+
+async function _supOpsPageFetch() {
+  var wrap    = document.getElementById("sup-ops-wrap");
+  var prevBtn = document.getElementById("sup-ops-prev-btn");
+  var nextBtn = document.getElementById("sup-ops-next-btn");
+  var pageLbl = document.getElementById("sup-ops-page-lbl");
+  var cntEl   = document.getElementById("sup-ops-count-bar");
+  if (wrap) wrap.innerHTML = "<div class='ops-empty'>Loading page " + (SUP_OPS_PAGE+1) + "…</div>";
+  var opFilter   = (document.getElementById("sup-ops-op-filter")      || {}).value || "";
+  var offFilter  = (document.getElementById("sup-ops-officer-filter") || {}).value || "";
+  var serverFilter = "";
+  if (opFilter)  serverFilter += "&operation=ilike.*" + encodeURIComponent(opFilter) + "*";
+  if (offFilter) serverFilter += "&officer=eq." + encodeURIComponent(offFilter);
+  var offset = SUP_OPS_PAGE * SUP_OPS_PAGE_SIZE;
+  var path   = "daily_operations?select=*&branch_id=in.(" + _supOpsBranchIds.join(",") + ")" +
+               _supOpsDateFilter + serverFilter + "&order=date.desc,time.desc" +
+               "&limit=" + SUP_OPS_PAGE_SIZE + "&offset=" + offset;
   try {
-    var res = await sf("daily_operations?select=*&branch_id=in.(" + branchIds.join(",") + ")" + dateFilter + "&order=date.desc,time.desc&limit=5000");
-    SUP_OPS_DATA = await res.json() || [];
+    var res  = await sf(path, { headers: { "Prefer": "count=exact" } });
+    var cr   = (res.headers.get("content-range") || "").match(/\/([0-9]+)/);
+    SUP_OPS_TOTAL = cr ? parseInt(cr[1]) : 0;
+    SUP_OPS_DATA  = await res.json() || [];
+    var totalPages = Math.max(1, Math.ceil(SUP_OPS_TOTAL / SUP_OPS_PAGE_SIZE));
+    if (cntEl)   cntEl.textContent = SUP_OPS_TOTAL.toLocaleString() + " records · Page " + (SUP_OPS_PAGE+1) + " / " + totalPages + " · showing " + (offset+1) + "–" + Math.min(offset+SUP_OPS_DATA.length, SUP_OPS_TOTAL);
+    if (pageLbl) pageLbl.textContent = "Page " + (SUP_OPS_PAGE+1) + " / " + totalPages;
+    if (prevBtn) prevBtn.disabled = SUP_OPS_PAGE <= 0;
+    if (nextBtn) nextBtn.disabled = SUP_OPS_PAGE >= totalPages - 1;
     supOpsRender();
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
+    if (wrap) wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
   }
+}
+
+function supOpsPageNav(dir) {
+  var totalPages = Math.max(1, Math.ceil(SUP_OPS_TOTAL / SUP_OPS_PAGE_SIZE));
+  SUP_OPS_PAGE   = Math.max(0, Math.min(SUP_OPS_PAGE + dir, totalPages - 1));
+  _supOpsPageFetch();
 }
 
 function supOpsFilter(f) {
@@ -4169,13 +4212,16 @@ async function supLoadKpi() {
   var isDay      = SUP_KPI_PERIOD === "day";
 
   try {
-    var res  = await sf(
+    var _supRes = await sf(
       "daily_operations?select=officer,operation,date,branch_id" +
       "&branch_id=in.(" + filteredBranchIds.join(",") + ")" +
       "&order=date.asc" + dateFilter +
-      "&operation=not.ilike.*Receive*&operation=not.ilike.*Stock Status*"
+      "&operation=not.ilike.*Receive*&operation=not.ilike.*Stock Status*&limit=10000",
+      { headers: { "Prefer": "count=exact" } }
     );
-    var data = await res.json() || [];
+    var _supCr   = (_supRes.headers.get("content-range") || "").match(/\/([0-9]+)/);
+    var _supTrue = _supCr ? parseInt(_supCr[1]) : null;
+    var data = await _supRes.json() || [];
 
     // Categorise by officer
     var officerMap = {};
@@ -4198,7 +4244,8 @@ async function supLoadKpi() {
     var officers = Object.values(officerMap).sort(function(a, b) {
       return b.total - a.total;
     });
-    var totalOps    = data.length;
+    var totalOps    = _supTrue != null ? _supTrue : data.length;
+    var _supTruncNote = (_supTrue != null && _supTrue > data.length) ? " <span style='font-size:9px;color:var(--muted);' title='Based on " + data.length.toLocaleString() + " of " + _supTrue.toLocaleString() + " records'>(" + data.length.toLocaleString() + " loaded)</span>" : "";
     var totalIssue  = 0, totalAssign = 0, totalSwap = 0, totalRet = 0, totalAtfs = 0;
     officers.forEach(function(o) {
       totalIssue  += o.issue;
@@ -4210,7 +4257,7 @@ async function supLoadKpi() {
 
     // Summary cards
     if (summaryEl) summaryEl.innerHTML =
-      "<div class='kpi-card gold'><div class='kpi-num'>"   + totalOps    + "</div><div class='kpi-lbl'>Total Ops</div></div>" +
+      "<div class='kpi-card gold'><div class='kpi-num'>"   + totalOps.toLocaleString() + _supTruncNote + "</div><div class='kpi-lbl'>Total Ops</div></div>" +
       "<div class='kpi-card cyan'><div class='kpi-num'>"   + totalIssue  + "</div><div class='kpi-lbl'>🚀 Issued</div></div>" +
       "<div class='kpi-card green'><div class='kpi-num'>"  + officers.length + "</div><div class='kpi-lbl'>Officers</div></div>" +
       "<div class='kpi-card violet'><div class='kpi-num'>" + totalRet    + "</div><div class='kpi-lbl'>↩ Returns</div></div>" +
@@ -4381,8 +4428,12 @@ async function supLoadKpi() {
 // ════════════════════════════════════════════════════════════════════════
 
 var ADM_KPI_PERIOD  = "day";
-var ADM_OPS_DATA    = [];
-var ADM_OPS_FILTER  = "all";
+var ADM_OPS_DATA      = [];
+var ADM_OPS_FILTER    = "all";
+var ADM_OPS_PAGE      = 0;
+var ADM_OPS_PAGE_SIZE = 100;
+var ADM_OPS_TOTAL     = 0;
+var _admOpsDateFilter = "";
 var ADM_CHART_BAR   = null;
 var ADM_CHART_DOUGH = null;
 var ADM_CHART_LINE  = null;
@@ -4479,15 +4530,46 @@ async function admLoadOps() {
   if (dateFrom) dateFilter += "&date=gte." + dateFrom;
   if (dateTo)   dateFilter += "&date=lte." + dateTo;
 
+  _admOpsDateFilter = dateFilter;
+  ADM_OPS_PAGE = 0;
+  await _admOpsPageFetch();
+}
+
+async function _admOpsPageFetch() {
+  var wrap    = document.getElementById("adm-ops-wrap");
+  var prevBtn = document.getElementById("adm-ops-prev-btn");
+  var nextBtn = document.getElementById("adm-ops-next-btn");
+  var pageLbl = document.getElementById("adm-ops-page-lbl");
+  var cntEl   = document.getElementById("adm-ops-count-bar");
+  if (wrap) wrap.innerHTML = "<div class='ops-empty'>Loading page " + (ADM_OPS_PAGE+1) + "…</div>";
+  var opFilter  = (document.getElementById("adm-ops-op-filter")      || {}).value || "";
+  var offFilter = (document.getElementById("adm-ops-officer-filter") || {}).value || "";
+  var serverFlt = "";
+  if (opFilter)  serverFlt += "&operation=ilike.*" + encodeURIComponent(opFilter) + "*";
+  if (offFilter) serverFlt += "&officer=eq."       + encodeURIComponent(offFilter);
+  var offset = ADM_OPS_PAGE * ADM_OPS_PAGE_SIZE;
+  var path   = "daily_operations?select=*" + _admOpsDateFilter + serverFlt +
+               "&order=date.desc,time.desc&limit=" + ADM_OPS_PAGE_SIZE + "&offset=" + offset;
   try {
-    var res = await sf(
-      "daily_operations?select=*" + dateFilter + "&order=date.desc,time.desc&limit=5000"
-    );
-    ADM_OPS_DATA = await res.json() || [];
+    var res  = await sf(path, { headers: { "Prefer": "count=exact" } });
+    var cr   = (res.headers.get("content-range") || "").match(/\/([0-9]+)/);
+    ADM_OPS_TOTAL = cr ? parseInt(cr[1]) : 0;
+    ADM_OPS_DATA  = await res.json() || [];
+    var totalPages = Math.max(1, Math.ceil(ADM_OPS_TOTAL / ADM_OPS_PAGE_SIZE));
+    if (cntEl)   cntEl.textContent = ADM_OPS_TOTAL.toLocaleString() + " records · Page " + (ADM_OPS_PAGE+1) + " / " + totalPages + " · showing " + (offset+1) + "–" + Math.min(offset+ADM_OPS_DATA.length, ADM_OPS_TOTAL);
+    if (pageLbl) pageLbl.textContent = "Page " + (ADM_OPS_PAGE+1) + " / " + totalPages;
+    if (prevBtn) prevBtn.disabled = ADM_OPS_PAGE <= 0;
+    if (nextBtn) nextBtn.disabled = ADM_OPS_PAGE >= totalPages - 1;
     admOpsRender();
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
+    if (wrap) wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
   }
+}
+
+function admOpsPageNav(dir) {
+  var totalPages = Math.max(1, Math.ceil(ADM_OPS_TOTAL / ADM_OPS_PAGE_SIZE));
+  ADM_OPS_PAGE   = Math.max(0, Math.min(ADM_OPS_PAGE + dir, totalPages - 1));
+  _admOpsPageFetch();
 }
 
 function admOpsFilter(f) {
@@ -4647,10 +4729,14 @@ async function admLoadKpi() {
   }
 
   try {
-    var res  = await sf(
-      "daily_operations?select=officer,operation,date,branch_id&order=date.asc" + dateFilter
+    // Fetch with count=exact so totalOps is accurate regardless of row count
+    var _kpiRes  = await sf(
+      "daily_operations?select=officer,operation,date,branch_id&order=date.asc" + dateFilter + "&limit=10000",
+      { headers: { "Prefer": "count=exact" } }
     );
-    var data = await res.json() || [];
+    var _kpiCr   = (_kpiRes.headers.get("content-range") || "").match(/\/([0-9]+)/);
+    var _kpiTrue = _kpiCr ? parseInt(_kpiCr[1]) : null;  // true DB total
+    var data = await _kpiRes.json() || [];
 
     if (selectedCity)
       data = data.filter(function(row) {
@@ -4690,14 +4776,15 @@ async function admLoadKpi() {
     });
     var sups = Object.values(supMap).sort(function(a, b) { return b.total - a.total; });
 
-    var totalOps     = data.length;
+    var totalOps     = _kpiTrue != null ? _kpiTrue : data.length;  // accurate even if > 10000
+    var _truncNote   = (_kpiTrue != null && _kpiTrue > data.length) ? " <span style='font-size:9px;color:var(--muted);' title='Aggregation based on " + data.length.toLocaleString() + " of " + _kpiTrue.toLocaleString() + " records'>(" + data.length.toLocaleString() + " loaded)</span>" : "";
     var totalIssue   = data.filter(function(r){return catOp(r.operation)==="issue";}).length;
     var totalReceive = data.filter(function(r){return catOp(r.operation)==="receive";}).length;
     var totalRet     = data.filter(function(r){return catOp(r.operation)==="ret";}).length;
     var leadRegion   = regions.length ? regions[0].city : "—";
 
     if (summaryEl) summaryEl.innerHTML =
-      "<div class='kpi-card gold'><div class='kpi-num'>"   + totalOps     + "</div><div class='kpi-lbl'>Total Ops</div></div>" +
+      "<div class='kpi-card gold'><div class='kpi-num'>"   + totalOps.toLocaleString() + _truncNote + "</div><div class='kpi-lbl'>Total Ops</div></div>" +
       "<div class='kpi-card cyan'><div class='kpi-num'>"   + totalIssue   + "</div><div class='kpi-lbl'>🚀 Issued</div></div>" +
       "<div class='kpi-card green'><div class='kpi-num'>"  + totalReceive + "</div><div class='kpi-lbl'>📥 Received</div></div>" +
       "<div class='kpi-card violet'><div class='kpi-num'>" + totalRet     + "</div><div class='kpi-lbl'>↩ Returns</div></div>" +
@@ -7090,7 +7177,7 @@ async function uaValidateBulk() {
   var assigned = {};
   try {
     var r    = await sf("deployed_assigned?select=sn,source,model,agent_id,operation" +
-                        "&branch_id=eq." + SUPA_BRANCH.id + "&limit=25000");
+                        "&branch_id=eq." + SUPA_BRANCH.id + "&limit=5000");
     var rows = await r.json();
     rows.forEach(function(row) {
       var op = (row.operation || "").toLowerCase();
