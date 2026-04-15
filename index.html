@@ -656,7 +656,7 @@ select.input{cursor:pointer;background:#fff;}
         <div id="s-form">
           <div class="clock-box" id="s-clock">—</div>
           <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="s-f-cust" placeholder="e.g. AGG-001"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="s-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>MS/BD CODE</span></div><input class="input" id="s-f-agent" placeholder="e.g. BD-001"></div>
-          <div class="form-grid"><div class="fg"><div class="fl"><span>Faulty POS SN</span></div><div style="display:flex;gap:6px;align-items:center;"><input class="input" id="s-f-faulty" placeholder="POS-00001" oninput="this.value=this.value.toUpperCase()" style="flex:1"><button class="scan-btn" onclick="scanOpenDirect('s-f-faulty')">📷</button></div></div><div class="fg"><div class="fl"><span>Replacement POS SN</span></div><div style="display:flex;gap:6px;align-items:center;"><input class="input" id="s-f-replace" placeholder="POS-00002" oninput="this.value=this.value.toUpperCase()" style="flex:1"><button class="scan-btn" onclick="scanOpenDirect('s-f-replace')">📷</button></div></div></div>
+          <div class="form-grid"><div class="fg"><div class="fl"><span>Faulty POS SN</span></div><div style="display:flex;gap:6px;align-items:center;"><input class="input" id="s-f-faulty" placeholder="POS-00001" oninput="this.value=this.value.toUpperCase()" style="flex:1"><button class="scan-btn" onclick="scanOpenDirect('s-f-faulty')">📷</button></div><div class="fl" style="margin-top:8px;"><span>Faulty POS Type <span style="color:var(--rose);font-weight:700;">*</span></span></div><select class="input" id="s-f-faulty-model" style="margin-top:4px;"><option value="">Select faulty POS type…</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div><div class="fg"><div class="fl"><span>Replacement POS SN</span></div><div style="display:flex;gap:6px;align-items:center;"><input class="input" id="s-f-replace" placeholder="POS-00002" oninput="this.value=this.value.toUpperCase()" style="flex:1"><button class="scan-btn" onclick="scanOpenDirect('s-f-replace')">📷</button></div></div></div>
           <div style="display:flex;gap:8px;margin-top:8px;"><button class="sub-btn" style="flex:1;" id="s-sub-btn" onclick="sSubmit()">🔄 Confirm Swap</button><button type="button" onclick="sClear()" style="padding:13px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">✕ Clear</button></div>
         </div>
         <div id="s-success" style="display:none"><div class="success-screen"><div class="suc-circle">🔄</div><div class="suc-title">Swapped!</div><div class="suc-sub">POS swap recorded</div><div id="s-suc-summary"></div><div class="undo-bar"><div class="undo-fill" id="s-undo-fill"></div></div><button class="act-btn act-edit" id="s-btn-edit" onclick="sEdit()" style="width:100%;margin-bottom:8px">✎ Edit (30s)</button><button class="new-btn" onclick="sNew()">+ New Swap</button></div></div>
@@ -670,7 +670,7 @@ select.input{cursor:pointer;background:#fff;}
         <div id="r-form">
           <div class="clock-box" id="r-clock">—</div>
           <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="r-f-merchant" placeholder="e.g. AGG-001234"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="r-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>Logging As</span></div><div class="input" style="opacity:.6;cursor:not-allowed;" id="r-officer-display">—</div></div>
-          <div class="form-grid"><div class="fg"><div class="fl"><span>Return Reason <span class="optional">(optional)</span></span></div><input class="input" id="r-f-reason" placeholder="End of lease, upgrade, faulty swap…"></div><div class="fg"><div class="fl"><span>POS Type <span class="optional">(optional)</span></span></div><select class="input" id="r-f-model"><option value="">Select type…</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div></div>
+          <div class="form-grid"><div class="fg"><div class="fl"><span>Return Reason <span class="optional">(optional)</span></span></div><input class="input" id="r-f-reason" placeholder="End of lease, upgrade, faulty swap…"></div><div class="fg"><div class="fl"><span>POS Type <span class="optional" id="r-f-model-hint">(required if Faulty)</span></span></div><select class="input" id="r-f-model"><option value="">Select type…</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div></div>
           <div class="fg"><div class="fl"><span>Condition</span></div><div class="toggle-row"><button class="toggle-btn active" onclick="rSetCondition('normal',this)">↩ R&R Working Good</button><button class="toggle-btn" onclick="rSetCondition('working',this)">📦 R&R Brand New</button><button class="toggle-btn" onclick="rSetCondition('faulty',this)">⚠️ R&R Faulty</button></div></div>
           <div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Entry Mode</span><div class="divider-line"></div></div>
           <div class="mode-toggle"><button class="mode-btn active" onclick="rSetMode('single')">Single Entry</button><button class="mode-btn" onclick="rSetMode('bulk')">Bulk Entry</button></div>
@@ -1715,6 +1715,18 @@ async function countRows(table, statusFilter) {
   try { var res = await fetch(SUPA_URL + "/rest/v1/" + path, { method: "GET", headers: Object.assign(authH(), {"Prefer":"count=exact"}) }); var cr = res.headers.get("content-range") || ""; var m = cr.match(/\/(\d+)/); return m ? parseInt(m[1], 10) : 0; } catch (e) { return 0; }
 }
 
+// Like countRows but also filters by model — uses count=exact so never capped by db-max-rows
+async function countRowsByModel(table, model, statusFilter) {
+  var path = table + "?limit=0&model=eq." + encodeURIComponent(model) +
+             (statusFilter ? "&status=eq." + encodeURIComponent(statusFilter) : "");
+  try {
+    var res = await fetch(SUPA_URL + "/rest/v1/" + path, { method: "GET", headers: Object.assign(authH(), {"Prefer":"count=exact"}) });
+    var cr  = res.headers.get("content-range") || "";
+    var m   = cr.match(/\/(\d+)/);
+    return m ? parseInt(m[1], 10) : 0;
+  } catch (e) { return 0; }
+}
+
 async function populateStockBranchPicker() { var role = SUPA_OFFICER ? SUPA_OFFICER.role : null; var selectorWrap = document.getElementById("sb-branch-selector"); var pick = document.getElementById("sb-branch-pick"); if (!selectorWrap || !pick) return; if (role === "Officer") { selectorWrap.style.display = "none"; return; } selectorWrap.style.display = "block"; var branches = []; if (role === "Admin") { try { var r = await sf("branches?select=id,name,code,table_suffix,city&order=name"); branches = await r.json() || []; ALL_BRANCHES = branches; } catch (e) { branches = ALL_BRANCHES; } } else { branches = [{ id: SUPA_BRANCH.id, name: SUPA_BRANCH.name, code: SUPA_BRANCH.code, table_suffix: SUPA_BRANCH.table_suffix, city: SUPA_BRANCH.city || null }]; try { var res = await sf("supervisor_branches?select=branch_id,branches(id,name,code,table_suffix,city)&supervisor_id=eq." + SUPA_OFFICER.id); var rows = await res.json() || []; rows.forEach(function(r) { if (r.branches && r.branches.id !== SUPA_BRANCH.id) branches.push(r.branches); }); } catch (e) {} } pick.innerHTML = "<option value=''>🌐 All branches</option>" + branches.map(function(b) { return "<option value='" + b.id + "' data-suffix='" + b.table_suffix + "' data-name='" + escHtml(b.name) + "'>" + escHtml(b.name) + " (" + escHtml(b.code) + ")</option>"; }).join(""); pick._branches = branches; }
 
 // fetchLiveStock kept but widget removed from UI - no longer called automatically
@@ -2176,8 +2188,10 @@ async function sSubmit() {
     var tid = (document.getElementById("s-f-tid") || {}).value ? document.getElementById("s-f-tid").value.trim() : "";
     var agentCode = document.getElementById("s-f-agent").value.trim();
     var faulty = document.getElementById("s-f-faulty").value.trim().toUpperCase();
+    var faultyModel = (document.getElementById("s-f-faulty-model") ? document.getElementById("s-f-faulty-model").value : "") || "";
     var replace = document.getElementById("s-f-replace").value.trim().toUpperCase();
     if (!faulty || !replace) { unlockSubmit("s-sub-btn", "🔄 Confirm " + APP_CONFIG.opSwap); alert("Both faulty and replacement SNs are required."); return; }
+    if (!faultyModel) { unlockSubmit("s-sub-btn", "🔄 Confirm " + APP_CONFIG.opSwap); alert("Please select the Faulty POS Type before confirming the swap."); return; }
     if (faulty === replace) { unlockSubmit("s-sub-btn", "🔄 Confirm " + APP_CONFIG.opSwap); alert("Faulty and replacement cannot be the same SN."); return; }
     setConn("loading", "Validating replacement SN…");
     var repCheck = await validateSNForSwap(replace);
@@ -2188,7 +2202,7 @@ async function sSubmit() {
     setConn("ok", "Verified ✓");
     if (_EDIT_OP.s) { setConn("loading", "Reversing previous swap…"); await undoOpDB(_EDIT_OP.s); OP_LOG = OP_LOG.filter(function(o) { return o.id !== _EDIT_OP.s.id; }); delete _EDIT_OP.s; }
     cacheInvalidate(SUPA_BRANCH.table_suffix || "hq");
-    pushOp({ type: "Swap", faultySn: faulty, faultyModel: null, replacementSn: replace, replacementSource: repCheck.source, replacementModel: repCheck.model, repIsAssigned: repCheck.isAssigned || repCheck.status === "Assigned", officer: off, merchantId: merchant, tid: tid, agentCode: agentCode, sns: [replace] });
+    pushOp({ type: "Swap", faultySn: faulty, faultyModel: faultyModel || null, replacementSn: replace, replacementSource: repCheck.source, replacementModel: repCheck.model, repIsAssigned: repCheck.isAssigned || repCheck.status === "Assigned", officer: off, merchantId: merchant, tid: tid, agentCode: agentCode, sns: [replace] });
     recordOp({ type: "Swap", typeKey: "swp", sns: [faulty, replace], faultySn: faulty, replacementSn: replace, officer: off });
     document.getElementById("s-suc-summary").innerHTML = "<div class='ss-row'><span class='ss-key'>Faulty (logged)</span><span class='ss-val' style='font-family:monospace;color:var(--rose)'>" + escHtml(faulty) + "</span></div><div class='ss-row'><span class='ss-key'>Replacement (sent out)</span><span class='ss-val' style='font-family:monospace;color:var(--green2)'>" + escHtml(replace) + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldCustomer + "</span><span class='ss-val'>" + escHtml(merchant || "—") + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldAgent + "</span><span class='ss-val'>" + escHtml(agentCode || "—") + "</span></div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div><div class='ss-row'><span class='ss-key'>Note</span><span class='ss-val' style='font-size:11px;color:var(--muted)'>Issued record kept for history</span></div>" + (repCheck.isAssigned || repCheck.status === "Assigned" ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(181,131,74,.1);border:1.5px solid rgba(181,131,74,.25);border-radius:8px;font-size:11px;color:var(--amber);font-weight:600;'>⚠ Assigned POS used as Swap Replacement: " + escHtml(replace) + "</div>" : "");
     document.getElementById("s-form").style.display = "none";
@@ -2198,8 +2212,8 @@ async function sSubmit() {
 }
 
 function sEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "swp") _EDIT_OP.s = last; } document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; }
-function sNew() { delete _EDIT_OP.s; document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; ["s-f-faulty", "s-f-replace", "s-f-cust", "s-f-tid", "s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); }
-function sClear() { ["s-f-faulty","s-f-replace","s-f-cust","s-f-tid","s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); }
+function sNew() { delete _EDIT_OP.s; document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; ["s-f-faulty", "s-f-replace", "s-f-cust", "s-f-tid", "s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = ""; }
+function sClear() { ["s-f-faulty","s-f-replace","s-f-cust","s-f-tid","s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = ""; }
 
 // ════════════════════════════════════════════════════════════
 //  return.js - with DYNAMIC BULK ROWS
@@ -2229,6 +2243,22 @@ function rSetCondition(c, btn) {
   document.querySelectorAll("#r-sn-rows .sn-status.ok, #r-bulk-rows-container .sn-status.ok").forEach(function(el) {
     el.textContent = "✓ " + lbl;
   });
+  // Highlight POS Type hint as required when faulty is selected
+  var hint = document.getElementById("r-f-model-hint");
+  var modelSel = document.getElementById("r-f-model");
+  if (hint) {
+    if (c === "faulty") {
+      hint.textContent = "required ★";
+      hint.style.color = "var(--rose)";
+      hint.style.fontWeight = "700";
+      if (modelSel) modelSel.style.borderColor = "var(--rose)";
+    } else {
+      hint.textContent = "(optional)";
+      hint.style.color = "";
+      hint.style.fontWeight = "";
+      if (modelSel) modelSel.style.borderColor = "";
+    }
+  }
 }
 
 async function rParseAndValidate() {
@@ -2268,6 +2298,7 @@ async function rSubmit() {
     if (!rows.length) { unlockSubmit("r-sub-btn", "↩ Confirm " + APP_CONFIG.opReturn); alert("No valid " + assets() + " entered."); return; }
     var sns = rows.map(function(r) { return r.sn; });
     var cond = R.condition || "normal";
+    if (cond === "faulty" && !model) { unlockSubmit("r-sub-btn", "↩ Confirm " + APP_CONFIG.opReturn); alert("Please select the POS Type when returning a Faulty POS — this ensures the POS type breakdown is accurate."); return; }
     var suffix = SUPA_BRANCH.table_suffix || "hq";
     var branchId = SUPA_BRANCH.id;
     var t = branchTables(suffix);
@@ -2536,23 +2567,29 @@ async function stockInvLoadSummary() {
     return;
   }
 
-  // Cache-based summary: N × 1 cacheFetch() instead of N × 11 HTTP requests.
-  // Cache TTL 30 min — warm after normal nav, cold-loads in parallel.
+  // Summary counts via count=exact (limit=0 + Prefer:count=exact header).
+  // This reads the true row count from the content-range header and is never
+  // capped by Supabase's db-max-rows setting (default 1000), so branches with
+  // more than 1000 SNs in any category now display the correct figure.
   try {
     var results = await Promise.all(branches.map(async function(br) {
-      var cache = await cacheFetch(br.table_suffix);
-      var cnt   = function(arr, st) {
-        return (arr || []).filter(function(r){ return !st || r.status === st; }).length;
-      };
-      var bnAvail  = cnt(cache ? cache.bn  : [], 'Available');
-      var bnAsgn   = cnt(cache ? cache.bn  : [], 'Assigned');
-      var rpAvail  = cnt(cache ? cache.rp  : [], 'Available');
-      var rpAsgn   = cnt(cache ? cache.rp  : [], 'Assigned');
-      var rtAvail  = cnt(cache ? cache.rt  : [], 'Available');
-      var rtAsgn   = cnt(cache ? cache.rt  : [], 'Assigned');
-      var rbnAvail = cnt(cache ? cache.rbn : [], 'Available');
-      var rbnAsgn  = cnt(cache ? cache.rbn : [], 'Assigned');
-      var ft       = cache ? (cache.faulty || []).length : 0;
+      var t = branchTables(br.table_suffix);
+      var counts = await Promise.all([
+        countRows(t.bn,  'Available'),  // 0 bnAvail
+        countRows(t.bn,  'Assigned'),   // 1 bnAsgn
+        countRows(t.rp,  'Available'),  // 2 rpAvail
+        countRows(t.rp,  'Assigned'),   // 3 rpAsgn
+        countRows(t.rt,  'Available'),  // 4 rtAvail
+        countRows(t.rt,  'Assigned'),   // 5 rtAsgn
+        countRows(t.rbn, 'Available'),  // 6 rbnAvail
+        countRows(t.rbn, 'Assigned'),   // 7 rbnAsgn
+        countRows(t.ft,  null)          // 8 faulty total
+      ]);
+      var bnAvail  = counts[0], bnAsgn  = counts[1];
+      var rpAvail  = counts[2], rpAsgn  = counts[3];
+      var rtAvail  = counts[4], rtAsgn  = counts[5];
+      var rbnAvail = counts[6], rbnAsgn = counts[7];
+      var ft       = counts[8];
       return {
         name:     br.name,     code:    br.code || '',
         city:     br.city || '', suffix: br.table_suffix,
@@ -2706,28 +2743,52 @@ async function stockInvLoadSummary() {
     posTypes.forEach(function(pt) { posTypeData[pt] = { rbn:0, bn:0, rp:0, rt:0, ft:0, asgn:0 }; });
     posTypeData["Other"] = { rbn:0, bn:0, rp:0, rt:0, ft:0, asgn:0 };
 
-    // Use cached data to count by model — Deployed status is explicitly excluded
+    // Per-model counts via count=exact — never capped by Supabase db-max-rows.
+    // Each known model is queried with ?model=eq.{model}&status=eq.{status}&limit=0
+    // and the true count is read from the content-range response header.
+    // "Other" is derived by subtracting known-model totals from the already-accurate
+    // grand totals computed earlier (also via count=exact).
     try {
       await Promise.all(branches.map(async function(br) {
-        var cache = await cacheFetch(br.table_suffix);
-        if (!cache) return;
-        var addTo = function(rows, catKey) {
-          (rows || []).forEach(function(r) {
-            var m = (r.model || "").trim();
-            var bucket = posTypes.indexOf(m) >= 0 ? m : "Other";
-            // Skip Deployed entirely — they are not office stock
-            if (r.status === "Deployed") return;
-            if (catKey === "ft") { posTypeData[bucket][catKey]++; }        // faulty: always count
-            else if (r.status === "Available") { posTypeData[bucket][catKey]++; }
-            else if (r.status === "Assigned")  { posTypeData[bucket]["asgn"]++; }
-          });
-        };
-        addTo(cache.rbn || [], "rbn");
-        addTo(cache.bn, "bn");
-        addTo(cache.rp, "rp");
-        addTo(cache.rt, "rt");
-        addTo(cache.faulty, "ft");
+        var t = branchTables(br.table_suffix);
+        await Promise.all(posTypes.map(async function(model) {
+          var c = await Promise.all([
+            countRowsByModel(t.rbn, model, 'Available'),  // 0
+            countRowsByModel(t.rbn, model, 'Assigned'),   // 1
+            countRowsByModel(t.bn,  model, 'Available'),  // 2
+            countRowsByModel(t.bn,  model, 'Assigned'),   // 3
+            countRowsByModel(t.rp,  model, 'Available'),  // 4
+            countRowsByModel(t.rp,  model, 'Assigned'),   // 5
+            countRowsByModel(t.rt,  model, 'Available'),  // 6
+            countRowsByModel(t.rt,  model, 'Assigned'),   // 7
+            countRowsByModel(t.ft,  model, null)          // 8 faulty (no status)
+          ]);
+          posTypeData[model].rbn  += c[0];
+          posTypeData[model].asgn += c[1] + c[3] + c[5] + c[7]; // Assigned across all 4 tables
+          posTypeData[model].bn   += c[2];
+          posTypeData[model].rp   += c[4];
+          posTypeData[model].rt   += c[6];
+          posTypeData[model].ft   += c[8];
+        }));
       }));
+
+      // Derive "Other" = accurate grand total − sum of all known-model counts
+      var knownRbn  = posTypes.reduce(function(s,pt){ return s + posTypeData[pt].rbn;  }, 0);
+      var knownBn   = posTypes.reduce(function(s,pt){ return s + posTypeData[pt].bn;   }, 0);
+      var knownRp   = posTypes.reduce(function(s,pt){ return s + posTypeData[pt].rp;   }, 0);
+      var knownRt   = posTypes.reduce(function(s,pt){ return s + posTypeData[pt].rt;   }, 0);
+      var knownFt   = posTypes.reduce(function(s,pt){ return s + posTypeData[pt].ft;   }, 0);
+      var knownAsgn = posTypes.reduce(function(s,pt){ return s + posTypeData[pt].asgn; }, 0);
+      // Total assigned across all 4 tables (rbnAsgn = rbnTotal−rbnAvail, rtAsgn = rtTotal−rtAvail)
+      var totalAllAsgn = totals.bnAsgn + totals.rpAsgn +
+                         (totals.rbnTotal - totals.rbnAvail) +
+                         (totals.rtTotal  - totals.rtAvail);
+      posTypeData["Other"].rbn  = Math.max(0, totals.rbnAvail - knownRbn);
+      posTypeData["Other"].bn   = Math.max(0, totals.bnAvail  - knownBn);
+      posTypeData["Other"].rp   = Math.max(0, totals.rpAvail  - knownRp);
+      posTypeData["Other"].rt   = Math.max(0, totals.rtAvail  - knownRt);
+      posTypeData["Other"].ft   = Math.max(0, totals.ft       - knownFt);
+      posTypeData["Other"].asgn = Math.max(0, totalAllAsgn    - knownAsgn);
     } catch (_e) {}
 
     var ptKeys = posTypes.concat(["Other"]).filter(function(pt) {
@@ -6414,6 +6475,7 @@ function sClear() {
   ["s-f-faulty","s-f-replace","s-f-cust","s-f-tid","s-f-agent"].forEach(function(id) {
     var el = document.getElementById(id); if (el) el.value = "";
   });
+  var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = "";
 }
 function rClear() {
   var rTid = document.getElementById("r-f-tid"); if (rTid) rTid.value = "";
