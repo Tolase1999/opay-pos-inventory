@@ -240,11 +240,19 @@ select.input{cursor:pointer;background:#fff;}
 .ops-table tr.op-deleted td{opacity:.35;text-decoration:line-through;}
 .ops-empty{padding:40px;text-align:center;color:var(--muted);font-size:12px;}
 .op-type-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-weight:700;font-size:10px;}
-.ob-dep {background:rgba(64,145,108,.1);color:var(--green2);}
-.ob-asg {background:rgba(26,111,168,.1);color:var(--sky);}
-.ob-swp {background:rgba(196,94,40,.1);color:var(--orange);}
-.ob-ret {background:rgba(91,63,166,.1);color:var(--violet);}
-.ob-atfs{background:var(--rose2);color:var(--rose);}
+.ob-dep      {background:rgba(64,145,108,.1);color:var(--green2);border:1px solid rgba(64,145,108,.25);}
+.ob-asg      {background:rgba(26,111,168,.1);color:var(--sky);border:1px solid rgba(26,111,168,.25);}
+.ob-swp      {background:rgba(196,94,40,.1);color:var(--orange);border:1px solid rgba(196,94,40,.25);}
+.ob-ret      {background:rgba(91,63,166,.1);color:var(--violet);border:1px solid rgba(91,63,166,.25);}
+.ob-atfs     {background:var(--rose2);color:var(--rose);border:1px solid rgba(192,57,43,.25);}
+/* ── Return subtypes ── */
+.ob-ret-wg   {background:rgba(45,106,79,.1);color:var(--green);border:1px solid rgba(45,106,79,.3);}   /* R&R Working Good */
+.ob-ret-bn   {background:rgba(64,145,108,.12);color:var(--green2);border:1px solid rgba(64,145,108,.35);}  /* R&R Brand New */
+.ob-ret-ft   {background:rgba(192,57,43,.1);color:var(--rose);border:1px solid rgba(192,57,43,.3);}     /* R&R Faulty */
+/* ── Other op types ── */
+.ob-rcv      {background:rgba(82,183,136,.1);color:var(--green2);border:1px solid rgba(82,183,136,.3);} /* Receive Stock */
+.ob-fix      {background:rgba(29,122,110,.1);color:var(--teal);border:1px solid rgba(29,122,110,.25);}  /* Stock Status Change */
+.ob-unassign {background:rgba(26,111,168,.08);color:var(--sky);border:1px solid rgba(26,111,168,.2);}   /* Unassign */
 .sn-tag{display:inline-block;padding:2px 6px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);font-family:monospace;font-size:11px;font-weight:700;color:var(--text2);margin:1px;}
 .act-btn{padding:4px 10px;border-radius:6px;border:none;cursor:pointer;font-weight:700;font-size:11px;transition:all .2s;font-family:'DM Sans',sans-serif;}
 .act-edit{background:rgba(29,122,110,.1);color:var(--teal);border:1px solid rgba(29,122,110,.2);}
@@ -1091,6 +1099,58 @@ function logDaily(operation, sn, model, extra) {
 
 function escHtml(s) {
   return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+// ── Shared operation-label helpers ────────────────────────────────────────
+// Single source of truth for every op badge across Edit/Delete, Staff Ops,
+// Officer Ops and Past Operations.  Pass the raw operation string + any
+// available condition/reason hint so Return sub-types resolve correctly.
+function _parseReturnCond(hint) {
+  // hint is either op.condition ("normal"/"working"/"faulty") or the raw
+  // reason string stored in daily_operations ("...Condition: working...").
+  if (!hint) return "normal";
+  var h = String(hint).toLowerCase();
+  if (h === "working" || h.indexOf("condition: working") !== -1) return "working";
+  if (h === "faulty"  || h.indexOf("condition: faulty")  !== -1) return "faulty";
+  // legacy text fallbacks stored in older reason strings
+  if (h.indexOf("r&r brand new") !== -1 || h.indexOf("brand new") !== -1) return "working";
+  if (h.indexOf("r&r faulty")    !== -1) return "faulty";
+  return "normal"; // default → R&R Working Good
+}
+
+var _OP_META_MAP = {
+  "Issue":               { label: "🚀 Issue",           cls: "ob-dep"      },
+  "Issued":              { label: "🚀 Issued",          cls: "ob-dep"      },
+  "Assign":              { label: "📋 Assign",          cls: "ob-asg"      },
+  "Assigned":            { label: "📋 Assigned",        cls: "ob-asg"      },
+  "Swap":                { label: "🔄 Swap",            cls: "ob-swp"      },
+  "ATFS":                { label: "⚡ ATFS",            cls: "ob-atfs"     },
+  "Unassign":            { label: "↩ Unassign",         cls: "ob-unassign" },
+  "Receive Stock":       { label: "📥 Receive Stock",   cls: "ob-rcv"      },
+  "Stock Status Change": { label: "🔀 Status Change",   cls: "ob-fix"      }
+};
+var _RET_COND_MAP = {
+  "normal":  { label: "↩ R&R Working Good", cls: "ob-ret-wg" },
+  "working": { label: "📦 R&R Brand New",   cls: "ob-ret-bn" },
+  "faulty":  { label: "⚠️ R&R Faulty",     cls: "ob-ret-ft" }
+};
+
+function opChip(operation, hint) {
+  var op = (operation || "").trim();
+  // Return with sub-type resolution
+  if (op === "Return" || op.split(" ")[0] === "Return") {
+    var cond = _parseReturnCond(hint);
+    return _RET_COND_MAP[cond] || _RET_COND_MAP["normal"];
+  }
+  // Exact match first, then first-word match, then raw fallback
+  return _OP_META_MAP[op] ||
+         _OP_META_MAP[op.split(" ")[0]] ||
+         { label: op || "—", cls: "" };
+}
+
+function opChipHtml(operation, hint) {
+  var m = opChip(operation, hint);
+  return "<span class='op-type-badge " + m.cls + "'>" + escHtml(m.label) + "</span>";
 }
 
 var _submitting = {};
@@ -2010,9 +2070,9 @@ async function edtRefresh() {
     console.error("edtRefresh DB error:", e);
   }
 }
-function edtRender() { var search = ((document.getElementById("edt-search") || {}).value || "").toLowerCase().trim(); var filtered = OP_LOG.filter(function(op) { if (EDT_FILTER !== "all" && op.type !== EDT_FILTER) return false; if (search) { var hay = (op.sns || []).join(" ").toLowerCase() + " " + (op.officer || "").toLowerCase() + " " + (op.type || "").toLowerCase(); if (!hay.includes(search)) return false; } return true; }); var count = document.getElementById("edt-count"); if (count) count.textContent = filtered.length + " op" + (filtered.length === 1 ? "" : "s"); var wrap = document.getElementById("edt-table-wrap"); if (!wrap) return; if (!filtered.length) { wrap.innerHTML = "<div class='ops-empty'>" + (OP_LOG.length ? "No ops match this filter." : "No operations recorded yet today.") + "</div>"; return; } var meta = { Issued: { icon: "🚀", cls: "ob-dep" }, Assigned: { icon: "📋", cls: "ob-asg" }, Swap: { icon: "🔄", cls: "ob-swp" }, Return: { icon: "↩", cls: "ob-ret" }, ATFS: { icon: "⚡", cls: "ob-atfs" } }; var rows = filtered.map(function(op) { var m = meta[op.type] || { icon: "?", cls: "" }; var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(op.faultySn) + "</span><span style='font-size:10px;color:var(--muted);margin:0 4px;'>→</span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>✓ " + escHtml(op.replacementSn) + "</span>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(""); }; var dis = op.deleted ? " disabled" : ""; var tsParts = (op.ts || "").split(" "); var tsDate = tsParts[0] || ""; var tsTime = tsParts.slice(1).join(" ") || ""; return "<tr class='" + (op.deleted ? "op-deleted" : "") + "'><td class='td-date' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsDate) + "</td><td class='td-time' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsTime) + "</td><td><span class='op-type-badge " + m.cls + "'>" + m.icon + " " + op.type + "</span></td><td>" + tags + "</td><td class='td-officer'>" + escHtml(op.officer || "") + "</td><td><div class='td-actions'><button class='act-btn act-edit'" + dis + " onclick='edtOpenEdit(" + op.id + ")'>✎</button><button class='act-btn act-del'" + dis + " onclick='edtConfirmDelete(" + op.id + ")'>🗑</button></div></td></tr>"; }).join(""); wrap.innerHTML = "<table class='ops-table'><thead><tr><th>Date</th><th>Time</th><th>Type</th><th>SNs</th><th>Officer</th><th>Actions</th></tr></thead><tbody>" + rows + "</tbody></table>"; }
+function edtRender() { var search = ((document.getElementById("edt-search") || {}).value || "").toLowerCase().trim(); var filtered = OP_LOG.filter(function(op) { if (EDT_FILTER !== "all" && op.type !== EDT_FILTER) return false; if (search) { var hay = (op.sns || []).join(" ").toLowerCase() + " " + (op.officer || "").toLowerCase() + " " + (op.type || "").toLowerCase(); if (!hay.includes(search)) return false; } return true; }); var count = document.getElementById("edt-count"); if (count) count.textContent = filtered.length + " op" + (filtered.length === 1 ? "" : "s"); var wrap = document.getElementById("edt-table-wrap"); if (!wrap) return; if (!filtered.length) { wrap.innerHTML = "<div class='ops-empty'>" + (OP_LOG.length ? "No ops match this filter." : "No operations recorded yet today.") + "</div>"; return; } var rows = filtered.map(function(op) { var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(op.faultySn) + "</span><span style='font-size:10px;color:var(--muted);margin:0 4px;'>→</span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>✓ " + escHtml(op.replacementSn) + "</span>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(""); }; var dis = op.deleted ? " disabled" : ""; var tsParts = (op.ts || "").split(" "); var tsDate = tsParts[0] || ""; var tsTime = tsParts.slice(1).join(" ") || ""; return "<tr class='" + (op.deleted ? "op-deleted" : "") + "'><td class='td-date' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsDate) + "</td><td class='td-time' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsTime) + "</td><td>" + opChipHtml(op.type, op.condition) + "</td><td>" + tags + "</td><td class='td-officer'>" + escHtml(op.officer || "") + "</td><td><div class='td-actions'><button class='act-btn act-edit'" + dis + " onclick='edtOpenEdit(" + op.id + ")'>✎</button><button class='act-btn act-del'" + dis + " onclick='edtConfirmDelete(" + op.id + ")'>🗑</button></div></td></tr>"; }).join(""); wrap.innerHTML = "<table class='ops-table'><thead><tr><th>Date</th><th>Time</th><th>Type</th><th>SNs</th><th>Officer</th><th>Actions</th></tr></thead><tbody>" + rows + "</tbody></table>"; }
 
-function edtOpenEdit(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op || op.deleted) return; var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<div style='font-size:11px;margin-bottom:6px;'><span style='color:var(--muted);'>Faulty (in): </span><span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>" + escHtml(op.faultySn) + "</span>&nbsp;&nbsp;<span style='color:var(--muted);'>Replacement (out): </span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>" + escHtml(op.replacementSn) + "</span></div>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(" "); } document.getElementById("modal-root").innerHTML = "<div class='modal-overlay' onclick='closeModal(event)'><div class='modal' onclick='event.stopPropagation()'><h3>✎ Edit Operation</h3><div class='modal-sub'>" + op.type + " · " + op.ts + "</div><div class='auth-fg'>" + (op.type === "Swap" ? "<label class='auth-lbl' style='color:var(--rose);'>⚠ Faulty SN (cannot change)</label><div style='padding:8px 12px;background:var(--rose2);border-radius:8px;border:1.5px solid rgba(192,57,43,.2);font-family:monospace;font-size:13px;font-weight:700;color:var(--rose);margin-bottom:10px;'>" + escHtml(op.faultySn||"—") + "</div><label class='auth-lbl' style='color:var(--green2);'>✓ Replacement SN (editable)</label><input class='auth-inp' id='em-replace-sn' value='" + escHtml(op.replacementSn||"") + "' style='font-family:monospace;font-weight:700;' oninput='this.value=this.value.toUpperCase()'><input type='hidden' id='em-sns' value='" + escHtml((op.sns||[]).join(",")) + "'>" : "<label class='auth-lbl'>SNs (comma-separated)</label><input class='auth-inp' id='em-sns' value='" + escHtml((op.sns||[]).join(", ")) + "'>") + "</div><div id='em-save-msg' style='font-size:11px;margin-top:6px;'></div><div class='modal-btns'><button class='modal-cancel' onclick='closeModal()'>Cancel</button><button class='modal-save' id='em-save-btn' onclick='edtSaveEdit(" + id + ")'>💾 Save</button></div></div></div>"; }
+function edtOpenEdit(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op || op.deleted) return; var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<div style='font-size:11px;margin-bottom:6px;'><span style='color:var(--muted);'>Faulty (in): </span><span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>" + escHtml(op.faultySn) + "</span>&nbsp;&nbsp;<span style='color:var(--muted);'>Replacement (out): </span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>" + escHtml(op.replacementSn) + "</span></div>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(" "); } document.getElementById("modal-root").innerHTML = "<div class='modal-overlay' onclick='closeModal(event)'><div class='modal' onclick='event.stopPropagation()'><h3>✎ Edit Operation</h3><div class='modal-sub'>" + opChip(op.type, op.condition).label + " · " + op.ts + "</div><div class='auth-fg'>" + (op.type === "Swap" ? "<label class='auth-lbl' style='color:var(--rose);'>⚠ Faulty SN (cannot change)</label><div style='padding:8px 12px;background:var(--rose2);border-radius:8px;border:1.5px solid rgba(192,57,43,.2);font-family:monospace;font-size:13px;font-weight:700;color:var(--rose);margin-bottom:10px;'>" + escHtml(op.faultySn||"—") + "</div><label class='auth-lbl' style='color:var(--green2);'>✓ Replacement SN (editable)</label><input class='auth-inp' id='em-replace-sn' value='" + escHtml(op.replacementSn||"") + "' style='font-family:monospace;font-weight:700;' oninput='this.value=this.value.toUpperCase()'><input type='hidden' id='em-sns' value='" + escHtml((op.sns||[]).join(",")) + "'>" : "<label class='auth-lbl'>SNs (comma-separated)</label><input class='auth-inp' id='em-sns' value='" + escHtml((op.sns||[]).join(", ")) + "'>") + "</div><div id='em-save-msg' style='font-size:11px;margin-top:6px;'></div><div class='modal-btns'><button class='modal-cancel' onclick='closeModal()'>Cancel</button><button class='modal-save' id='em-save-btn' onclick='edtSaveEdit(" + id + ")'>💾 Save</button></div></div></div>"; }
 
 async function edtSaveEdit(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op) return; var msgEl = document.getElementById("em-save-msg"); var btn = document.getElementById("em-save-btn"); if (btn) btn.disabled = true; if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Reversing old operation…</span>"; var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); try { if (op.type === "Swap") { var newReplace = ((document.getElementById("em-replace-sn") || {}).value || "").trim().toUpperCase(); if (!newReplace || newReplace === op.replacementSn) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--muted)'>No change made.</span>"; setTimeout(function() { closeModal(); }, 800); return; } var oldSrc = op.sourceMap ? op.sourceMap[op.replacementSn] : t.bn; var H = authH(); var HJ = authHJ(); await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(op.replacementSn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + oldSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Validating new SN…</span>"; var repCheck = await validateSNForSwap(newReplace); if (!repCheck.ok) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>New replacement SN not found: " + repCheck.msg + "</span>"; await fetch(SUPA_URL + "/rest/v1/" + oldSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Deployed" }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: op.replacementSn, operation: "Swap (replacement)", source: oldSrc, officer: op.officer, branch_id: branchId }) }); if (btn) btn.disabled = false; return; } if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Applying new SN…</span>"; await fetch(SUPA_URL + "/rest/v1/" + repCheck.source + "?sn=eq." + encodeURIComponent(newReplace), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Deployed" }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: newReplace, model: repCheck.model || null, operation: "Swap (replacement)", source: repCheck.source, customer_id: op.merchantId || null, agent_id: op.agentCode || null, officer: op.officer, branch_id: branchId }) }); if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId) { return patch("daily_operations", "id=eq." + dbId, { sn: newReplace, reason: "Swap replacement SN changed from " + op.replacementSn + " [edited]" }); })); } op.sourceMap = op.sourceMap || {}; op.sourceMap[newReplace] = repCheck.source; delete op.sourceMap[op.replacementSn]; op.sns = [op.faultySn, newReplace]; op.replacementSn = newReplace; op.edited = true; cacheInvalidate(suffix); debouncedFetchLiveStock(); if (msgEl) msgEl.innerHTML = "<span style='color:var(--green2)'>✓ Swap updated</span>"; setTimeout(function() { closeModal(); edtRender(); }, 700); return; } var newSns = ((document.getElementById("em-sns") || {}).value || "").split(",").map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean); if (!newSns.length) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>Enter at least one SN.</span>"; if (btn) btn.disabled = false; return; } var oldSns = op.sns || []; await Promise.all(oldSns.map(async function(sn) { var src = (op.sourceMap && op.sourceMap[sn]) ? op.sourceMap[sn] : t.bn; var H = authH(); var HJ = authHJ(); if (op.type === "Issued" || op.type === "Assigned") { await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); } else if (op.type === "ATFS") { await fetch(SUPA_URL + "/rest/v1/" + t.ft + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + t.bn, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Available", officer: op.officer || null }) }).catch(function() {}); } })); if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Applying new operation…</span>"; var newSourceMap = {}; var newModelMap = {}; await Promise.all(newSns.map(async function(sn) { var HJ = authHJ(); if (op.type === "Issued" || op.type === "Assigned") { var found = null; var srcResults = await Promise.all(["bn","rp","rt"].map(function(cat) { return sf(t[cat] + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn)).then(function(r) { return r.json(); }).then(function(rows) { return rows && rows.length ? { src: t[cat], model: rows[0].model } : null; }).catch(function() { return null; }); })); found = srcResults.find(function(x) { return x !== null; }) || null; var src = found ? found.src : t.bn; var model = found ? found.model : null; newSourceMap[sn] = src; newModelMap[sn] = model; var newStatus = op.type === "Issued" ? "Deployed" : "Assigned"; await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: newStatus }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, model: model, operation: op.type === "Issued" ? "Deployed" : "Assigned", source: src, customer_id: op.type === "Issued" ? (op.merchantId || null) : null, agent_id: op.type === "Assigned" ? (op.agentCode || null) : null, officer: op.officer, branch_id: branchId }) }); } else if (op.type === "ATFS") { var src2 = (op.sourceMap && op.sourceMap[oldSns[0]]) ? op.sourceMap[oldSns[0]] : t.bn; newSourceMap[sn] = src2; await fetch(SUPA_URL + "/rest/v1/" + src2 + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: authH() }); await fetch(SUPA_URL + "/rest/v1/" + t.ft, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Faulty", source: src2, reason: op.reason || null, officer: op.officer || null }) }); } })); if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId, i) { return patch("daily_operations", "id=eq." + dbId, { sn: newSns[i] || newSns[0] || null, reason: (op.reason || "") + " [edited]" }); })); } op.sns = newSns; op.sourceMap = newSourceMap; op.modelMap = newModelMap; op.edited = true; cacheInvalidate(suffix); debouncedFetchLiveStock(); if (msgEl) msgEl.innerHTML = "<span style='color:var(--green2)'>✓ Saved</span>"; setTimeout(function() { closeModal(); edtRender(); }, 700); } catch (e) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>Error: " + e.message + "</span>"; if (btn) btn.disabled = false; } }
 
@@ -4124,27 +4184,18 @@ function supOpsRender() {
     wrap.innerHTML = "<div class='ops-empty'>No operations found.</div>";
     return;
   }
-  var meta = {
-    Issue:  { icon: "🚀", cls: "ob-dep"  },
-    Assign: { icon: "📋", cls: "ob-asg"  },
-    Swap:   { icon: "🔄", cls: "ob-swp"  },
-    Return: { icon: "↩",  cls: "ob-ret"  },
-    ATFS:   { icon: "⚡", cls: "ob-atfs" }
-  };
+  // opChipHtml() resolves labels + Return sub-types from reason field
   wrap.innerHTML =
     "<table class='ops-table'><thead><tr>" +
     "<th>Date</th><th>Time</th><th>Operation</th><th>SN</th><th>Officer</th><th>Actions</th>" +
     "</tr></thead><tbody>" +
     filtered.map(function(op) {
-      var opKey = op.operation || "";
-      var m     = meta[opKey.split(" ")[0]] || { icon: "⚙️", cls: "" };
       return "<tr>" +
         "<td style='font-size:11px;color:var(--muted);white-space:nowrap;'>" +
           escHtml(op.date || "—") + "</td>" +
         "<td style='font-size:11px;color:var(--muted)'>" +
           (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
-        "<td><span class='op-type-badge " + m.cls + "'>" +
-          m.icon + " " + escHtml(opKey) + "</span></td>" +
+        "<td>" + opChipHtml(op.operation, op.reason) + "</td>" +
         "<td><span class='sn-tag'>" + escHtml(op.sn || "—") + "</span></td>" +
         "<td style='font-size:11px;'>" + escHtml(op.officer || "—") + "</td>" +
         "<td><button class='act-btn act-del' onclick='supDeleteOp(\"" + op.id + "\")'>🗑</button></td>" +
@@ -4702,7 +4753,7 @@ function admOpsRender() {
           escHtml(op.date || "—") + "</td>" +
         "<td style='font-size:11px;color:var(--muted)'>" +
           (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
-        "<td><span class='op-type-badge'>" + escHtml(op.operation || "") + "</span></td>" +
+        "<td>" + opChipHtml(op.operation, op.reason) + "</td>" +
         "<td><span class='sn-tag'>" + escHtml(op.sn || "—") + "</span></td>" +
         "<td style='font-size:11px;'>" + escHtml(op.officer || "—") + "</td>" +
         "<td><button class='act-btn act-del' onclick='admDeleteOp(\"" + op.id + "\")'>🗑</button></td>" +
@@ -6329,31 +6380,49 @@ function _pastOpsRender() {
   if (sumWrap) {
     sumWrap.style.display = "";
     var opCounts = {};
-    var opIcons  = { "Issue":"🚀","Assign":"📋","Swap":"🔄","Return":"↩","ATFS":"⚡","Unassign":"↩" };
-    var kpiOps   = ["Issue","Assign","Swap","Return","ATFS","Unassign"];
+    // For Return, also bucket by sub-type from the reason field
+    var retSubCounts = { "normal": 0, "working": 0, "faulty": 0 };
     PAST_DATA.forEach(function(r) {
       var op = r.operation || "Other";
       opCounts[op] = (opCounts[op] || 0) + 1;
+      if (op === "Return") {
+        var cond = _parseReturnCond(r.reason || "");
+        retSubCounts[cond] = (retSubCounts[cond] || 0) + 1;
+      }
     });
 
-    var totalKpi = kpiOps.reduce(function(s,o){ return s + (opCounts[o]||0); }, 0);
-    var colors   = {
-      "Issue":"var(--green2)","Assign":"var(--sky)","Swap":"var(--orange)",
-      "Return":"var(--violet)","ATFS":"var(--rose)","Unassign":"var(--sky)"
-    };
-    var bgColors = {
-      "Issue":"rgba(64,145,108,.08)","Assign":"rgba(26,111,168,.08)","Swap":"rgba(196,94,40,.08)",
-      "Return":"rgba(91,63,166,.08)","ATFS":"var(--rose2)","Unassign":"rgba(26,111,168,.08)"
-    };
+    // Build KPI card definitions — Return expands into sub-type cards if any exist
+    var kpiCards = [
+      { key:"Issue",    label:"🚀 Issue",           color:"var(--green2)", bg:"rgba(64,145,108,.08)" },
+      { key:"Assign",   label:"📋 Assign",          color:"var(--sky)",    bg:"rgba(26,111,168,.08)" },
+      { key:"Swap",     label:"🔄 Swap",            color:"var(--orange)", bg:"rgba(196,94,40,.08)"  },
+      { key:"ATFS",     label:"⚡ ATFS",            color:"var(--rose)",   bg:"var(--rose2)"         },
+      { key:"Unassign", label:"↩ Unassign",         color:"var(--sky)",    bg:"rgba(26,111,168,.08)" }
+    ];
+    // Inject Return sub-type cards in-place of the generic Return slot
+    var retTotal = opCounts["Return"] || 0;
+    if (retTotal > 0) {
+      if (retSubCounts["normal"]  > 0) kpiCards.push({ key:"ret_wg",  label:"↩ R&R Working Good", color:"var(--green)",  bg:"rgba(45,106,79,.08)"  });
+      if (retSubCounts["working"] > 0) kpiCards.push({ key:"ret_bn",  label:"📦 R&R Brand New",   color:"var(--green2)", bg:"rgba(64,145,108,.08)" });
+      if (retSubCounts["faulty"]  > 0) kpiCards.push({ key:"ret_ft",  label:"⚠️ R&R Faulty",     color:"var(--rose)",   bg:"var(--rose2)"         });
+      // Fallback: if all are 0 (old records with no parseable condition) show generic Return
+      if (retSubCounts["normal"] + retSubCounts["working"] + retSubCounts["faulty"] === 0)
+        kpiCards.push({ key:"Return", label:"↩ Return", color:"var(--violet)", bg:"rgba(91,63,166,.08)" });
+    }
 
-    var cardsHtml = kpiOps.map(function(op) {
-      var cnt = opCounts[op] || 0;
-      return "<div style='background:" + (bgColors[op]||"var(--surface)") + ";border:1.5px solid " +
-        (colors[op]||"var(--border)").replace("var(","rgba(").replace(")",",.2)") + ";" +
+    var retSubKeyCount = { "ret_wg": retSubCounts["normal"], "ret_bn": retSubCounts["working"], "ret_ft": retSubCounts["faulty"] };
+    var totalKpi = kpiCards.reduce(function(s,c){
+      var cnt = c.key.startsWith("ret_") ? (retSubKeyCount[c.key]||0) : (opCounts[c.key]||0);
+      return s + cnt;
+    }, 0);
+
+    var cardsHtml = kpiCards.map(function(c) {
+      var cnt = c.key.startsWith("ret_") ? (retSubKeyCount[c.key]||0) : (opCounts[c.key]||0);
+      return "<div style='background:" + c.bg + ";border:1.5px solid " +
+        c.color.replace("var(","rgba(").replace(")",",.25)") + ";" +
         "border-radius:12px;padding:12px 14px;text-align:center;'>" +
-        "<div style='font-size:22px;font-weight:800;font-family:Syne,sans-serif;color:" + (colors[op]||"var(--text)") + ";'>" + cnt + "</div>" +
-        "<div style='font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;'>" +
-          (opIcons[op]||"⚙️") + " " + op + "</div>" +
+        "<div style='font-size:22px;font-weight:800;font-family:Syne,sans-serif;color:" + c.color + ";'>" + cnt + "</div>" +
+        "<div style='font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;'>" + c.label + "</div>" +
       "</div>";
     }).join("");
 
@@ -6371,23 +6440,13 @@ function _pastOpsRender() {
   }
 
   var today   = new Date().toISOString().split("T")[0];
-  var opMeta  = {
-    "Issue":              { icon: "🚀", cls: "ob-dep"  },
-    "Assign":             { icon: "📋", cls: "ob-asg"  },
-    "Swap":               { icon: "🔄", cls: "ob-swp"  },
-    "Return":             { icon: "↩",  cls: "ob-ret"  },
-    "ATFS":               { icon: "⚡", cls: "ob-atfs" },
-    "Receive Stock":      { icon: "📥", cls: "ob-asg"  },
-    "Stock Status Change":{ icon: "🔀", cls: "ob-dep"  }
-  };
+  // opChipHtml() resolves all op labels — no local opMeta needed
 
   // Branch name map
   var branchNameMap = {};
   ALL_BRANCHES.forEach(function(b) { branchNameMap[b.id] = b.name; });
 
   tbody.innerHTML = PAST_DATA.map(function(r) {
-    var opKey = (r.operation || "").split(" ")[0];
-    var m     = opMeta[r.operation] || opMeta[opKey] || { icon: "⚙️", cls: "" };
     var isToday = (r.date || "") === today;
     var brName  = branchNameMap[r.branch_id] || "—";
     var details = r.reason || (r.model ? "Model: " + r.model : "—");
@@ -6400,8 +6459,7 @@ function _pastOpsRender() {
       "</td>" +
       "<td style='font-size:11px;color:var(--muted);'>" +
         (r.time ? r.time.substring(0,5) : "—") + "</td>" +
-      "<td><span class='op-type-badge " + m.cls + "'>" +
-        m.icon + " " + escHtml(r.operation || "—") + "</span></td>" +
+      "<td>" + opChipHtml(r.operation, r.reason) + "</td>" +
       "<td><span class='sn-tag'>" + escHtml(r.sn || "—") + "</span></td>" +
       "<td style='font-size:11px;color:var(--muted);max-width:180px;overflow:hidden;" +
         "text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(details) + "'>" +
