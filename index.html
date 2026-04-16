@@ -527,12 +527,6 @@ select.input{cursor:pointer;background:#fff;}
       </div>
     </div>
 
-    <div id="sb-branch-badge" style="display:none;margin:10px 12px 8px;padding:8px 12px;background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.2);border-radius:10px;">
-      <div style="font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;">Your Branch</div>
-      <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:14px;">🏢</span><div><div id="sb-branch-name"></div><div id="sb-branch-code"></div></div></div>
-      <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(245,197,24,.1);display:flex;align-items:center;gap:5px;"><span style="font-size:10px;">👤</span><span id="sb-officer-name" style="font-size:10px;color:#94A3B8;"></span><span id="sb-officer-role" class="sb-officer-role" style="margin-left:auto;"></span></div>
-    </div>
-
     <!-- OFFICER NAV -->
     <div id="nav-officer-section" style="display:none">
       <div class="nav-item" onclick="showPanel('home')" style="background:transparent;"><div class="nav-icon" style="background:rgba(45,106,79,.08);">🏠</div><div><div class="nav-title">Home</div><div class="nav-desc">Dashboard overview</div></div></div>
@@ -585,7 +579,18 @@ select.input{cursor:pointer;background:#fff;}
       <div class="nav-item adm" onclick="showPanel('adm-analytics');admAnalyticsBoot()"><div class="nav-icon">📡</div><div><div class="nav-title">Analytics</div><div class="nav-desc">Grafana &amp; system usage</div></div></div>
     </div>
 
+    <div id="sb-branch-badge" style="display:none;margin:10px 12px 8px;padding:8px 12px;background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.2);border-radius:10px;">
+      <div style="font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;">Your Branch</div>
+      <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:14px;">🏢</span><div><div id="sb-branch-name"></div><div id="sb-branch-code"></div></div></div>
+      <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(245,197,24,.1);display:flex;align-items:center;gap:5px;"><span style="font-size:10px;">👤</span><span id="sb-officer-name" style="font-size:10px;color:#94A3B8;"></span><span id="sb-officer-role" class="sb-officer-role" style="margin-left:auto;"></span></div>
+    </div>
+
     <!-- STOCK WIDGET - REMOVED COMPLETELY -->
+
+    <div class="log-widget" id="sb-log-widget">
+      <div class="log-widget-title">Today's Ops <span class="log-total" id="sb-log-total">0</span></div>
+      <div id="sb-log-ops"><div class="log-empty">No operations yet today.</div></div>
+    </div>
 
     <div class="sidebar-footer"><div class="sidebar-footer-txt">OPay POS Inventory v1.0 · Role-Based</div></div>
   </div>
@@ -3339,7 +3344,7 @@ async function stockInvFetch() {
   var tblPath, cntPath;
   if (_invCat === "ft") {
     var ftTbl = branchTables(_invSuffix).ft;
-    var base  = ftTbl + "?select=sn,reason,officer,status,created_at" + snFilter;
+    var base  = ftTbl + "?select=sn,model,reason,officer,status,created_at" + snFilter;
     tblPath   = base + "&order=created_at.desc&limit=" + INV_PAGE_SIZE + "&offset=" + offset;
     cntPath   = base + "&limit=0";
   } else {
@@ -3442,7 +3447,7 @@ async function stockInvFetchAll() {
         var tbl  = branchTables(br.suffix)[cat];
         if (!tbl) return;
         var cols = cat === "ft"
-          ? "sn,reason,officer,status,created_at"
+          ? "sn,model,reason,officer,status,created_at"
           : "sn,model,status,officer,created_at";
         // Model filter only applies to non-ft categories (ft uses 'reason' not 'model')
         var modelQ = (INV_FILTER_MODEL && cat !== "ft")
@@ -3549,7 +3554,7 @@ function stockInvRender() {
     return "<tr>" +
       "<td class='td-num'>"     + (displayOffset + i + 1) + "</td>" +
       "<td><span class='sn-tag'>" + escHtml(r.sn) + "</span></td>" +
-      "<td class='td-model'>"   + escHtml(r.model || r.reason || "—") + "</td>" +
+      "<td class='td-model'>"   + escHtml(r.model || "—") + "</td>" +
       "<td><span class='inv-stat " + statCls + "'>" +
         escHtml(r.status || "Faulty") + "</span></td>" +
       "<td class='td-branch'>"  + escHtml(r._branchName || "—") + "</td>" +
