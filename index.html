@@ -527,6 +527,12 @@ select.input{cursor:pointer;background:#fff;}
       </div>
     </div>
 
+    <div id="sb-branch-badge" style="display:none;margin:10px 12px 8px;padding:8px 12px;background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.2);border-radius:10px;">
+      <div style="font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;">Your Branch</div>
+      <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:14px;">🏢</span><div><div id="sb-branch-name"></div><div id="sb-branch-code"></div></div></div>
+      <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(245,197,24,.1);display:flex;align-items:center;gap:5px;"><span style="font-size:10px;">👤</span><span id="sb-officer-name" style="font-size:10px;color:#94A3B8;"></span><span id="sb-officer-role" class="sb-officer-role" style="margin-left:auto;"></span></div>
+    </div>
+
     <!-- OFFICER NAV -->
     <div id="nav-officer-section" style="display:none">
       <div class="nav-item" onclick="showPanel('home')" style="background:transparent;"><div class="nav-icon" style="background:rgba(45,106,79,.08);">🏠</div><div><div class="nav-title">Home</div><div class="nav-desc">Dashboard overview</div></div></div>
@@ -579,18 +585,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="nav-item adm" onclick="showPanel('adm-analytics');admAnalyticsBoot()"><div class="nav-icon">📡</div><div><div class="nav-title">Analytics</div><div class="nav-desc">Grafana &amp; system usage</div></div></div>
     </div>
 
-    <div id="sb-branch-badge" style="display:none;margin:10px 12px 8px;padding:8px 12px;background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.2);border-radius:10px;">
-      <div style="font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;">Your Branch</div>
-      <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:14px;">🏢</span><div><div id="sb-branch-name"></div><div id="sb-branch-code"></div></div></div>
-      <div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(245,197,24,.1);display:flex;align-items:center;gap:5px;"><span style="font-size:10px;">👤</span><span id="sb-officer-name" style="font-size:10px;color:#94A3B8;"></span><span id="sb-officer-role" class="sb-officer-role" style="margin-left:auto;"></span></div>
-    </div>
-
     <!-- STOCK WIDGET - REMOVED COMPLETELY -->
-
-    <div class="log-widget" id="sb-log-widget">
-      <div class="log-widget-title">Today's Ops <span class="log-total" id="sb-log-total">0</span></div>
-      <div id="sb-log-ops"><div class="log-empty">No operations yet today.</div></div>
-    </div>
 
     <div class="sidebar-footer"><div class="sidebar-footer-txt">OPay POS Inventory v1.0 · Role-Based</div></div>
   </div>
@@ -893,7 +888,7 @@ select.input{cursor:pointer;background:#fff;}
     <div class="panel" id="panel-sup-kpi">
       <div class="page-label"><div class="op-chip sup">📈 Officer KPIs</div><div class="crumb">→ Daily &amp; Monthly performance</div></div>
       <div class="card"><div class="card-header sup"><div class="card-icon sup">📈</div><div><h2>Officer KPIs</h2><p>Total operations performed by each officer — daily and monthly</p></div></div>
-      <div class="card-body"><div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;"><div class="period-toggle"><button class="period-btn active" id="sup-kpi-day-btn" onclick="supKpiPeriod('day')">Today</button><button class="period-btn" id="sup-kpi-mon-btn" onclick="supKpiPeriod('month')">Month</button><button class="period-btn" id="sup-kpi-3m-btn" onclick="supKpiPeriod('3month')">3 Months</button><button class="period-btn" id="sup-kpi-yr-btn" onclick="supKpiPeriod('year')">Year</button></div><input type="month" class="input" id="sup-kpi-month" style="width:160px;padding:6px 10px;display:none;" onchange="supLoadKpi()"><input type="date" class="input" id="sup-kpi-date" style="width:160px;padding:6px 10px;" onchange="supLoadKpi()"><select class="input" id="sup-kpi-city" style="width:140px;padding:6px 10px;" onchange="supLoadKpi()"><option value="">🌆 All Cities</option></select><button class="act-btn act-edit" onclick="supLoadKpi()" style="padding:6px 14px;">↺ Refresh</button><button class="act-btn act-edit" onclick="kpiExport('sup')" style="padding:6px 14px;">⬇ Export</button></div><div class="kpi-grid" id="sup-kpi-summary"></div><div class="chart-grid" id="sup-kpi-charts" style="display:none"><div class="chart-card"><div class="chart-title">📊 Operations by Officer</div><div class="chart-wrap"><canvas id="sup-chart-bar"></canvas></div></div><div class="chart-card"><div class="chart-title">🍩 Operation Types</div><div class="chart-wrap"><canvas id="sup-chart-doughnut"></canvas></div></div><div class="chart-card full"><div class="chart-title" id="sup-chart-line-title">📈 Daily Activity Trend</div><div class="chart-wrap tall"><canvas id="sup-chart-line"></canvas></div></div></div><div class="kpi-table-wrap" id="sup-kpi-table-wrap"><div class="ops-empty">Select period and click Refresh.</div></div></div></div>
+      <div class="card-body"><div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;"><div class="period-toggle"><button class="period-btn active" id="sup-kpi-day-btn" onclick="supKpiPeriod('day')">Today</button><button class="period-btn" id="sup-kpi-mon-btn" onclick="supKpiPeriod('month')">Month</button><button class="period-btn" id="sup-kpi-3m-btn" onclick="supKpiPeriod('3month')">3 Months</button><button class="period-btn" id="sup-kpi-yr-btn" onclick="supKpiPeriod('year')">Year</button><button class="period-btn" id="sup-kpi-cust-btn" onclick="supKpiPeriod('custom')">📅 Custom</button></div><input type="month" class="input" id="sup-kpi-month" style="width:160px;padding:6px 10px;display:none;" onchange="supLoadKpi()"><input type="date" class="input" id="sup-kpi-date" style="width:160px;padding:6px 10px;" onchange="supLoadKpi()"><span id="sup-kpi-custom-range" style="display:none;"><input type="date" class="input" id="sup-kpi-from" style="width:150px;padding:6px 10px;" onchange="supLoadKpi()"><span style="font-size:12px;color:var(--muted);padding:0 4px;">→</span><input type="date" class="input" id="sup-kpi-to" style="width:150px;padding:6px 10px;" onchange="supLoadKpi()"></span><select class="input" id="sup-kpi-city" style="width:140px;padding:6px 10px;" onchange="supLoadKpi()"><option value="">🌆 All Cities</option></select><button class="act-btn act-edit" onclick="supLoadKpi()" style="padding:6px 14px;">↺ Refresh</button><button class="act-btn act-edit" onclick="kpiExport('sup')" style="padding:6px 14px;">⬇ Export</button></div><div class="kpi-grid" id="sup-kpi-summary"></div><div class="chart-grid" id="sup-kpi-charts" style="display:none"><div class="chart-card"><div class="chart-title">📊 Operations by Officer</div><div class="chart-wrap"><canvas id="sup-chart-bar"></canvas></div></div><div class="chart-card"><div class="chart-title">🍩 Operation Types</div><div class="chart-wrap"><canvas id="sup-chart-doughnut"></canvas></div></div><div class="chart-card full"><div class="chart-title" id="sup-chart-line-title">📈 Daily Activity Trend</div><div class="chart-wrap tall"><canvas id="sup-chart-line"></canvas></div></div></div><div class="kpi-table-wrap" id="sup-kpi-table-wrap"><div class="ops-empty">Select period and click Refresh.</div></div></div></div>
     </div>
 
     <!-- ADMIN PANELS -->
@@ -903,7 +898,7 @@ select.input{cursor:pointer;background:#fff;}
     <div class="panel" id="panel-adm-kpi">
       <div class="page-label"><div class="op-chip adm">🌆 Regional Ops</div><div class="crumb">→ All operations by region &amp; supervisor</div></div>
       <div class="card"><div class="card-header adm"><div class="card-icon adm">🌆</div><div><h2>Regional Operations</h2><p>Compare performance across all regions and supervisors</p></div></div>
-      <div class="card-body"><div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;"><div class="period-toggle"><button class="period-btn active" id="adm-kpi-day-btn" onclick="admKpiPeriod('day')">Today</button><button class="period-btn" id="adm-kpi-mon-btn" onclick="admKpiPeriod('month')">Month</button><button class="period-btn" id="adm-kpi-3m-btn" onclick="admKpiPeriod('3month')">3 Months</button><button class="period-btn" id="adm-kpi-yr-btn" onclick="admKpiPeriod('year')">Year</button></div><input type="month" class="input" id="adm-kpi-month" style="width:160px;padding:6px 10px;display:none;" onchange="admLoadKpi()"><input type="date" class="input" id="adm-kpi-date" style="width:160px;padding:6px 10px;" onchange="admLoadKpi()"><select class="input" id="adm-kpi-city" style="width:140px;padding:6px 10px;" onchange="admLoadKpi()"><option value="">🌆 All Cities</option></select><button class="act-btn act-edit" onclick="admLoadKpi()" style="padding:6px 14px;">↺ Refresh</button><button class="act-btn act-edit" onclick="kpiExport('adm')" style="padding:6px 14px;">⬇ Export</button></div><div class="kpi-grid" id="adm-kpi-summary"></div><div class="chart-grid" id="adm-kpi-charts" style="display:none"><div class="chart-card"><div class="chart-title">📊 Operations by Region</div><div class="chart-wrap"><canvas id="adm-chart-bar"></canvas></div></div><div class="chart-card"><div class="chart-title">🍩 Operation Type Mix</div><div class="chart-wrap"><canvas id="adm-chart-doughnut"></canvas></div></div><div class="chart-card full"><div class="chart-title" id="adm-chart-line-title">📈 Daily Trend by Region</div><div class="chart-wrap tall"><canvas id="adm-chart-line"></canvas></div></div></div><div class="kpi-table-wrap" id="adm-kpi-table-wrap"><div class="ops-empty">Select period and click Refresh.</div></div></div></div>
+      <div class="card-body"><div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;"><div class="period-toggle"><button class="period-btn active" id="adm-kpi-day-btn" onclick="admKpiPeriod('day')">Today</button><button class="period-btn" id="adm-kpi-mon-btn" onclick="admKpiPeriod('month')">Month</button><button class="period-btn" id="adm-kpi-3m-btn" onclick="admKpiPeriod('3month')">3 Months</button><button class="period-btn" id="adm-kpi-yr-btn" onclick="admKpiPeriod('year')">Year</button><button class="period-btn" id="adm-kpi-cust-btn" onclick="admKpiPeriod('custom')">📅 Custom</button></div><input type="month" class="input" id="adm-kpi-month" style="width:160px;padding:6px 10px;display:none;" onchange="admLoadKpi()"><input type="date" class="input" id="adm-kpi-date" style="width:160px;padding:6px 10px;" onchange="admLoadKpi()"><span id="adm-kpi-custom-range" style="display:none;"><input type="date" class="input" id="adm-kpi-from" style="width:150px;padding:6px 10px;" onchange="admLoadKpi()"><span style="font-size:12px;color:var(--muted);padding:0 4px;">→</span><input type="date" class="input" id="adm-kpi-to" style="width:150px;padding:6px 10px;" onchange="admLoadKpi()"></span><select class="input" id="adm-kpi-city" style="width:140px;padding:6px 10px;" onchange="admLoadKpi()"><option value="">🌆 All Cities</option></select><button class="act-btn act-edit" onclick="admLoadKpi()" style="padding:6px 14px;">↺ Refresh</button><button class="act-btn act-edit" onclick="kpiExport('adm')" style="padding:6px 14px;">⬇ Export</button></div><div class="kpi-grid" id="adm-kpi-summary"></div><div class="chart-grid" id="adm-kpi-charts" style="display:none"><div class="chart-card"><div class="chart-title">📊 Operations by Region</div><div class="chart-wrap"><canvas id="adm-chart-bar"></canvas></div></div><div class="chart-card"><div class="chart-title">🍩 Operation Type Mix</div><div class="chart-wrap"><canvas id="adm-chart-doughnut"></canvas></div></div><div class="chart-card full"><div class="chart-title" id="adm-chart-line-title">📈 Daily Trend by Region</div><div class="chart-wrap tall"><canvas id="adm-chart-line"></canvas></div></div></div><div class="kpi-table-wrap" id="adm-kpi-table-wrap"><div class="ops-empty">Select period and click Refresh.</div></div></div></div>
     </div>
 
     <div class="panel" id="panel-adm-branches"><div class="page-label"><div class="op-chip adm">🏢 Assign Branches</div><div class="crumb">→ Link supervisors to branches</div></div><div class="card"><div class="card-header adm"><div class="card-icon adm">🏢</div><div><h2>Assign Branches to Supervisors</h2><p>Control which branches each supervisor oversees</p></div></div><div class="card-body"><div class="fg"><div class="fl"><span>Select Supervisor</span></div><select class="input" id="adm-sup-select" onchange="admLoadSupBranches()"><option value="">Select a supervisor…</option></select></div><div id="adm-branch-assign-wrap" style="display:none"><div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Assign Branches</span><div class="divider-line"></div></div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Select all branches this supervisor should oversee.</div><div class="branch-assign-grid" id="adm-branch-checkboxes"></div><button class="sub-btn" onclick="admSaveBranchAssign()" style="margin-top:16px;">🏢 Save Branch Assignment</button><div id="adm-assign-msg" style="margin-top:10px;font-size:12px;font-weight:600;"></div></div></div></div></div>
@@ -921,7 +916,7 @@ select.input{cursor:pointer;background:#fff;}
     <div class="panel" id="panel-past-ops">
       <div class="page-label"><div class="op-chip edt">📜 Past Operations</div><div class="crumb">→ Full operation history</div></div>
       <div class="card"><div class="card-header edt"><div class="card-icon edt">📜</div><div><h2>Past Operations</h2><p>View all operations performed — read-only history from the database</p></div></div>
-      <div class="card-body"><div id="past-ops-summary" style="display:none;margin-bottom:18px;"><div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px;">My Performance Summary</div><div id="past-ops-summary-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;"></div><div id="past-ops-summary-total" style="padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;"><div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>From</span></div><input type="date" class="input" id="past-date-from" style="padding:6px 10px;"></div><div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>To</span></div><input type="date" class="input" id="past-date-to" style="padding:6px 10px;"></div><div class="fg" style="margin:0;min-width:150px;"><div class="fl" style="margin-bottom:4px;"><span>Operation</span></div><select class="input" id="past-op-filter" style="padding:6px 10px;"><option value="">All Operations</option><option value="Issue">🚀 Issue</option><option value="Assign">📋 Assign</option><option value="Swap">🔄 Swap</option><option value="Return">↩ Return</option><option value="ATFS">⚡ ATFS</option><option value="Receive Stock">📥 Receive Stock</option><option value="Stock Status Change">🔀 Stock Status Change</option></select></div><div class="fg" style="margin:0;flex:1;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>Search SN / Officer</span></div><input class="input ed-search" id="past-search" placeholder="Search SN or officer…" oninput="pastOpsFilter()" style="height:38px;"></div><button class="act-btn act-edit" onclick="pastOpsLoad()" style="padding:8px 16px;height:38px;">↺ Load</button><button class="act-btn act-edit" onclick="pastOpsExport()" style="padding:8px 16px;height:38px;">⬇ Export CSV</button></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"><button class="ed-filter-btn" onclick="pastOpsSetRange('today')">Today</button><button class="ed-filter-btn" onclick="pastOpsSetRange('yesterday')">Yesterday</button><button class="ed-filter-btn" onclick="pastOpsSetRange('week')">This Week</button><button class="ed-filter-btn" onclick="pastOpsSetRange('month')">This Month</button><button class="ed-filter-btn" onclick="pastOpsSetRange('all')">All Time</button><span id="past-count" class="ed-count"></span></div><div class="ops-wrap"><table class="ops-table" id="past-ops-table"><thead><tr><th>Date</th><th>Time</th><th>Operation</th><th>Serial Number</th><th>Details</th><th>Officer</th><th>Branch</th></tr></thead><tbody id="past-ops-tbody"><tr><td colspan="7" class="ops-empty">Select a date range and click Load.</td></tr></tbody></table></div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;"><div id="past-count-bar" style="font-size:11px;color:var(--muted);font-weight:600;"></div><div style="display:flex;align-items:center;gap:6px;"><button class="act-btn act-edit" id="past-prev-btn" onclick="pastOpsPage(-1)" style="padding:4px 10px;" disabled>‹ Prev</button><span id="past-page-lbl" style="font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap;">Page 1</span><button class="act-btn act-edit" id="past-next-btn" onclick="pastOpsPage(1)" style="padding:4px 10px;" disabled>Next ›</button></div></div><div style="margin-top:14px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--muted);">🔒 Past operations are <strong>read-only</strong>. To edit or delete today's operations, use the <strong>Edit / Delete</strong> panel.</div></div></div>
+      <div class="card-body"><div id="past-ops-summary" style="display:none;margin-bottom:18px;"><div style="font-size:11px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:10px;">My Performance Summary</div><div id="past-ops-summary-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;"></div><div id="past-ops-summary-total" style="padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;"><div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>From</span></div><input type="date" class="input" id="past-date-from" style="padding:6px 10px;"></div><div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>To</span></div><input type="date" class="input" id="past-date-to" style="padding:6px 10px;"></div><div class="fg" style="margin:0;min-width:150px;"><div class="fl" style="margin-bottom:4px;"><span>Operation</span></div><select class="input" id="past-op-filter" style="padding:6px 10px;"><option value="">All Operations</option><option value="Issue">🚀 Issue</option><option value="Assign">📋 Assign</option><option value="Swap">🔄 Swap</option><option value="Return">↩ Return</option><option value="ATFS">⚡ ATFS</option><option value="Receive Stock">📥 Receive Stock</option><option value="Stock Status Change">🔀 Stock Status Change</option></select></div><div class="fg" style="margin:0;flex:1;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>Search SN / Officer</span></div><input class="input ed-search" id="past-search" placeholder="Search SN or officer…" oninput="pastOpsFilter()" style="height:38px;"></div><button class="act-btn act-edit" onclick="pastOpsLoad()" style="padding:8px 16px;height:38px;">↺ Load</button><button class="act-btn act-edit" onclick="pastOpsExport()" style="padding:8px 16px;height:38px;">⬇ Export CSV</button></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;"><button class="ed-filter-btn" onclick="pastOpsSetRange('today')">Today</button><button class="ed-filter-btn" onclick="pastOpsSetRange('yesterday')">Yesterday</button><button class="ed-filter-btn" onclick="pastOpsSetRange('week')">This Week</button><button class="ed-filter-btn" onclick="pastOpsSetRange('month')">This Month</button><button class="ed-filter-btn" onclick="pastOpsSetRange('all')">All Time</button><span id="past-count" class="ed-count"></span></div><div class="ops-wrap"><table class="ops-table" id="past-ops-table"><thead><tr><th>Date</th><th>Time</th><th>Operation</th><th>Serial Number</th><th>MID / BD Code</th><th>Officer</th><th>Branch</th></tr></thead><tbody id="past-ops-tbody"><tr><td colspan="7" class="ops-empty">Select a date range and click Load.</td></tr></tbody></table></div><div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;"><div id="past-count-bar" style="font-size:11px;color:var(--muted);font-weight:600;"></div><div style="display:flex;align-items:center;gap:6px;"><button class="act-btn act-edit" id="past-prev-btn" onclick="pastOpsPage(-1)" style="padding:4px 10px;" disabled>‹ Prev</button><span id="past-page-lbl" style="font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap;">Page 1</span><button class="act-btn act-edit" id="past-next-btn" onclick="pastOpsPage(1)" style="padding:4px 10px;" disabled>Next ›</button></div></div><div style="margin-top:14px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--muted);">🔒 Past operations are <strong>read-only</strong>. To edit or delete today's operations, use the <strong>Edit / Delete</strong> panel.</div></div></div>
     </div>
 
     <div class="panel" id="panel-off-add-stock"><div class="page-label"><div class="op-chip rcv">📦 Add New Stock</div><div class="crumb">→ Submit stock addition for approval</div></div><div class="card"><div class="card-header rcv"><div class="card-icon rcv">📦</div><div><h2>Add New Stock</h2><p>Submit SNs for supervisor approval — stock is added once approved</p></div></div><div class="card-body"><div id="off-stock-form"><div id="off-stock-pending-notice" style="padding:10px 14px;background:rgba(181,131,74,.08);border:1.5px solid rgba(181,131,74,.2);border-radius:10px;margin-bottom:16px;font-size:12px;color:var(--amber);line-height:1.7;">⏳ <strong>Pending approval flow:</strong> Your request will be reviewed by your supervisor or admin before the stock is added to the system.</div><div class="form-grid"><div class="fg"><div class="fl"><span>Stock Category</span></div><select class="input" id="off-stock-cat"><option value="">Select category…</option><option value="bn">📦 Brand New</option><option value="rp">🔧 Repaired</option><option value="rt">↩ Return Stock</option><option value="ft">⚡ Faulty</option></select></div><div class="fg"><div class="fl"><span>Supplier / Source</span></div><input class="input" id="off-stock-supplier" placeholder="e.g. Tech Team, HQ"></div></div><div class="fg"><div class="fl"><span>POS Type</span></div><select class="input" id="off-stock-model" required><option value="">Select POS type…</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div><div class="fg"><div class="fl"><span>Note <span class="optional">(optional)</span></span></div><input class="input" id="off-stock-note" placeholder="Any additional information for supervisor…"></div><div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Serial Numbers</span><div class="divider-line"></div></div><div class="mode-toggle"><button class="mode-btn active" onclick="offStockSetMode('single')">Single Entry</button><button class="mode-btn" onclick="offStockSetMode('bulk')">Bulk Paste</button></div><div id="off-stock-single"><div id="off-stock-sn-rows"></div><button class="add-btn" onclick="offStockAddRow()"><div class="add-plus">+</div>Add Serial Number</button></div><div id="off-stock-bulk" style="display:none"><textarea class="bulk-area" id="off-stock-bulk-area" placeholder="POS-00001&#10;POS-00002" rows="6"></textarea><button class="bval-btn" onclick="offStockValidateBulk()">Validate SNs</button><div class="bulk-results" id="off-stock-bulk-results"></div></div><div style="display:flex;gap:8px;margin-top:8px;"><button class="sub-btn" id="off-stock-sub-btn" onclick="offStockSubmit()" style="flex:1;">📦 Submit for Approval</button><button onclick="offStockClear()" style="padding:13px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;">✕ Clear</button></div></div><div id="off-stock-success" style="display:none"><div class="success-screen"><div class="suc-circle">⏳</div><div class="suc-title" style="color:var(--amber);">Submitted!</div><div class="suc-sub">Awaiting supervisor/admin approval</div><div id="off-stock-suc-summary"></div><button class="new-btn" onclick="offStockNew()" style="margin-top:14px;">+ Submit Another Request</button><button class="act-btn act-edit" onclick="showPanel('off-my-requests');offMyRequestsLoad()" style="width:100%;margin-top:8px;padding:10px;">📜 View My Requests</button></div></div></div></div></div>
@@ -1151,6 +1146,125 @@ function opChip(operation, hint) {
 function opChipHtml(operation, hint) {
   var m = opChip(operation, hint);
   return "<span class='op-type-badge " + m.cls + "'>" + escHtml(m.label) + "</span>";
+}
+
+// ── _extractOpId: extract the MID/AGG ID or BD Code from a reason string ──
+// Returns a compact, human-readable identifier for the "MID / BD Code" column.
+function _extractOpId(operation, reason, model) {
+  var r  = (reason  || "").trim();
+  var op = (operation || "").toLowerCase();
+
+  // MERCHANT/AGG ID pattern (Issue, Swap-new-out, Return)
+  var midM = r.match(/MERCHANT\/AGG ID:\s*([^\s·\|]+)/i) ||
+             r.match(/MID:\s*([^\s·\|]+)/i);
+  // MS/BD CODE pattern (Assign, Unassign)
+  var bdM  = r.match(/MS\/BD CODE:\s*([^\s·\|]+)/i) ||
+             r.match(/MS\/BD:\s*([^\s·\|]+)/i)       ||
+             r.match(/BD CODE:\s*([^\s·\|]+)/i);
+  // TID (secondary, shown alongside MID for Issue/Return)
+  var tidM = r.match(/TID:\s*([^\s·\|]+)/i);
+
+  if (midM) {
+    var val = midM[1];
+    return tidM ? "MID: " + val + "  ·  TID: " + tidM[1] : "MID: " + val;
+  }
+  if (bdM) return "BD: " + bdM[1];
+
+  // Swap faulty-in leg has no MID — label it clearly
+  if (op === "swap (faulty in)" || (op.includes("swap") && op.includes("faulty"))) {
+    return "⚠ Faulty (in)";
+  }
+
+  // ATFS / Return condition text — strip "Condition: X" for cleanliness
+  if (r) {
+    var stripped = r.replace(/Condition:\s*\w+\s*[·\|]?\s*/gi, "")
+                    .replace(/^\s*[·\|]\s*/, "").trim();
+    // If only empty after stripping, fall through to model
+    if (stripped) return stripped.substring(0, 60) + (stripped.length > 60 ? "…" : "");
+  }
+  return model ? model : "—";
+}
+
+// ── _mergeSwapRows: pair "Swap (faulty in)" + "Swap (new out)" into 1 row ──
+// A Swap logs 2 DB rows (one per leg). This collapses them into a single
+// display row so it counts as 1 operation, just like every other op.
+function _mergeSwapRows(rows) {
+  if (!rows || !rows.length) return rows;
+
+  // Key = officer + date + HH:MM (both legs are written within the same minute)
+  function rowKey(r) {
+    return (r.officer || "") + "|" + (r.date || "") + "|" + (r.time || "").substring(0, 5);
+  }
+
+  // Index each swap leg
+  var faultyMap = {};  // key → row
+  var outMap    = {};  // key → row
+
+  rows.forEach(function(r) {
+    var op = (r.operation || "").toLowerCase();
+    var k  = rowKey(r);
+    if (op === "swap (faulty in)") { if (!faultyMap[k]) faultyMap[k] = r; }
+    else if (op === "swap (new out)") { if (!outMap[k]) outMap[k] = r;  }
+  });
+
+  // Identify fully-paired keys (both legs present)
+  var pairedKeys = {};
+  Object.keys(faultyMap).forEach(function(k) {
+    if (outMap[k]) pairedKeys[k] = true;
+  });
+
+  var suppressFaultyIds = {}; // faulty-in rows consumed by a merge
+  var result = [];
+
+  rows.forEach(function(r) {
+    var op = (r.operation || "").toLowerCase();
+    var k  = rowKey(r);
+
+    if (op === "swap (new out)" && pairedKeys[k]) {
+      var fRow = faultyMap[k];
+      suppressFaultyIds[fRow.id] = true;
+      // Emit merged row — shows both SNs, counts as 1 op, MID comes from new-out reason
+      result.push({
+        id:              r.id,
+        _pairId:         fRow.id,
+        operation:       "Swap",
+        _swapFaultySn:   fRow.sn,
+        _swapReplaceSn:  r.sn,
+        sn:              r.sn,
+        model:           r.model || fRow.model || null,
+        officer:         r.officer,
+        reason:          r.reason,
+        date:            r.date,
+        time:            r.time,
+        branch_id:       r.branch_id,
+        _merged:         true
+      });
+      return;
+    }
+
+    // Faulty-in that was paired — skip (already emitted above via new-out)
+    if (op === "swap (faulty in)" && pairedKeys[k]) return;
+
+    // Orphaned faulty-in (no matching new-out found): show as Swap with just the faulty SN
+    if (op === "swap (faulty in)") {
+      result.push(Object.assign({}, r, {
+        operation: "Swap", _swapFaultySn: r.sn, _swapReplaceSn: null, _merged: true
+      }));
+      return;
+    }
+
+    // Orphaned new-out (no matching faulty-in): show as Swap with just the replacement SN
+    if (op === "swap (new out)") {
+      result.push(Object.assign({}, r, {
+        operation: "Swap", _swapFaultySn: null, _swapReplaceSn: r.sn, _merged: true
+      }));
+      return;
+    }
+
+    result.push(r);
+  });
+
+  return result;
 }
 
 var _submitting = {};
@@ -1458,7 +1572,18 @@ async function validateSNForSwap(sn) {
     var tables = [{ tbl: t.rbn, rows: cache.rbn || [] }, { tbl: t.bn, rows: cache.bn }, { tbl: t.rp, rows: cache.rp }, { tbl: t.rt, rows: cache.rt }];
     for (var i = 0; i < tables.length; i++) {
       var hit = tables[i].rows.find(function(r) { return r.sn === sn; });
-      if (hit) return { ok: true, msg: labels[tables[i].tbl] + " · Available" + (hit.model ? " · " + hit.model : ""), sn: hit.sn, model: hit.model, source: tables[i].tbl, status: "Available" };
+      if (hit) {
+        if (hit.status === "Deployed") return { ok: false, msg: "SN is Issued — cannot use an issued " + asset() + " for swap" };
+        if (hit.status === "Assigned") {
+          // Assigned POS found in stock cache — look up source from deployed_assigned for accuracy
+          var aRes = await sf("deployed_assigned?select=sn,model,source,operation&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id).catch(function(){return null;});
+          var aRows = aRes ? await aRes.json().catch(function(){return [];}) : [];
+          var aRow = Array.isArray(aRows) && aRows.length ? aRows[0] : null;
+          var srcForAssigned = aRow ? (aRow.source || tables[i].tbl) : tables[i].tbl;
+          return { ok: true, msg: "⚠ Assigned POS · " + labels[tables[i].tbl] + (hit.model ? " · " + hit.model : ""), sn: hit.sn, model: hit.model, source: srcForAssigned, status: "Assigned", isAssigned: true };
+        }
+        return { ok: true, msg: labels[tables[i].tbl] + " · Available" + (hit.model ? " · " + hit.model : ""), sn: hit.sn, model: hit.model, source: tables[i].tbl, status: "Available" };
+      }
     }
     var res = await sf("deployed_assigned?select=sn,model,source,operation&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id);
     var rows = await res.json();
@@ -1466,7 +1591,7 @@ async function validateSNForSwap(sn) {
       var r = rows[0];
       var op = (r.operation || "").toLowerCase();
       if (op.includes("deploy") || op.includes("issue")) return { ok: false, msg: "SN is Issued — cannot use an issued " + asset() + " for swap" };
-      return { ok: true, msg: "Assigned · Ready for swap" + (r.model ? " · " + r.model : ""), sn: r.sn, model: r.model || "", source: r.source || t.bn, status: "Assigned" };
+      return { ok: true, msg: "⚠ Assigned POS · Ready for swap" + (r.model ? " · " + r.model : ""), sn: r.sn, model: r.model || "", source: r.source || t.bn, status: "Assigned", isAssigned: true };
     }
     return { ok: false, msg: "SN not found in stock or assigned " + assets() };
   } catch (e) {
@@ -1858,8 +1983,8 @@ function recordOp(op) {
 
 function updateLogWidget() { var defs = [{ key: "dep", icon: "🚀", name: APP_CONFIG.opDeploy + "d" }, { key: "asg", icon: "📋", name: "Assigned" }, { key: "swp", icon: "🔄", name: "Swapped" }, { key: "ret", icon: "↩", name: "Returned" }, { key: "atfs", icon: "⚡", name: "ATFS" }, { key: "rcv", icon: "📥", name: "Received" }]; var total = defs.reduce(function(s, d) { return s + (TODAY_LOG[d.key] || 0); }, 0); var el = document.getElementById("sb-log-total"); if (el) el.textContent = total; var active = defs.filter(function(d) { return (TODAY_LOG[d.key] || 0) > 0; }); var ops = document.getElementById("sb-log-ops"); if (!ops) return; if (!active.length) { ops.innerHTML = "<div class='log-empty'>No operations yet today.</div>"; return; } ops.innerHTML = active.map(function(d) { var n = TODAY_LOG[d.key] || 0; return "<div class='log-op'><span class='log-op-icon'>" + d.icon + "</span><div><div class='log-op-name'>" + d.name + "</div><div class='log-op-count'>" + n + " POS" + (n === 1 ? "" : "s") + "</div></div><span class='log-op-badge'>" + n + "</span></div>"; }).join(""); }
 
-// FIXED: Using allSettled instead of all for proper error handling
-function pushOp(payload) {
+// FIXED: Async pushOp — assigned-POS deletes are awaited before insert to eliminate race condition
+async function pushOp(payload) {
   if (!SUPA_BRANCH || !SUPA_OFFICER) return;
   var suffix = SUPA_BRANCH.table_suffix || "hq";
   var sns = payload.sns || [];
@@ -1869,13 +1994,26 @@ function pushOp(payload) {
   var stockCalls = [];
   var logCalls = [];
 
+  // ── Phase 0: pre-delete any assigned-POS rows from deployed_assigned ──
+  // Must complete BEFORE the status-patch + new insert to avoid a race
+  // where the old "Assigned" row and new "Deployed" row collide in the table.
+  if (payload.type === "Issued" && payload.assignedSns && payload.assignedSns.length) {
+    await Promise.allSettled(payload.assignedSns.map(function(sn) {
+      return fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: authH() });
+    }));
+  }
+  if (payload.type === "Swap" && payload.repIsAssigned && payload.replacementSn) {
+    await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(payload.replacementSn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: authH() }).catch(function(){});
+  }
+
   switch (payload.type) {
     case "Issued":
       sns.forEach(function(sn) {
         var src = payload.sourceMap ? payload.sourceMap[sn] : defaultSrc;
-        stockCalls.push(patch(src, "sn=eq." + sn, { status: "Deployed" }));
         var isAsgPOS = payload.assignedSns && payload.assignedSns.indexOf(sn) !== -1;
-        if (isAsgPOS) { stockCalls.push(fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: authH() })); }
+        // Patch source stock table: Assigned → Deployed (or Available → Deployed)
+        stockCalls.push(patch(src, "sn=eq." + sn, { status: "Deployed" }));
+        // Insert deployed_assigned row — DELETE already done in Phase 0 above
         stockCalls.push(post("deployed_assigned", { sn: sn, model: payload.modelMap ? payload.modelMap[sn] : null, operation: isAsgPOS ? "Deployed (Assigned POS)" : "Deployed", source: src, customer_id: payload.merchantId || null, officer: officer, branch_id: branchId }));
         logCalls.push(logDaily("Issue", sn, payload.modelMap ? payload.modelMap[sn] : null, { reason: (isAsgPOS ? "[Assigned POS used for Issue] " : "") + (payload.merchantId ? APP_CONFIG.fieldCustomer + ": " + payload.merchantId : "") }));
       });
@@ -1905,8 +2043,8 @@ function pushOp(payload) {
       }
       if (payload.replacementSn) {
         var src = payload.replacementSource || defaultSrc;
+        // Patch source stock table: Assigned → Deployed (DELETE already done in Phase 0)
         stockCalls.push(patch(src, "sn=eq." + payload.replacementSn, { status: "Deployed" }));
-        if (payload.repIsAssigned) { stockCalls.push(fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(payload.replacementSn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: authH() })); }
         stockCalls.push(post("deployed_assigned", { sn: payload.replacementSn, model: payload.replacementModel || null, operation: payload.repIsAssigned ? "Swap (Assigned POS)" : "Swap (replacement)", source: src, customer_id: payload.merchantId || null, agent_id: payload.agentCode || null, officer: officer, branch_id: branchId }));
         logCalls.push(logDaily("Swap (new out)", payload.replacementSn, null, { reason: payload.merchantId ? APP_CONFIG.fieldCustomer + ": " + payload.merchantId : null }));
       }
@@ -2262,9 +2400,10 @@ async function sSubmit() {
     setConn("ok", "Verified ✓");
     if (_EDIT_OP.s) { setConn("loading", "Reversing previous swap…"); await undoOpDB(_EDIT_OP.s); OP_LOG = OP_LOG.filter(function(o) { return o.id !== _EDIT_OP.s.id; }); delete _EDIT_OP.s; }
     cacheInvalidate(SUPA_BRANCH.table_suffix || "hq");
-    pushOp({ type: "Swap", faultySn: faulty, faultyModel: faultyModel || null, replacementSn: replace, replacementSource: repCheck.source, replacementModel: repCheck.model, repIsAssigned: repCheck.isAssigned || repCheck.status === "Assigned", officer: off, merchantId: merchant, tid: tid, agentCode: agentCode, sns: [replace] });
+    var repIsAssigned = !!(repCheck.isAssigned || repCheck.status === "Assigned" || swapGuard.isAssigned);
+    pushOp({ type: "Swap", faultySn: faulty, faultyModel: faultyModel || null, replacementSn: replace, replacementSource: repCheck.source, replacementModel: repCheck.model, repIsAssigned: repIsAssigned, officer: off, merchantId: merchant, tid: tid, agentCode: agentCode, sns: [replace] });
     recordOp({ type: "Swap", typeKey: "swp", sns: [faulty, replace], faultySn: faulty, replacementSn: replace, officer: off });
-    document.getElementById("s-suc-summary").innerHTML = "<div class='ss-row'><span class='ss-key'>Faulty (logged)</span><span class='ss-val' style='font-family:monospace;color:var(--rose)'>" + escHtml(faulty) + "</span></div><div class='ss-row'><span class='ss-key'>Replacement (sent out)</span><span class='ss-val' style='font-family:monospace;color:var(--green2)'>" + escHtml(replace) + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldCustomer + "</span><span class='ss-val'>" + escHtml(merchant || "—") + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldAgent + "</span><span class='ss-val'>" + escHtml(agentCode || "—") + "</span></div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div><div class='ss-row'><span class='ss-key'>Note</span><span class='ss-val' style='font-size:11px;color:var(--muted)'>Issued record kept for history</span></div>" + (repCheck.isAssigned || repCheck.status === "Assigned" ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(181,131,74,.1);border:1.5px solid rgba(181,131,74,.25);border-radius:8px;font-size:11px;color:var(--amber);font-weight:600;'>⚠ Assigned POS used as Swap Replacement: " + escHtml(replace) + "</div>" : "");
+    document.getElementById("s-suc-summary").innerHTML = "<div class='ss-row'><span class='ss-key'>Faulty (logged)</span><span class='ss-val' style='font-family:monospace;color:var(--rose)'>" + escHtml(faulty) + "</span></div><div class='ss-row'><span class='ss-key'>Replacement (sent out)</span><span class='ss-val' style='font-family:monospace;color:var(--green2)'>" + escHtml(replace) + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldCustomer + "</span><span class='ss-val'>" + escHtml(merchant || "—") + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldAgent + "</span><span class='ss-val'>" + escHtml(agentCode || "—") + "</span></div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div><div class='ss-row'><span class='ss-key'>Note</span><span class='ss-val' style='font-size:11px;color:var(--muted)'>Issued record kept for history</span></div>" + (repIsAssigned ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(181,131,74,.1);border:1.5px solid rgba(181,131,74,.25);border-radius:8px;font-size:11px;color:var(--amber);font-weight:600;'>⚠ Assigned POS used as Swap Replacement: " + escHtml(replace) + "</div>" : "");
     document.getElementById("s-form").style.display = "none";
     document.getElementById("s-success").style.display = "block";
     startUndoTimer("s");
@@ -3982,7 +4121,7 @@ function destroyChart(c) {
 
 // ── Helper: build date range filter string ────────────────────────────
 
-function buildDateFilter(period, dayId, monthId) {
+function buildDateFilter(period, dayId, monthId, fromId, toId) {
   var now = new Date();
   if (period === "day") {
     var date = (document.getElementById(dayId) || {}).value ||
@@ -4003,6 +4142,14 @@ function buildDateFilter(period, dayId, monthId) {
   if (period === "year") {
     var yr = now.getFullYear();
     return "&date=gte." + yr + "-01-01&date=lte." + yr + "-12-31";
+  }
+  if (period === "custom") {
+    var from = fromId ? ((document.getElementById(fromId) || {}).value || "") : "";
+    var to   = toId   ? ((document.getElementById(toId)   || {}).value || "") : "";
+    if (from && to) return "&date=gte." + from + "&date=lte." + to;
+    if (from)       return "&date=gte." + from;
+    if (to)         return "&date=lte." + to;
+    return "";
   }
   return "";
 }
@@ -4110,7 +4257,7 @@ async function _supOpsPageFetch() {
     var res  = await sf(path, { headers: { "Prefer": "count=exact" } });
     var cr   = (res.headers.get("content-range") || "").match(/\/([0-9]+)/);
     SUP_OPS_TOTAL = cr ? parseInt(cr[1]) : 0;
-    SUP_OPS_DATA  = await res.json() || [];
+    SUP_OPS_DATA  = _mergeSwapRows(await res.json() || []);
     var totalPages = Math.max(1, Math.ceil(SUP_OPS_TOTAL / SUP_OPS_PAGE_SIZE));
     if (cntEl)   cntEl.textContent = SUP_OPS_TOTAL.toLocaleString() + " records · Page " + (SUP_OPS_PAGE+1) + " / " + totalPages + " · showing " + (offset+1) + "–" + Math.min(offset+SUP_OPS_DATA.length, SUP_OPS_TOTAL);
     if (pageLbl) pageLbl.textContent = "Page " + (SUP_OPS_PAGE+1) + " / " + totalPages;
@@ -4187,18 +4334,27 @@ function supOpsRender() {
   // opChipHtml() resolves labels + Return sub-types from reason field
   wrap.innerHTML =
     "<table class='ops-table'><thead><tr>" +
-    "<th>Date</th><th>Time</th><th>Operation</th><th>SN</th><th>Officer</th><th>Actions</th>" +
+    "<th>Date</th><th>Time</th><th>Operation</th><th>Serial Number</th><th>MID / BD Code</th><th>Officer</th><th>Actions</th>" +
     "</tr></thead><tbody>" +
     filtered.map(function(op) {
+      var snCell;
+      if (op._merged && op._swapFaultySn && op._swapReplaceSn) {
+        snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(op._swapFaultySn) + "</span>" +
+                 "<span style='font-size:10px;color:var(--muted);margin:0 3px;'>→</span>" +
+                 "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>✓ " + escHtml(op._swapReplaceSn) + "</span>";
+      } else { snCell = "<span class='sn-tag'>" + escHtml(op.sn || "—") + "</span>"; }
+      var idLabel = _extractOpId(op.operation, op.reason, op.model);
+      var delBtn  = op._pairId
+        ? "<button class='act-btn act-del' onclick='supDeleteSwapOp(\"" + op.id + "\",\"" + op._pairId + "\")'>🗑</button>"
+        : "<button class='act-btn act-del' onclick='supDeleteOp(\"" + op.id + "\")'>🗑</button>";
       return "<tr>" +
-        "<td style='font-size:11px;color:var(--muted);white-space:nowrap;'>" +
-          escHtml(op.date || "—") + "</td>" +
-        "<td style='font-size:11px;color:var(--muted)'>" +
-          (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
+        "<td style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(op.date || "—") + "</td>" +
+        "<td style='font-size:11px;color:var(--muted)'>" + (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
         "<td>" + opChipHtml(op.operation, op.reason) + "</td>" +
-        "<td><span class='sn-tag'>" + escHtml(op.sn || "—") + "</span></td>" +
+        "<td>" + snCell + "</td>" +
+        "<td style='font-size:11px;color:var(--text2);font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(idLabel) + "'>" + escHtml(idLabel) + "</td>" +
         "<td style='font-size:11px;'>" + escHtml(op.officer || "—") + "</td>" +
-        "<td><button class='act-btn act-del' onclick='supDeleteOp(\"" + op.id + "\")'>🗑</button></td>" +
+        "<td>" + delBtn + "</td>" +
         "</tr>";
     }).join("") +
     "</tbody></table>";
@@ -4211,17 +4367,26 @@ async function supDeleteOp(id) {
   else alert("Failed to delete.");
 }
 
+async function supDeleteSwapOp(id1, id2) {
+  if (!confirm("Delete this Swap operation? Both records (faulty in + replacement out) will be removed.")) return;
+  await Promise.all([id1, id2].filter(Boolean).map(function(id) {
+    return del("daily_operations", "id=eq." + id);
+  }));
+  supLoadOps();
+}
+
 // ── KPI period toggle ──────────────────────────────────────────────────
 
 function supKpiPeriod(p) {
   SUP_KPI_PERIOD = p;
-  var map = { day: "day", month: "mon", "3month": "3m", year: "yr" };
+  var map = { day: "day", month: "mon", "3month": "3m", year: "yr", custom: "cust" };
   Object.keys(map).forEach(function(k) {
     var btn = document.getElementById("sup-kpi-" + map[k] + "-btn");
     if (btn) btn.classList.toggle("active", k === p);
   });
-  document.getElementById("sup-kpi-date").style.display  = p === "day"   ? "" : "none";
-  document.getElementById("sup-kpi-month").style.display = p === "month" ? "" : "none";
+  document.getElementById("sup-kpi-date").style.display         = p === "day"    ? "" : "none";
+  document.getElementById("sup-kpi-month").style.display        = p === "month"  ? "" : "none";
+  document.getElementById("sup-kpi-custom-range").style.display = p === "custom" ? "inline-flex" : "none";
   supLoadKpi();
 }
 
@@ -4274,7 +4439,7 @@ async function supLoadKpi() {
     return;
   }
 
-  var dateFilter = buildDateFilter(SUP_KPI_PERIOD, "sup-kpi-date", "sup-kpi-month");
+  var dateFilter = buildDateFilter(SUP_KPI_PERIOD, "sup-kpi-date", "sup-kpi-month", "sup-kpi-from", "sup-kpi-to");
   var isDay      = SUP_KPI_PERIOD === "day";
 
   try {
@@ -4668,7 +4833,7 @@ async function _admOpsPageFetch() {
     var res  = await sf(path, { headers: { "Prefer": "count=exact" } });
     var cr   = (res.headers.get("content-range") || "").match(/\/([0-9]+)/);
     ADM_OPS_TOTAL = cr ? parseInt(cr[1]) : 0;
-    ADM_OPS_DATA  = await res.json() || [];
+    ADM_OPS_DATA  = _mergeSwapRows(await res.json() || []);
     var totalPages = Math.max(1, Math.ceil(ADM_OPS_TOTAL / ADM_OPS_PAGE_SIZE));
     if (cntEl)   cntEl.textContent = ADM_OPS_TOTAL.toLocaleString() + " records · Page " + (ADM_OPS_PAGE+1) + " / " + totalPages + " · showing " + (offset+1) + "–" + Math.min(offset+ADM_OPS_DATA.length, ADM_OPS_TOTAL);
     if (pageLbl) pageLbl.textContent = "Page " + (ADM_OPS_PAGE+1) + " / " + totalPages;
@@ -4745,18 +4910,27 @@ function admOpsRender() {
   }
   wrap.innerHTML =
     "<table class='ops-table'><thead><tr>" +
-    "<th>Date</th><th>Time</th><th>Operation</th><th>SN</th><th>Officer</th><th>Actions</th>" +
+    "<th>Date</th><th>Time</th><th>Operation</th><th>Serial Number</th><th>MID / BD Code</th><th>Officer</th><th>Actions</th>" +
     "</tr></thead><tbody>" +
     filtered.map(function(op) {
+      var snCell;
+      if (op._merged && op._swapFaultySn && op._swapReplaceSn) {
+        snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(op._swapFaultySn) + "</span>" +
+                 "<span style='font-size:10px;color:var(--muted);margin:0 3px;'>→</span>" +
+                 "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>✓ " + escHtml(op._swapReplaceSn) + "</span>";
+      } else { snCell = "<span class='sn-tag'>" + escHtml(op.sn || "—") + "</span>"; }
+      var idLabel = _extractOpId(op.operation, op.reason, op.model);
+      var delBtn  = op._pairId
+        ? "<button class='act-btn act-del' onclick='admDeleteSwapOp(\"" + op.id + "\",\"" + op._pairId + "\")'>🗑</button>"
+        : "<button class='act-btn act-del' onclick='admDeleteOp(\"" + op.id + "\")'>🗑</button>";
       return "<tr>" +
-        "<td style='font-size:11px;color:var(--muted);white-space:nowrap;'>" +
-          escHtml(op.date || "—") + "</td>" +
-        "<td style='font-size:11px;color:var(--muted)'>" +
-          (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
+        "<td style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(op.date || "—") + "</td>" +
+        "<td style='font-size:11px;color:var(--muted)'>" + (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
         "<td>" + opChipHtml(op.operation, op.reason) + "</td>" +
-        "<td><span class='sn-tag'>" + escHtml(op.sn || "—") + "</span></td>" +
+        "<td>" + snCell + "</td>" +
+        "<td style='font-size:11px;color:var(--text2);font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(idLabel) + "'>" + escHtml(idLabel) + "</td>" +
         "<td style='font-size:11px;'>" + escHtml(op.officer || "—") + "</td>" +
-        "<td><button class='act-btn act-del' onclick='admDeleteOp(\"" + op.id + "\")'>🗑</button></td>" +
+        "<td>" + delBtn + "</td>" +
         "</tr>";
     }).join("") +
     "</tbody></table>";
@@ -4769,17 +4943,26 @@ async function admDeleteOp(id) {
   else alert("Failed to delete.");
 }
 
+async function admDeleteSwapOp(id1, id2) {
+  if (!confirm("Delete this Swap operation? Both records (faulty in + replacement out) will be removed.")) return;
+  await Promise.all([id1, id2].filter(Boolean).map(function(id) {
+    return del("daily_operations", "id=eq." + id);
+  }));
+  admLoadOps();
+}
+
 // ── KPI period toggle ──────────────────────────────────────────────────
 
 function admKpiPeriod(p) {
   ADM_KPI_PERIOD = p;
-  var map = { day: "day", month: "mon", "3month": "3m", year: "yr" };
+  var map = { day: "day", month: "mon", "3month": "3m", year: "yr", custom: "cust" };
   Object.keys(map).forEach(function(k) {
     var btn = document.getElementById("adm-kpi-" + map[k] + "-btn");
     if (btn) btn.classList.toggle("active", k === p);
   });
-  document.getElementById("adm-kpi-date").style.display  = p === "day"   ? "" : "none";
-  document.getElementById("adm-kpi-month").style.display = p === "month" ? "" : "none";
+  document.getElementById("adm-kpi-date").style.display         = p === "day"    ? "" : "none";
+  document.getElementById("adm-kpi-month").style.display        = p === "month"  ? "" : "none";
+  document.getElementById("adm-kpi-custom-range").style.display = p === "custom" ? "inline-flex" : "none";
   admLoadKpi();
 }
 
@@ -4829,7 +5012,7 @@ async function admLoadKpi() {
     });
   } catch (e) {}
 
-  var dateFilter = buildDateFilter(ADM_KPI_PERIOD, "adm-kpi-date", "adm-kpi-month");
+  var dateFilter = buildDateFilter(ADM_KPI_PERIOD, "adm-kpi-date", "adm-kpi-month", "adm-kpi-from", "adm-kpi-to");
   var isDay      = ADM_KPI_PERIOD === "day";
 
   function catOp(op) {
@@ -6337,7 +6520,7 @@ async function _pastOpsFetch() {
       return;
     }
 
-    PAST_DATA = rows || [];
+    PAST_DATA = _mergeSwapRows(rows || []);
 
     // Count comes from content-range header of the same data request
     var cr = dataRes.headers.get("content-range") || "";
@@ -6383,6 +6566,7 @@ function _pastOpsRender() {
     // For Return, also bucket by sub-type from the reason field
     var retSubCounts = { "normal": 0, "working": 0, "faulty": 0 };
     PAST_DATA.forEach(function(r) {
+      // After merge, r.operation for swap rows is "Swap" — count once correctly
       var op = r.operation || "Other";
       opCounts[op] = (opCounts[op] || 0) + 1;
       if (op === "Return") {
@@ -6447,9 +6631,27 @@ function _pastOpsRender() {
   ALL_BRANCHES.forEach(function(b) { branchNameMap[b.id] = b.name; });
 
   tbody.innerHTML = PAST_DATA.map(function(r) {
-    var isToday = (r.date || "") === today;
-    var brName  = branchNameMap[r.branch_id] || "—";
-    var details = r.reason || (r.model ? "Model: " + r.model : "—");
+    var isToday  = (r.date || "") === today;
+    var brName   = branchNameMap[r.branch_id] || "—";
+    var idLabel  = _extractOpId(r.operation, r.reason, r.model);
+
+    // SN cell: merged Swap shows faulty → replacement; others show the single SN
+    var snCell;
+    if (r._merged && r._swapFaultySn && r._swapReplaceSn) {
+      snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);" +
+               "border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(r._swapFaultySn) + "</span>" +
+               "<span style='font-size:10px;color:var(--muted);margin:0 4px;'>→</span>" +
+               "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);" +
+               "border-color:rgba(64,145,108,.2);'>✓ " + escHtml(r._swapReplaceSn) + "</span>";
+    } else if (r._merged && r._swapFaultySn) {
+      snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);" +
+               "border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(r._swapFaultySn) + "</span>";
+    } else if (r._merged && r._swapReplaceSn) {
+      snCell = "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);" +
+               "border-color:rgba(64,145,108,.2);'>✓ " + escHtml(r._swapReplaceSn) + "</span>";
+    } else {
+      snCell = "<span class='sn-tag'>" + escHtml(r.sn || "—") + "</span>";
+    }
 
     return "<tr" + (isToday ? " style='background:rgba(64,145,108,.03);'" : "") + ">" +
       "<td style='font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;'>" +
@@ -6460,10 +6662,10 @@ function _pastOpsRender() {
       "<td style='font-size:11px;color:var(--muted);'>" +
         (r.time ? r.time.substring(0,5) : "—") + "</td>" +
       "<td>" + opChipHtml(r.operation, r.reason) + "</td>" +
-      "<td><span class='sn-tag'>" + escHtml(r.sn || "—") + "</span></td>" +
-      "<td style='font-size:11px;color:var(--muted);max-width:180px;overflow:hidden;" +
-        "text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(details) + "'>" +
-        escHtml(details) + "</td>" +
+      "<td>" + snCell + "</td>" +
+      "<td style='font-size:11px;color:var(--text2);font-weight:600;max-width:180px;overflow:hidden;" +
+        "text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(idLabel) + "'>" +
+        escHtml(idLabel) + "</td>" +
       "<td style='font-size:11px;font-weight:600;color:var(--sky);'>" +
         escHtml(r.officer || "—") + "</td>" +
       "<td style='font-size:11px;color:var(--text2);'>" +
@@ -6516,10 +6718,16 @@ async function pastOpsExport() {
         return (r.sn||"").toLowerCase().includes(q) || (r.officer||"").toLowerCase().includes(q);
       });
     }
+    allRows = _mergeSwapRows(allRows);
     var rows = allRows.map(function(r) {
       return { Date:r.date||"", Time:r.time||"", Operation:r.operation||"",
-               SN:r.sn||"", Model:r.model||"", Details:r.reason||"",
-               Officer:r.officer||"", Branch:branchNameMap[r.branch_id]||r.branch_id||"" };
+               "Faulty SN":    r._swapFaultySn  || (r.operation==="Swap" ? "" : ""),
+               "New SN":       r._swapReplaceSn || "",
+               SN:             r._merged ? "" : (r.sn||""),
+               Model:          r.model||"",
+               "MID/BD Code":  _extractOpId(r.operation, r.reason, r.model),
+               Officer:        r.officer||"",
+               Branch:         branchNameMap[r.branch_id]||r.branch_id||"" };
     });
     _downloadCsv("OPayPOS_PastOps_" + new Date().toISOString().split("T")[0] + ".csv", rows);
     if (msgEl) msgEl.textContent = "✓ Exported " + rows.length + " records.";
