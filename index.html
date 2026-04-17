@@ -1102,6 +1102,41 @@ var APP_CONFIG = {
   sessionKey: "opay_pos_session_v1",
 };
 
+
+// ── User-friendly error translator ──────────────────────────────────────────
+// Converts raw JS/network/DB errors into plain language for officers.
+// Technical details are logged to the console only; never shown to users.
+function friendlyErr(e) {
+  var m = (e && (friendlyErr(e) || e.toString())) || "";
+  var ml = m.toLowerCase();
+  if (!m || ml === "[object object]") return "Something went wrong — please try again.";
+  if (ml.indexOf("failed to fetch") !== -1 ||
+      ml.indexOf("networkerror")    !== -1 ||
+      ml.indexOf("network request failed") !== -1 ||
+      ml.indexOf("load failed")     !== -1 ||
+      ml.indexOf("the internet connection") !== -1)
+    return "Connection unstable — check your internet and try again.";
+  if (ml.indexOf("timed out") !== -1 || ml.indexOf("timeout") !== -1)
+    return "Request timed out — please try again.";
+  if (ml.indexOf("duplicate key") !== -1 || ml.indexOf("23505") !== -1)
+    return "This serial number already exists in stock — remove it and retry.";
+  if (ml.indexOf("foreign key") !== -1 || ml.indexOf("23503") !== -1)
+    return "Related record not found — please refresh and try again.";
+  if (ml.indexOf("permission denied") !== -1 || ml.indexOf("42501") !== -1 ||
+      ml.indexOf("401") !== -1 || ml.indexOf("403") !== -1)
+    return "Access denied — please log out and log back in.";
+  if (ml.indexOf("http 5") !== -1 || ml.indexOf("500") !== -1 ||
+      ml.indexOf("502") !== -1 || ml.indexOf("503") !== -1)
+    return "Server unavailable — please try again in a moment.";
+  if (ml.indexOf("http 4") !== -1 || ml.indexOf("400") !== -1 ||
+      ml.indexOf("404") !== -1 || ml.indexOf("422") !== -1)
+    return "Invalid request — please refresh and try again.";
+  if (ml.indexOf("json") !== -1 || ml.indexOf("syntax") !== -1 ||
+      ml.indexOf("unexpected token") !== -1)
+    return "Unexpected server response — please try again.";
+  return "Something went wrong — please try again.";
+}
+// ─────────────────────────────────────────────────────────────────────────────
 var SUPA_URL = "https://iqzckosvbzrqcvxbznvu.supabase.co";
 var SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxemNrb3N2YnpycWN2eGJ6bnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTU3NDksImV4cCI6MjA4OTY5MTc0OX0.QOJH5YewXWINlxkOWniqKnsb6wjmRQ_1uogOZ76r6ZA";
 
@@ -1540,9 +1575,9 @@ async function batchPost(url, rows, headers, chunkSize) {
       if (!res.ok) {
         var txt = await res.text();
         var j = {}; try { j = JSON.parse(txt); } catch (x) {}
-        errors.push("Batch " + Math.ceil(i/chunkSize+1) + ": " + (j.message || txt).substring(0, 120));
+        errors.push("Batch " + Math.ceil(i/chunkSize+1) + ": " + "Could not save — please try again.");
       }
-    } catch (e) { errors.push("Batch " + Math.ceil(i/chunkSize+1) + ": " + e.message); }
+    } catch (e) { errors.push("Batch " + Math.ceil(i/chunkSize+1) + ": " + friendlyErr(e)); }
   }
   return errors;
 }
@@ -1660,7 +1695,7 @@ async function validateSN(sn, requiredStatus) {
     } catch (_fe) {}
     return { ok: false, msg: "SN not found in this branch stock" };
   } catch (e) {
-    return { ok: false, msg: "DB error: " + e.message };
+    return { ok: false, msg: "" + friendlyErr(e) };
   }
 }
 
@@ -1704,7 +1739,7 @@ async function validateSNForSwap(sn) {
     }
     return { ok: false, msg: "SN not found in stock or assigned " + assets() };
   } catch (e) {
-    return { ok: false, msg: "DB error: " + e.message };
+    return { ok: false, msg: "" + friendlyErr(e) };
   }
 }
 
@@ -1725,7 +1760,7 @@ async function validateSNForReturn(sn) {
     }
     return { ok: false, msg: "SN not found in issued/assigned " + assets() };
   } catch (e) {
-    return { ok: false, msg: "DB error: " + e.message };
+    return { ok: false, msg: "" + friendlyErr(e) };
   }
 }
 
@@ -1866,8 +1901,8 @@ async function doSignup() {
     var hashed = await sha256(pass);
     var res = await fetch(SUPA_URL + "/rest/v1/officers", { method: "POST", headers: authHJ(), body: JSON.stringify({ full_name: name, password_hash: hashed, branch_id: branchId, role: "Officer", status: "Pending" }) });
     if (res.status === 201) { authClearMsg("su"); document.getElementById("su-btn").style.display = "none"; document.getElementById("su-pending").style.display = "block"; }
-    else { var body = await res.text(); var parsed = {}; try { parsed = JSON.parse(body); } catch (e) {} if (parsed.code === "23505") authMsg("su", "err", "Name already registered at this branch."); else authMsg("su", "err", "Failed (" + res.status + "): " + (parsed.message || body.substring(0, 80))); }
-  } catch (e) { authMsg("su", "err", "Network error: " + e.message); }
+    else { var body = await res.text(); var parsed = {}; try { parsed = JSON.parse(body); } catch (e) {} if (parsed.code === "23505") authMsg("su", "err", "Name already registered at this branch."); else authMsg("su", "err", "Signup failed — please try again."); }
+  } catch (e) { authMsg("su", "err", "" + friendlyErr(e)); }
   btn.disabled = false; btn.textContent = "Request Access →";
 }
 
@@ -1886,7 +1921,7 @@ async function doLogin() {
     var res = await sf(query);
     var officers = await res.json();
     if (!Array.isArray(officers)) {
-      var errMsg = (officers && officers.message) ? officers.message : "Server error — check Supabase connection.";
+      var errMsg = (officers && "Something went wrong — please try again.") ? "Something went wrong — please try again." : "Server unavailable — please try again in a moment.";
       authMsg("li", "err", errMsg); btn.disabled = false; btn.textContent = "Sign In →"; return;
     }
     if (!officers.length) { authMsg("li", "err", "No account found with that name."); btn.disabled = false; btn.textContent = "Sign In →"; return; }
@@ -1907,7 +1942,7 @@ async function doLogin() {
     var session = { id: match.id, full_name: match.full_name, role: match.role, branch_id: match.branch_id, branch: branch, can_add_stock: canAddStock, loginAt: new Date().toISOString() };
     try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch (e) {}
     enterApp(session);
-  } catch (e) { authMsg("li", "err", "Cannot reach server."); }
+  } catch (e) { authMsg("li", "err", "Connection unstable — please try again."); }
   btn.disabled = false; btn.textContent = "Sign In →";
 }
 
@@ -2337,11 +2372,11 @@ function edtRender() { var search = ((document.getElementById("edt-search") || {
 
 function edtOpenEdit(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op || op.deleted) return; var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<div style='font-size:11px;margin-bottom:6px;'><span style='color:var(--muted);'>Faulty (in): </span><span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>" + escHtml(op.faultySn) + "</span>&nbsp;&nbsp;<span style='color:var(--muted);'>Replacement (out): </span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>" + escHtml(op.replacementSn) + "</span></div>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(" "); } document.getElementById("modal-root").innerHTML = "<div class='modal-overlay' onclick='closeModal(event)'><div class='modal' onclick='event.stopPropagation()'><h3>✎ Edit Operation</h3><div class='modal-sub'>" + opChip(op.type, op.condition).label + " · " + op.ts + "</div><div class='auth-fg'>" + (op.type === "Swap" ? "<label class='auth-lbl' style='color:var(--rose);'>⚠ Faulty SN (cannot change)</label><div style='padding:8px 12px;background:var(--rose2);border-radius:8px;border:1.5px solid rgba(192,57,43,.2);font-family:monospace;font-size:13px;font-weight:700;color:var(--rose);margin-bottom:10px;'>" + escHtml(op.faultySn||"—") + "</div><label class='auth-lbl' style='color:var(--green2);'>✓ Replacement SN (editable)</label><input class='auth-inp' id='em-replace-sn' value='" + escHtml(op.replacementSn||"") + "' style='font-family:monospace;font-weight:700;' oninput='this.value=this.value.toUpperCase()'><input type='hidden' id='em-sns' value='" + escHtml((op.sns||[]).join(",")) + "'>" : "<label class='auth-lbl'>SNs (comma-separated)</label><input class='auth-inp' id='em-sns' value='" + escHtml((op.sns||[]).join(", ")) + "'>") + "</div><div id='em-save-msg' style='font-size:11px;margin-top:6px;'></div><div class='modal-btns'><button class='modal-cancel' onclick='closeModal()'>Cancel</button><button class='modal-save' id='em-save-btn' onclick='edtSaveEdit(" + id + ")'>💾 Save</button></div></div></div>"; }
 
-async function edtSaveEdit(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op) return; var msgEl = document.getElementById("em-save-msg"); var btn = document.getElementById("em-save-btn"); if (btn) btn.disabled = true; if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Reversing old operation…</span>"; var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); try { if (op.type === "Swap") { var newReplace = ((document.getElementById("em-replace-sn") || {}).value || "").trim().toUpperCase(); if (!newReplace || newReplace === op.replacementSn) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--muted)'>No change made.</span>"; setTimeout(function() { closeModal(); }, 800); return; } var oldSrc = op.sourceMap ? op.sourceMap[op.replacementSn] : t.bn; var H = authH(); var HJ = authHJ(); await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(op.replacementSn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + oldSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Validating new SN…</span>"; var repCheck = await validateSNForSwap(newReplace); if (!repCheck.ok) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>New replacement SN not found: " + repCheck.msg + "</span>"; await fetch(SUPA_URL + "/rest/v1/" + oldSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Deployed" }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: op.replacementSn, operation: "Swap (replacement)", source: oldSrc, officer: op.officer, branch_id: branchId }) }); if (btn) btn.disabled = false; return; } if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Applying new SN…</span>"; await fetch(SUPA_URL + "/rest/v1/" + repCheck.source + "?sn=eq." + encodeURIComponent(newReplace), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Deployed" }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: newReplace, model: repCheck.model || null, operation: "Swap (replacement)", source: repCheck.source, customer_id: op.merchantId || null, agent_id: op.agentCode || null, officer: op.officer, branch_id: branchId }) }); if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId) { return patch("daily_operations", "id=eq." + dbId, { sn: newReplace, reason: "Swap replacement SN changed from " + op.replacementSn + " [edited]" }); })); } op.sourceMap = op.sourceMap || {}; op.sourceMap[newReplace] = repCheck.source; delete op.sourceMap[op.replacementSn]; op.sns = [op.faultySn, newReplace]; op.replacementSn = newReplace; op.edited = true; cacheInvalidate(suffix); debouncedFetchLiveStock(); if (msgEl) msgEl.innerHTML = "<span style='color:var(--green2)'>✓ Swap updated</span>"; setTimeout(function() { closeModal(); edtRender(); }, 700); return; } var newSns = ((document.getElementById("em-sns") || {}).value || "").split(",").map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean); if (!newSns.length) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>Enter at least one SN.</span>"; if (btn) btn.disabled = false; return; } var oldSns = op.sns || []; await Promise.all(oldSns.map(async function(sn) { var src = (op.sourceMap && op.sourceMap[sn]) ? op.sourceMap[sn] : t.bn; var H = authH(); var HJ = authHJ(); if (op.type === "Issued" || op.type === "Assigned") { await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); } else if (op.type === "ATFS") { await fetch(SUPA_URL + "/rest/v1/" + t.ft + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + t.bn, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Available", officer: op.officer || null }) }).catch(function() {}); } })); if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Applying new operation…</span>"; var newSourceMap = {}; var newModelMap = {}; await Promise.all(newSns.map(async function(sn) { var HJ = authHJ(); if (op.type === "Issued" || op.type === "Assigned") { var found = null; var srcResults = await Promise.all(["bn","rp","rt"].map(function(cat) { return sf(t[cat] + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn)).then(function(r) { return r.json(); }).then(function(rows) { return rows && rows.length ? { src: t[cat], model: rows[0].model } : null; }).catch(function() { return null; }); })); found = srcResults.find(function(x) { return x !== null; }) || null; var src = found ? found.src : t.bn; var model = found ? found.model : null; newSourceMap[sn] = src; newModelMap[sn] = model; var newStatus = op.type === "Issued" ? "Deployed" : "Assigned"; await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: newStatus }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, model: model, operation: op.type === "Issued" ? "Deployed" : "Assigned", source: src, customer_id: op.type === "Issued" ? (op.merchantId || null) : null, agent_id: op.type === "Assigned" ? (op.agentCode || null) : null, officer: op.officer, branch_id: branchId }) }); } else if (op.type === "ATFS") { var src2 = (op.sourceMap && op.sourceMap[oldSns[0]]) ? op.sourceMap[oldSns[0]] : t.bn; newSourceMap[sn] = src2; await fetch(SUPA_URL + "/rest/v1/" + src2 + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: authH() }); await fetch(SUPA_URL + "/rest/v1/" + t.ft, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Faulty", source: src2, reason: op.reason || null, officer: op.officer || null }) }); } })); if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId, i) { return patch("daily_operations", "id=eq." + dbId, { sn: newSns[i] || newSns[0] || null, reason: (op.reason || "") + " [edited]" }); })); } op.sns = newSns; op.sourceMap = newSourceMap; op.modelMap = newModelMap; op.edited = true; cacheInvalidate(suffix); debouncedFetchLiveStock(); if (msgEl) msgEl.innerHTML = "<span style='color:var(--green2)'>✓ Saved</span>"; setTimeout(function() { closeModal(); edtRender(); }, 700); } catch (e) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>Error: " + e.message + "</span>"; if (btn) btn.disabled = false; } }
+async function edtSaveEdit(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op) return; var msgEl = document.getElementById("em-save-msg"); var btn = document.getElementById("em-save-btn"); if (btn) btn.disabled = true; if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Reversing old operation…</span>"; var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); try { if (op.type === "Swap") { var newReplace = ((document.getElementById("em-replace-sn") || {}).value || "").trim().toUpperCase(); if (!newReplace || newReplace === op.replacementSn) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--muted)'>No change made.</span>"; setTimeout(function() { closeModal(); }, 800); return; } var oldSrc = op.sourceMap ? op.sourceMap[op.replacementSn] : t.bn; var H = authH(); var HJ = authHJ(); await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(op.replacementSn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + oldSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Validating new SN…</span>"; var repCheck = await validateSNForSwap(newReplace); if (!repCheck.ok) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>New replacement SN not found: " + repCheck.msg + "</span>"; await fetch(SUPA_URL + "/rest/v1/" + oldSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Deployed" }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: op.replacementSn, operation: "Swap (replacement)", source: oldSrc, officer: op.officer, branch_id: branchId }) }); if (btn) btn.disabled = false; return; } if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Applying new SN…</span>"; await fetch(SUPA_URL + "/rest/v1/" + repCheck.source + "?sn=eq." + encodeURIComponent(newReplace), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Deployed" }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: newReplace, model: repCheck.model || null, operation: "Swap (replacement)", source: repCheck.source, customer_id: op.merchantId || null, agent_id: op.agentCode || null, officer: op.officer, branch_id: branchId }) }); if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId) { return patch("daily_operations", "id=eq." + dbId, { sn: newReplace, reason: "Swap replacement SN changed from " + op.replacementSn + " [edited]" }); })); } op.sourceMap = op.sourceMap || {}; op.sourceMap[newReplace] = repCheck.source; delete op.sourceMap[op.replacementSn]; op.sns = [op.faultySn, newReplace]; op.replacementSn = newReplace; op.edited = true; cacheInvalidate(suffix); debouncedFetchLiveStock(); if (msgEl) msgEl.innerHTML = "<span style='color:var(--green2)'>✓ Swap updated</span>"; setTimeout(function() { closeModal(); edtRender(); }, 700); return; } var newSns = ((document.getElementById("em-sns") || {}).value || "").split(",").map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean); if (!newSns.length) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>Enter at least one SN.</span>"; if (btn) btn.disabled = false; return; } var oldSns = op.sns || []; await Promise.all(oldSns.map(async function(sn) { var src = (op.sourceMap && op.sourceMap[sn]) ? op.sourceMap[sn] : t.bn; var H = authH(); var HJ = authHJ(); if (op.type === "Issued" || op.type === "Assigned") { await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); } else if (op.type === "ATFS") { await fetch(SUPA_URL + "/rest/v1/" + t.ft + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + t.bn, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Available", officer: op.officer || null }) }).catch(function() {}); } })); if (msgEl) msgEl.innerHTML = "<span style='color:var(--amber)'>Applying new operation…</span>"; var newSourceMap = {}; var newModelMap = {}; await Promise.all(newSns.map(async function(sn) { var HJ = authHJ(); if (op.type === "Issued" || op.type === "Assigned") { var found = null; var srcResults = await Promise.all(["bn","rp","rt"].map(function(cat) { return sf(t[cat] + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn)).then(function(r) { return r.json(); }).then(function(rows) { return rows && rows.length ? { src: t[cat], model: rows[0].model } : null; }).catch(function() { return null; }); })); found = srcResults.find(function(x) { return x !== null; }) || null; var src = found ? found.src : t.bn; var model = found ? found.model : null; newSourceMap[sn] = src; newModelMap[sn] = model; var newStatus = op.type === "Issued" ? "Deployed" : "Assigned"; await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: newStatus }) }); await fetch(SUPA_URL + "/rest/v1/deployed_assigned", { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, model: model, operation: op.type === "Issued" ? "Deployed" : "Assigned", source: src, customer_id: op.type === "Issued" ? (op.merchantId || null) : null, agent_id: op.type === "Assigned" ? (op.agentCode || null) : null, officer: op.officer, branch_id: branchId }) }); } else if (op.type === "ATFS") { var src2 = (op.sourceMap && op.sourceMap[oldSns[0]]) ? op.sourceMap[oldSns[0]] : t.bn; newSourceMap[sn] = src2; await fetch(SUPA_URL + "/rest/v1/" + src2 + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: authH() }); await fetch(SUPA_URL + "/rest/v1/" + t.ft, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Faulty", source: src2, reason: op.reason || null, officer: op.officer || null }) }); } })); if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId, i) { return patch("daily_operations", "id=eq." + dbId, { sn: newSns[i] || newSns[0] || null, reason: (op.reason || "") + " [edited]" }); })); } op.sns = newSns; op.sourceMap = newSourceMap; op.modelMap = newModelMap; op.edited = true; cacheInvalidate(suffix); debouncedFetchLiveStock(); if (msgEl) msgEl.innerHTML = "<span style='color:var(--green2)'>✓ Saved</span>"; setTimeout(function() { closeModal(); edtRender(); }, 700); } catch (e) { if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>Error: " + friendlyErr(e) + "</span>"; if (btn) btn.disabled = false; } }
 
 function edtConfirmDelete(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op || op.deleted) return; var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<div style='font-size:11px;margin-bottom:6px;'><span style='color:var(--muted);'>Faulty (in): </span><span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>" + escHtml(op.faultySn) + "</span>&nbsp;&nbsp;<span style='color:var(--muted);'>Replacement (out): </span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>" + escHtml(op.replacementSn) + "</span></div>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(" "); } document.getElementById("modal-root").innerHTML = "<div class='modal-overlay' onclick='closeModal(event)'><div class='del-modal' onclick='event.stopPropagation()'><div style='font-size:38px'>🗑️</div><h3>Delete this operation?</h3><p>" + op.type + " · " + op.ts + "<br>" + tags + "<br><br>This will <strong style='color:var(--rose)'>reverse the stock change</strong> and remove the log from the database.<br><span style='font-size:11px;color:var(--muted)'>" + (op.type === "Issued" || op.type === "Assigned" ? "SN(s) will be restored to Available stock." : op.type === "Swap" ? "Replacement SN restored to Available. Faulty SN stays in faulty stock." : op.type === "Return" || op.type === "ATFS" ? "SN(s) will be restored to Brand New stock." : "") + "</span></p><div class='del-modal-btns'><button class='del-cancel' onclick='closeModal()'>Cancel</button><button class='del-confirm' id='del-confirm-btn' onclick='edtExecuteDelete(" + id + ")'>Delete</button></div></div></div>"; }
 
-async function edtExecuteDelete(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op) return; var btn = document.getElementById("del-confirm-btn"); if (btn) { btn.disabled = true; btn.textContent = "Reversing…"; } var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); var H = authH(); var HJ = authHJ(); try { if (op.type === "Issued" || op.type === "Assigned") { await Promise.all((op.sns || []).map(async function(sn) { var src = (op.sourceMap && op.sourceMap[sn]) ? op.sourceMap[sn] : t.bn; await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); })); } else if (op.type === "Swap") { if (op.replacementSn) { var repSrc = (op.sourceMap && op.sourceMap[op.replacementSn]) ? op.sourceMap[op.replacementSn] : t.bn; await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(op.replacementSn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + repSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); } } else if (op.type === "Return") { var cond = op.condition || "normal"; var destTbl = cond === "working" ? t.bn : cond === "faulty" ? t.ft : t.rt; await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + destTbl + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: H }); })); await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + t.bn, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Available", officer: op.officer || null }) }).catch(function() {}); })); } else if (op.type === "ATFS") { await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + t.ft + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: H }); })); await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + t.bn, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Available", officer: op.officer || null }) }).catch(function() {}); })); } if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId) { return fetch(SUPA_URL + "/rest/v1/daily_operations?id=eq." + dbId, { method: "DELETE", headers: H }); })); } op.deleted = true; op.deletedAt = new Date().toLocaleString(); TODAY_LOG[op.typeKey] = Math.max(0, (TODAY_LOG[op.typeKey] || 0) - (op.sns || []).length); cacheInvalidate(suffix); debouncedFetchLiveStock(); closeModal(); edtRender(); edtUpdateBadge(); updateLogWidget(); } catch (e) { alert("Reversal failed: " + e.message); if (btn) { btn.disabled = false; btn.textContent = "Delete"; } } }
+async function edtExecuteDelete(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op) return; var btn = document.getElementById("del-confirm-btn"); if (btn) { btn.disabled = true; btn.textContent = "Reversing…"; } var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); var H = authH(); var HJ = authHJ(); try { if (op.type === "Issued" || op.type === "Assigned") { await Promise.all((op.sns || []).map(async function(sn) { var src = (op.sourceMap && op.sourceMap[sn]) ? op.sourceMap[sn] : t.bn; await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + src + "?sn=eq." + encodeURIComponent(sn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); })); } else if (op.type === "Swap") { if (op.replacementSn) { var repSrc = (op.sourceMap && op.sourceMap[op.replacementSn]) ? op.sourceMap[op.replacementSn] : t.bn; await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + encodeURIComponent(op.replacementSn) + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); await fetch(SUPA_URL + "/rest/v1/" + repSrc + "?sn=eq." + encodeURIComponent(op.replacementSn), { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); } } else if (op.type === "Return") { var cond = op.condition || "normal"; var destTbl = cond === "working" ? t.bn : cond === "faulty" ? t.ft : t.rt; await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + destTbl + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: H }); })); await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + t.bn, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Available", officer: op.officer || null }) }).catch(function() {}); })); } else if (op.type === "ATFS") { await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + t.ft + "?sn=eq." + encodeURIComponent(sn), { method: "DELETE", headers: H }); })); await Promise.all((op.sns || []).map(function(sn) { return fetch(SUPA_URL + "/rest/v1/" + t.bn, { method: "POST", headers: HJ, body: JSON.stringify({ sn: sn, branch_id: branchId, status: "Available", officer: op.officer || null }) }).catch(function() {}); })); } if (op.dbIds && op.dbIds.length) { await Promise.all(op.dbIds.map(function(dbId) { return fetch(SUPA_URL + "/rest/v1/daily_operations?id=eq." + dbId, { method: "DELETE", headers: H }); })); } op.deleted = true; op.deletedAt = new Date().toLocaleString(); TODAY_LOG[op.typeKey] = Math.max(0, (TODAY_LOG[op.typeKey] || 0) - (op.sns || []).length); cacheInvalidate(suffix); debouncedFetchLiveStock(); closeModal(); edtRender(); edtUpdateBadge(); updateLogWidget(); } catch (e) { alert("Reversal failed — " + friendlyErr(e)); if (btn) { btn.disabled = false; btn.textContent = "Delete"; } } }
 
 // ════════════════════════════════════════════════════════════
 //  deploy.js - with DYNAMIC BULK ROWS (deletable boxes)
@@ -2414,7 +2449,7 @@ async function dSubmit() {
     document.getElementById("d-form").style.display = "none";
     document.getElementById("d-success").style.display = "block";
     startUndoTimer("d");
-  } catch (e) { setConn("err", e.message); alert("Issue error: " + e.message); } finally { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); }
+  } catch (e) { setConn("err", friendlyErr(e)); alert("Issue error: " + friendlyErr(e)); } finally { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); }
 }
 
 function dEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "dep") _EDIT_OP.d = last; } document.getElementById("d-form").style.display = ""; document.getElementById("d-success").style.display = "none"; }
@@ -2489,7 +2524,7 @@ async function aSubmit() {
     document.getElementById("a-form").style.display = "none";
     document.getElementById("a-success").style.display = "block";
     startUndoTimer("a");
-  } catch (e) { setConn("err", e.message); alert("Assign error: " + e.message); } finally { unlockSubmit("a-sub-btn", "📋 Confirm " + APP_CONFIG.opAssign); }
+  } catch (e) { setConn("err", friendlyErr(e)); alert("Assign error: " + friendlyErr(e)); } finally { unlockSubmit("a-sub-btn", "📋 Confirm " + APP_CONFIG.opAssign); }
 }
 
 function aEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "asg") _EDIT_OP.a = last; } document.getElementById("a-form").style.display = ""; document.getElementById("a-success").style.display = "none"; }
@@ -2549,7 +2584,7 @@ async function sSubmit() {
     document.getElementById("s-form").style.display = "none";
     document.getElementById("s-success").style.display = "block";
     startUndoTimer("s");
-  } catch (e) { setConn("err", e.message); alert("Swap error: " + e.message); } finally { unlockSubmit("s-sub-btn", "🔄 Confirm " + APP_CONFIG.opSwap); }
+  } catch (e) { setConn("err", friendlyErr(e)); alert("Swap error: " + friendlyErr(e)); } finally { unlockSubmit("s-sub-btn", "🔄 Confirm " + APP_CONFIG.opSwap); }
 }
 
 function sEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "swp") _EDIT_OP.s = last; } document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; }
@@ -2677,7 +2712,7 @@ async function rSubmit() {
       if (reason && (destTbl === t.rt || destTbl === t.ft)) body.reason = reason;
       try {
         var res = await fetch(SUPA_URL + "/rest/v1/" + destTbl, { method: "POST", headers: authHJR(), body: JSON.stringify(body) });
-        if (!res.ok) { var et = await res.text(); var ej = {}; try { ej = JSON.parse(et); } catch (x) {} errors.push(sn + ": " + (ej.message || ej.hint || et).substring(0, 100)); }
+        if (!res.ok) { var et = await res.text(); var ej = {}; try { ej = JSON.parse(et); } catch (x) {} errors.push(sn + ": " + "Could not unassign — please retry."); }
       } catch (fe) { errors.push(sn + ": " + fe.message); }
       fetch(SUPA_URL + "/rest/v1/daily_operations", { method: "POST", headers: HJ, body: JSON.stringify({ operation: "Return", sn: sn, model: model || null, officer: off, branch_id: branchId, reason: (merchant ? APP_CONFIG.fieldCustomer + ": " + merchant + " · " : "") + (tid ? "TID: " + tid + " · " : "") + "Condition: " + cond + (reason ? " · " + reason : ""), date: new Date().toISOString().split("T")[0], time: new Date().toTimeString().split(" ")[0] }) }).catch(function() {});
     }));
@@ -2767,7 +2802,7 @@ async function atSubmit() {
     document.getElementById("at-suc-summary").innerHTML = ssSummary(sns, off, "Reason: " + reason, APP_CONFIG.opATFS + " " + assets());
     document.getElementById("at-form").style.display = "none";
     document.getElementById("at-success").style.display = "block";
-  } catch (e) { setConn("err", e.message); alert("ATFS error: " + e.message); } finally { unlockSubmit("at-sub-btn", "⚡ Log " + APP_CONFIG.opATFS); }
+  } catch (e) { setConn("err", friendlyErr(e)); alert("ATFS error: " + friendlyErr(e)); } finally { unlockSubmit("at-sub-btn", "⚡ Log " + APP_CONFIG.opATFS); }
 }
 
 function atEdit() { document.getElementById("at-form").style.display = ""; document.getElementById("at-success").style.display = "none"; }
@@ -2803,14 +2838,14 @@ function rcvRemoveBulkRow(idx) { if (idx >= 0 && idx < RCV_BULK_ROWS.length) { R
 function rcvRemoveAllInvalid() { RCV_BULK_ROWS = RCV_BULK_ROWS.filter(function(r) { return r.valid; }); rcvRenderBulkRows(); }
 function rcvClearBulkRows() { RCV_BULK_ROWS = []; document.getElementById("rcv-bulk-paste-area").value = ""; rcvRenderBulkRows(); }
 
-async function rcvSubmit() { if (!lockSubmit("rcv-sub-btn")) return; try { var cat = RCV.category; var off = (document.getElementById("rcv-officer") || {}).value || ""; var supplier = (document.getElementById("rcv-supplier") || {}).value || ""; var model = (document.getElementById("rcv-model") || {}).value || ""; off = off.trim(); supplier = supplier.trim(); model = model.trim(); if (!model) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Please select a POS type."); } if (!cat) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Select a stock category."); } if (!off) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Officer name required."); } if (!supplier) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Supplier required."); } var targetBranchId = SUPA_BRANCH.id; var suffix = SUPA_BRANCH.table_suffix || "hq"; var targetName = SUPA_BRANCH.name; if (SUPA_OFFICER.role === "Admin") { var sel = document.getElementById("rcv-branch-select"); if (!sel || !sel.value) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Select a target branch."); } targetBranchId = sel.value; var opt = sel.options[sel.selectedIndex]; suffix = safeSuffix(opt.dataset.suffix, "hq"); targetName = opt.dataset.name || opt.textContent; } else { var sel2 = document.getElementById("rcv-sup-branch-select"); if (sel2 && sel2.value) { targetBranchId = sel2.value; var opt2 = sel2.options[sel2.selectedIndex]; suffix = safeSuffix(opt2.dataset.suffix, suffix); targetName = opt2.textContent; } } var sns = []; if (RCV.mode === "bulk") { if (!RCV_BULK_ROWS.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Validate SNs first."); } sns = RCV_BULK_ROWS.filter(function(r) { return r.valid; }).map(function(r) { return r.sn; }); } else if (RCV.mode === "csv") { if (!RCV.bulkGood.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Validate SNs first."); } sns = RCV.bulkGood; } else { document.querySelectorAll("input[id^='rcv-sn-']").forEach(function(inp) { var idx = inp.id.replace("rcv-sn-", ""); var st = document.getElementById("rcv-st-" + idx); var v = inp.value.trim().toUpperCase(); if (v && st && st.className.includes("ok")) sns.push(v); }); if (!sns.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("No validated SNs. Enter SNs and wait for ✓ check."); } } if (!suffix || suffix === "null" || suffix === "undefined") { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("This branch has no table suffix configured in the database."); } var table = cat === "Brand New" ? "stock_bn_" + suffix : cat === "Repaired" ? "stock_rp_" + suffix : cat === "Faulty" ? "stock_ft_" + suffix : "stock_rt_" + suffix; var isFaulty = cat === "Faulty"; var rows = sns.map(function(sn) { var row = { sn: sn, model: model || null, branch_id: targetBranchId, officer: off || null }; if (isFaulty) { row.status = "Faulty"; row.source = "Received"; row.reason = supplier ? "Received from: " + supplier : "Received as faulty"; } else { row.status = "Available"; } return row; }); setConn("loading", "Saving " + sns.length + " " + assets() + "…"); setConn("loading", "Checking for duplicates…"); var cache2 = await cacheFetch(suffix); var dupConflicts = []; if (cache2) { var allExist = {}; (cache2.rbn||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.bn||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.rp||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.rt||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.faulty||[]).forEach(function(r){allExist[r.sn]=1;}); dupConflicts = sns.filter(function(sn){return allExist[sn];}); } if (dupConflicts.length) { setConn("err", "Duplicate SNs"); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("⚠ " + dupConflicts.length + " SN(s) already exist in this branch's stock:\n\n" + dupConflicts.slice(0,10).join(", ") + (dupConflicts.length > 10 ? "\n…and " + (dupConflicts.length-10) + " more" : "") + "\n\nRemove them and retry."); } setConn("loading", "Saving " + sns.length + " " + assets() + " in batches…"); var H2 = authH(); var batchErrs = await batchPost(SUPA_URL + "/rest/v1/" + table, rows, H2, 500); if (batchErrs.length) { setConn("err", "Partial errors"); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("⚠ Some batches failed:\n" + batchErrs.join("\n")); } setConn("ok", "Saved!"); recordOp({ type: "Receive Stock", typeKey: "rcv", sns: sns, officer: off, category: cat, supplier: supplier }); document.getElementById("rcv-suc-summary").innerHTML = ssSummary(sns, off, cat + " → " + targetName + " · " + supplier, assets() + " Received"); document.getElementById("rcv-form").style.display = "none"; document.getElementById("rcv-success").style.display = "block"; debouncedFetchLiveStock(); cacheInvalidate(suffix); var logRows2 = sns.map(function(sn){ return { operation: "Receive Stock (" + cat + ")", sn: sn, model: model || null, officer: off, branch_id: targetBranchId, reason: "Source: " + supplier, date: new Date().toISOString().split("T")[0], time: new Date().toTimeString().split(" ")[0] }; }); batchPost(SUPA_URL + "/rest/v1/daily_operations", logRows2, H2, 200).catch(function(){}); setTimeout(function(){ setConn("ok","Connected ✓"); }, 3000); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); } catch (e) { setConn("err", e.message); alert("Receive error: " + e.message); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); } }
+async function rcvSubmit() { if (!lockSubmit("rcv-sub-btn")) return; try { var cat = RCV.category; var off = (document.getElementById("rcv-officer") || {}).value || ""; var supplier = (document.getElementById("rcv-supplier") || {}).value || ""; var model = (document.getElementById("rcv-model") || {}).value || ""; off = off.trim(); supplier = supplier.trim(); model = model.trim(); if (!model) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Please select a POS type."); } if (!cat) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Select a stock category."); } if (!off) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Officer name required."); } if (!supplier) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Supplier required."); } var targetBranchId = SUPA_BRANCH.id; var suffix = SUPA_BRANCH.table_suffix || "hq"; var targetName = SUPA_BRANCH.name; if (SUPA_OFFICER.role === "Admin") { var sel = document.getElementById("rcv-branch-select"); if (!sel || !sel.value) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Select a target branch."); } targetBranchId = sel.value; var opt = sel.options[sel.selectedIndex]; suffix = safeSuffix(opt.dataset.suffix, "hq"); targetName = opt.dataset.name || opt.textContent; } else { var sel2 = document.getElementById("rcv-sup-branch-select"); if (sel2 && sel2.value) { targetBranchId = sel2.value; var opt2 = sel2.options[sel2.selectedIndex]; suffix = safeSuffix(opt2.dataset.suffix, suffix); targetName = opt2.textContent; } } var sns = []; if (RCV.mode === "bulk") { if (!RCV_BULK_ROWS.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Validate SNs first."); } sns = RCV_BULK_ROWS.filter(function(r) { return r.valid; }).map(function(r) { return r.sn; }); } else if (RCV.mode === "csv") { if (!RCV.bulkGood.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Validate SNs first."); } sns = RCV.bulkGood; } else { document.querySelectorAll("input[id^='rcv-sn-']").forEach(function(inp) { var idx = inp.id.replace("rcv-sn-", ""); var st = document.getElementById("rcv-st-" + idx); var v = inp.value.trim().toUpperCase(); if (v && st && st.className.includes("ok")) sns.push(v); }); if (!sns.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("No validated SNs. Enter SNs and wait for ✓ check."); } } if (!suffix || suffix === "null" || suffix === "undefined") { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("This branch has no table suffix configured in the database."); } var table = cat === "Brand New" ? "stock_bn_" + suffix : cat === "Repaired" ? "stock_rp_" + suffix : cat === "Faulty" ? "stock_ft_" + suffix : "stock_rt_" + suffix; var isFaulty = cat === "Faulty"; var rows = sns.map(function(sn) { var row = { sn: sn, model: model || null, branch_id: targetBranchId, officer: off || null }; if (isFaulty) { row.status = "Faulty"; row.source = "Received"; row.reason = supplier ? "Received from: " + supplier : "Received as faulty"; } else { row.status = "Available"; } return row; }); setConn("loading", "Saving " + sns.length + " " + assets() + "…"); setConn("loading", "Checking for duplicates…"); var cache2 = await cacheFetch(suffix); var dupConflicts = []; if (cache2) { var allExist = {}; (cache2.rbn||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.bn||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.rp||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.rt||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.faulty||[]).forEach(function(r){allExist[r.sn]=1;}); dupConflicts = sns.filter(function(sn){return allExist[sn];}); } if (dupConflicts.length) { setConn("err", "Duplicate SNs"); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("⚠ " + dupConflicts.length + " SN(s) already exist in this branch's stock:\n\n" + dupConflicts.slice(0,10).join(", ") + (dupConflicts.length > 10 ? "\n…and " + (dupConflicts.length-10) + " more" : "") + "\n\nRemove them and retry."); } setConn("loading", "Saving " + sns.length + " " + assets() + " in batches…"); var H2 = authH(); var batchErrs = await batchPost(SUPA_URL + "/rest/v1/" + table, rows, H2, 500); if (batchErrs.length) { setConn("err", "Partial errors"); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("⚠ Some batches failed:\n" + batchErrs.join("\n")); } setConn("ok", "Saved!"); recordOp({ type: "Receive Stock", typeKey: "rcv", sns: sns, officer: off, category: cat, supplier: supplier }); document.getElementById("rcv-suc-summary").innerHTML = ssSummary(sns, off, cat + " → " + targetName + " · " + supplier, assets() + " Received"); document.getElementById("rcv-form").style.display = "none"; document.getElementById("rcv-success").style.display = "block"; debouncedFetchLiveStock(); cacheInvalidate(suffix); var logRows2 = sns.map(function(sn){ return { operation: "Receive Stock (" + cat + ")", sn: sn, model: model || null, officer: off, branch_id: targetBranchId, reason: "Source: " + supplier, date: new Date().toISOString().split("T")[0], time: new Date().toTimeString().split(" ")[0] }; }); batchPost(SUPA_URL + "/rest/v1/daily_operations", logRows2, H2, 200).catch(function(){}); setTimeout(function(){ setConn("ok","Connected ✓"); }, 3000); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); } catch (e) { setConn("err", friendlyErr(e)); alert("" + friendlyErr(e)); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); } }
 
 function rcvNew() { document.getElementById("rcv-form").style.display = ""; document.getElementById("rcv-success").style.display = "none"; document.getElementById("rcv-sn-rows").innerHTML = ""; document.getElementById("rcv-bulk-paste-area").value = ""; RCV_BULK_ROWS = []; rcvRenderBulkRows(); RCV.snCount = 0; RCV.bulkGood = []; RCV.category = null; document.querySelectorAll("#panel-rcv .toggle-btn").forEach(function(b) { b.classList.remove("active"); }); rcvAddRow(); }
 function rcvClear() { document.getElementById("rcv-officer").value = SUPA_OFFICER ? SUPA_OFFICER.full_name : ""; document.getElementById("rcv-supplier").value = ""; document.getElementById("rcv-model").value = ""; var csvInfo = document.getElementById("rcv-csv-info"); var csvRes = document.getElementById("rcv-csv-results"); if (csvInfo) csvInfo.innerHTML = ""; if (csvRes) csvRes.innerHTML = ""; RCV.csvData = []; document.getElementById("rcv-sn-rows").innerHTML = ""; document.getElementById("rcv-bulk-paste-area").value = ""; RCV_BULK_ROWS = []; rcvRenderBulkRows(); RCV.snCount = 0; RCV.bulkGood = []; RCV.category = null; document.querySelectorAll("#panel-rcv .toggle-btn").forEach(function(b) { b.classList.remove("active"); }); rcvAddRow(); }
 
 function rcvCsvDrop(e) { e.preventDefault(); document.getElementById("rcv-csv-dropzone").style.borderColor = "rgba(34,197,94,.35)"; var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (file) rcvParseCsv(file); }
 function rcvCsvLoad(input) { var file = input && input.files && input.files[0]; if (file) rcvParseCsv(file); input.value = ""; }
-function rcvParseCsv(file) { var infoEl = document.getElementById("rcv-csv-info"); var resultsEl = document.getElementById("rcv-csv-results"); if (infoEl) infoEl.innerHTML = "<span style='color:var(--muted)'>Parsing " + escHtml(file.name) + "…</span>"; if (resultsEl) resultsEl.innerHTML = ""; if (typeof Papa === "undefined") { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>PapaParse not loaded. Please refresh.</span>"; return; } Papa.parse(file, { header: true, skipEmptyLines: true, complete: function(result) { var rows = result.data || []; if (!rows.length) { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>CSV is empty.</span>"; return; } var headers = Object.keys(rows[0]); var snCol = headers.find(function(h) { var l = h.trim().toLowerCase(); return l === "sn" || l === "serial" || l === "serial number" || l === "serial_number" || l === "serialnumber" || l === "barcode" || l === "code"; }); if (!snCol) { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>No SN column found. Headers: " + escHtml(headers.join(", ")) + "<br>Rename a column to <strong>SN</strong> and retry.</span>"; return; } var sns = rows.map(function(r) { return (r[snCol] || "").trim().toUpperCase(); }).filter(Boolean); var seen = {}, dupes = 0; sns = sns.filter(function(s) { if (seen[s]) { dupes++; return false; } seen[s] = true; return true; }); RCV.bulkGood = sns.slice(); var html = "<div style='font-size:11px;font-weight:700;color:var(--green2);margin-bottom:6px;'>✓ " + sns.length + " SNs loaded from <em>" + escHtml(file.name) + "</em>" + (dupes ? " · " + dupes + " duplicates removed" : "") + "</div><div style='max-height:160px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:4px;'>" + sns.slice(0, 200).map(function(s) { return "<span class='sn-tag' style='font-size:10px;'>" + escHtml(s) + "</span>"; }).join("") + (sns.length > 200 ? "<span style='font-size:10px;color:var(--muted);'>…and " + (sns.length - 200) + " more</span>" : "") + "</div>"; if (resultsEl) resultsEl.innerHTML = html; if (infoEl) infoEl.innerHTML = ""; }, error: function(err) { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>Parse error: " + escHtml(err.message || "unknown") + "</span>"; } }); }
+function rcvParseCsv(file) { var infoEl = document.getElementById("rcv-csv-info"); var resultsEl = document.getElementById("rcv-csv-results"); if (infoEl) infoEl.innerHTML = "<span style='color:var(--muted)'>Parsing " + escHtml(file.name) + "…</span>"; if (resultsEl) resultsEl.innerHTML = ""; if (typeof Papa === "undefined") { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>PapaParse not loaded. Please refresh.</span>"; return; } Papa.parse(file, { header: true, skipEmptyLines: true, complete: function(result) { var rows = result.data || []; if (!rows.length) { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>CSV is empty.</span>"; return; } var headers = Object.keys(rows[0]); var snCol = headers.find(function(h) { var l = h.trim().toLowerCase(); return l === "sn" || l === "serial" || l === "serial number" || l === "serial_number" || l === "serialnumber" || l === "barcode" || l === "code"; }); if (!snCol) { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>No SN column found. Headers: " + escHtml(headers.join(", ")) + "<br>Rename a column to <strong>SN</strong> and retry.</span>"; return; } var sns = rows.map(function(r) { return (r[snCol] || "").trim().toUpperCase(); }).filter(Boolean); var seen = {}, dupes = 0; sns = sns.filter(function(s) { if (seen[s]) { dupes++; return false; } seen[s] = true; return true; }); RCV.bulkGood = sns.slice(); var html = "<div style='font-size:11px;font-weight:700;color:var(--green2);margin-bottom:6px;'>✓ " + sns.length + " SNs loaded from <em>" + escHtml(file.name) + "</em>" + (dupes ? " · " + dupes + " duplicates removed" : "") + "</div><div style='max-height:160px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:4px;'>" + sns.slice(0, 200).map(function(s) { return "<span class='sn-tag' style='font-size:10px;'>" + escHtml(s) + "</span>"; }).join("") + (sns.length > 200 ? "<span style='font-size:10px;color:var(--muted);'>…and " + (sns.length - 200) + " more</span>" : "") + "</div>"; if (resultsEl) resultsEl.innerHTML = html; if (infoEl) infoEl.innerHTML = ""; }, error: function(err) { if (infoEl) infoEl.innerHTML = "<span style='color:var(--rose)'>Parse error: " + escHtml(friendlyErr(err) || "unknown") + "</span>"; } }); }
 
 // ════════════════════════════════════════════════════════════
 //  unassign.js - with DYNAMIC BULK ROWS
@@ -2821,7 +2856,7 @@ var UA_BULK_ROWS = [];
 
 function uaBoot() { UA.snCount = 0; uaAddRow(); }
 function uaAddRow() { UA.snCount++; var idx = UA.snCount; var row = document.createElement("div"); row.className = "sn-row"; row.id = "ua-row-" + idx; row.innerHTML = "<input class='sn-inp' id='ua-sn-" + idx + "' placeholder='POS-" + String(idx).padStart(5,"0") + "' oninput=\"this.value=this.value.toUpperCase();document.getElementById('ua-st-" + idx + "').className='sn-status empty';document.getElementById('ua-st-" + idx + "').textContent='—'\" onblur='uaValidateSN(" + idx + ")'><span class='sn-status empty' id='ua-st-" + idx + "'>—</span><button class='scan-btn' onclick=\"scanOpen('ua-sn-" + idx + "','ua'," + idx + ",null)\">📷</button><button class='remove-btn' onclick=\"document.getElementById('ua-row-" + idx + "').remove()\">×</button>"; document.getElementById("ua-sn-rows").appendChild(row); }
-async function uaValidateSN(idx) { var inp = document.getElementById("ua-sn-" + idx); var st = document.getElementById("ua-st-" + idx); var row = document.getElementById("ua-row-" + idx); if (!inp || !st) return; var sn = (inp.value || "").trim().toUpperCase(); if (!sn) { st.className = "sn-status empty"; st.textContent = "—"; return; } st.className = "sn-status"; st.textContent = "…"; try { var res = await sf("deployed_assigned?select=sn,source,model,operation,agent_id&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id); var rows = await res.json(); if (!Array.isArray(rows) || !rows.length) { st.className = "sn-status err"; st.textContent = "✗ Not found in assigned POSs"; return; } var r = rows[0]; var op = (r.operation || "").toLowerCase(); if (op.includes("deploy") || op.includes("issue")) { st.className = "sn-status err"; st.textContent = "✗ Issued (not Assigned) — use Return instead"; return; } st.className = "sn-status ok"; st.textContent = "✓ Assigned" + (r.agent_id ? " · " + r.agent_id : "") + (r.model ? " · " + r.model : ""); row.dataset.source = r.source || ""; row.dataset.model = r.model || ""; row.dataset.agentId = r.agent_id || ""; inp.dataset.validatedSn = sn; } catch (e) { st.className = "sn-status err"; st.textContent = "✗ Error: " + e.message; } }
+async function uaValidateSN(idx) { var inp = document.getElementById("ua-sn-" + idx); var st = document.getElementById("ua-st-" + idx); var row = document.getElementById("ua-row-" + idx); if (!inp || !st) return; var sn = (inp.value || "").trim().toUpperCase(); if (!sn) { st.className = "sn-status empty"; st.textContent = "—"; return; } st.className = "sn-status"; st.textContent = "…"; try { var res = await sf("deployed_assigned?select=sn,source,model,operation,agent_id&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id); var rows = await res.json(); if (!Array.isArray(rows) || !rows.length) { st.className = "sn-status err"; st.textContent = "✗ Not found in assigned POSs"; return; } var r = rows[0]; var op = (r.operation || "").toLowerCase(); if (op.includes("deploy") || op.includes("issue")) { st.className = "sn-status err"; st.textContent = "✗ Issued (not Assigned) — use Return instead"; return; } st.className = "sn-status ok"; st.textContent = "✓ Assigned" + (r.agent_id ? " · " + r.agent_id : "") + (r.model ? " · " + r.model : ""); row.dataset.source = r.source || ""; row.dataset.model = r.model || ""; row.dataset.agentId = r.agent_id || ""; inp.dataset.validatedSn = sn; } catch (e) { st.className = "sn-status err"; st.textContent = "✗ " + friendlyErr(e); } }
 
 function uaSetMode(m) {
   UA.mode = m;
@@ -2840,7 +2875,7 @@ function uaRemoveBulkRow(idx) { if (idx >= 0 && idx < UA_BULK_ROWS.length) { UA_
 function uaRemoveAllInvalid() { UA_BULK_ROWS = UA_BULK_ROWS.filter(function(r) { return r.valid; }); uaRenderBulkRows(); }
 function uaClearBulkRows() { UA_BULK_ROWS = []; document.getElementById("ua-bulk-area").value = ""; uaRenderBulkRows(); }
 
-async function uaSubmit() { if (!lockSubmit("ua-sub-btn")) return; try { var off = SUPA_OFFICER.full_name; var agent = (document.getElementById("ua-f-agent").value || "").trim(); var reason = (document.getElementById("ua-f-reason").value || "").trim(); var items = []; if (UA.mode === "bulk") { if (!UA_BULK_ROWS.length) { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); return alert("Validate SNs first."); } items = UA_BULK_ROWS.filter(function(r) { return r.valid; }).map(function(r) { return { sn: r.sn, source: r.source, model: r.model, agentId: r.agentId }; }); } else { document.querySelectorAll("input[id^='ua-sn-']").forEach(function(inp) { var sn = (inp.value || "").trim().toUpperCase(); var idx = inp.id.replace("ua-sn-", ""); var row = document.getElementById("ua-row-" + idx); if (sn && inp.dataset.validatedSn === sn) items.push({ sn: sn, source: row ? row.dataset.source || "" : "", model: row ? row.dataset.model || "" : "", agentId: row ? row.dataset.agentId || "" : "" }); }); } if (!items.length) { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); return alert("No valid Assigned POSs entered."); } var sns = items.map(function(i) { return i.sn; }); var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); var H = authH(); var HJ = authHJ(); setConn("loading", "Unassigning " + items.length + " POS" + (items.length===1?"":"s") + "…"); var errors = []; await Promise.all(items.map(async function(item) { var enc = encodeURIComponent(item.sn); try { await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + enc + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); var srcTbl = item.source || t.bn; await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); fetch(SUPA_URL + "/rest/v1/daily_operations", { method: "POST", headers: HJ, body: JSON.stringify({ operation: "Unassign", sn: item.sn, model: item.model || null, officer: off, branch_id: branchId, reason: (agent ? "MS/BD: " + agent + " · " : "") + (reason || "Unassigned"), date: new Date().toISOString().split("T")[0], time: new Date().toTimeString().split(" ")[0] }) }).catch(function(){}); } catch (e) { errors.push(item.sn + ": " + e.message); } })); cacheInvalidate(suffix); debouncedFetchLiveStock(); recordOp({ type: "Unassign", typeKey: "asg", sns: sns, officer: off, reason: reason }); setConn("ok", errors.length ? "Done with errors" : "Done ✓"); var sumHtml = "<div style='text-align:left;margin-top:12px;'><div class='ss-row'><span class='ss-key'>Operation</span><span class='ss-val'>↩ Unassigned</span></div><div class='ss-row'><span class='ss-key'>POSs</span><span class='ss-val ss-count'>" + items.length + "</span></div><div style='margin:8px 0;'>" + items.map(function(it) { return "<div style='display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2);'><span style='font-size:10px;color:var(--muted);font-weight:600;'>SN</span><span class='sn-tag' style='color:var(--sky);border-color:rgba(56,189,248,.25);'>" + escHtml(it.sn) + "</span></div>"; }).join("") + "</div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div>" + (agent ? "<div class='ss-row'><span class='ss-key'>MS/BD Code</span><span class='ss-val'>" + escHtml(agent) + "</span></div>" : "") + (reason ? "<div class='ss-row'><span class='ss-key'>Reason</span><span class='ss-val'>" + escHtml(reason) + "</span></div>" : "") + "<div class='ss-row'><span class='ss-key'>Stock Status</span><span class='ss-val' style='color:var(--green2);font-weight:800;'>✓ Returned to Available</span></div></div>"; if (errors.length) sumHtml += "<div class='err-block'>⚠️ " + errors.length + " error(s):<br>" + errors.map(function(e){ return escHtml(e); }).join("<br>") + "</div>"; document.getElementById("ua-suc-summary").innerHTML = sumHtml; document.getElementById("ua-form").style.display = "none"; document.getElementById("ua-success").style.display = "block"; setTimeout(function(){ setConn("ok","Connected ✓"); }, 3000); } catch (e) { setConn("err", e.message); alert("Unassign error: " + e.message); } finally { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); } }
+async function uaSubmit() { if (!lockSubmit("ua-sub-btn")) return; try { var off = SUPA_OFFICER.full_name; var agent = (document.getElementById("ua-f-agent").value || "").trim(); var reason = (document.getElementById("ua-f-reason").value || "").trim(); var items = []; if (UA.mode === "bulk") { if (!UA_BULK_ROWS.length) { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); return alert("Validate SNs first."); } items = UA_BULK_ROWS.filter(function(r) { return r.valid; }).map(function(r) { return { sn: r.sn, source: r.source, model: r.model, agentId: r.agentId }; }); } else { document.querySelectorAll("input[id^='ua-sn-']").forEach(function(inp) { var sn = (inp.value || "").trim().toUpperCase(); var idx = inp.id.replace("ua-sn-", ""); var row = document.getElementById("ua-row-" + idx); if (sn && inp.dataset.validatedSn === sn) items.push({ sn: sn, source: row ? row.dataset.source || "" : "", model: row ? row.dataset.model || "" : "", agentId: row ? row.dataset.agentId || "" : "" }); }); } if (!items.length) { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); return alert("No valid Assigned POSs entered."); } var sns = items.map(function(i) { return i.sn; }); var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); var H = authH(); var HJ = authHJ(); setConn("loading", "Unassigning " + items.length + " POS" + (items.length===1?"":"s") + "…"); var errors = []; await Promise.all(items.map(async function(item) { var enc = encodeURIComponent(item.sn); try { await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + enc + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); var srcTbl = item.source || t.bn; await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); fetch(SUPA_URL + "/rest/v1/daily_operations", { method: "POST", headers: HJ, body: JSON.stringify({ operation: "Unassign", sn: item.sn, model: item.model || null, officer: off, branch_id: branchId, reason: (agent ? "MS/BD: " + agent + " · " : "") + (reason || "Unassigned"), date: new Date().toISOString().split("T")[0], time: new Date().toTimeString().split(" ")[0] }) }).catch(function(){}); } catch (e) { errors.push(item.sn + ": " + friendlyErr(e)); } })); cacheInvalidate(suffix); debouncedFetchLiveStock(); recordOp({ type: "Unassign", typeKey: "asg", sns: sns, officer: off, reason: reason }); setConn("ok", errors.length ? "Done with errors" : "Done ✓"); var sumHtml = "<div style='text-align:left;margin-top:12px;'><div class='ss-row'><span class='ss-key'>Operation</span><span class='ss-val'>↩ Unassigned</span></div><div class='ss-row'><span class='ss-key'>POSs</span><span class='ss-val ss-count'>" + items.length + "</span></div><div style='margin:8px 0;'>" + items.map(function(it) { return "<div style='display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2);'><span style='font-size:10px;color:var(--muted);font-weight:600;'>SN</span><span class='sn-tag' style='color:var(--sky);border-color:rgba(56,189,248,.25);'>" + escHtml(it.sn) + "</span></div>"; }).join("") + "</div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div>" + (agent ? "<div class='ss-row'><span class='ss-key'>MS/BD Code</span><span class='ss-val'>" + escHtml(agent) + "</span></div>" : "") + (reason ? "<div class='ss-row'><span class='ss-key'>Reason</span><span class='ss-val'>" + escHtml(reason) + "</span></div>" : "") + "<div class='ss-row'><span class='ss-key'>Stock Status</span><span class='ss-val' style='color:var(--green2);font-weight:800;'>✓ Returned to Available</span></div></div>"; if (errors.length) sumHtml += "<div class='err-block'>⚠️ " + errors.length + " error(s):<br>" + errors.map(function(e){ return escHtml(e); }).join("<br>") + "</div>"; document.getElementById("ua-suc-summary").innerHTML = sumHtml; document.getElementById("ua-form").style.display = "none"; document.getElementById("ua-success").style.display = "block"; setTimeout(function(){ setConn("ok","Connected ✓"); }, 3000); } catch (e) { setConn("err", friendlyErr(e)); alert("" + friendlyErr(e)); } finally { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); } }
 function uaClear() { document.getElementById("ua-f-agent").value = ""; document.getElementById("ua-f-reason").value = ""; document.getElementById("ua-sn-rows").innerHTML = ""; document.getElementById("ua-bulk-area").value = ""; UA_BULK_ROWS = []; uaRenderBulkRows(); UA.snCount = 0; UA.bulkGood = []; uaAddRow(); }
 function uaNew() { document.getElementById("ua-form").style.display = ""; document.getElementById("ua-success").style.display = "none"; uaClear(); }
 // ════════════════════════════════════════════════════════════
@@ -3174,7 +3209,7 @@ async function stockInvLoadSummary() {
     wrap.innerHTML = summaryCards + catSummary + posTypeSummary + table;
 
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error loading summary: " + e.message + "</div>";
+    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error loading summary: " + friendlyErr(e) + "</div>";
   }
 
   if (btn) { btn.disabled = false; btn.textContent = "↺ Refresh Summary"; }
@@ -3383,7 +3418,7 @@ async function stockInvFetchField() {
     var rows    = await dataRes.json();
 
     if (!dataRes.ok) {
-      var errMsg = (rows && rows.message) ? rows.message : ("HTTP " + dataRes.status);
+      var errMsg = (rows && "Something went wrong — please try again.") ? "Something went wrong — please try again." : ("HTTP " + dataRes.status);
       tbody.innerHTML = "<tr><td colspan='9' class='ops-empty' style='color:var(--rose)'>" +
         "DB Error: " + escHtml(errMsg) + "</td></tr>";
       return;
@@ -3460,7 +3495,7 @@ async function stockInvFetchField() {
 
   } catch (e) {
     tbody.innerHTML = "<tr><td colspan='9' class='ops-empty' style='color:var(--rose)'>" +
-      "Error: " + e.message + "</td></tr>";
+      friendlyErr(e) + "</td></tr>";
   }
 }
 
@@ -3505,7 +3540,7 @@ async function stockInvFetch() {
     var rows    = await dataRes.json();
 
     if (!dataRes.ok) {
-      var errMsg = (rows && rows.message) ? rows.message : ("HTTP " + dataRes.status);
+      var errMsg = (rows && "Something went wrong — please try again.") ? "Something went wrong — please try again." : ("HTTP " + dataRes.status);
       tbody.innerHTML = "<tr><td colspan='9' class='ops-empty' style='color:var(--rose)'>" +
         "DB Error: " + escHtml(errMsg) + "</td></tr>";
       return;
@@ -3534,7 +3569,7 @@ async function stockInvFetch() {
 
   } catch (e) {
     tbody.innerHTML = "<tr><td colspan='9' class='ops-empty' style='color:var(--rose)'>" +
-      "Error: " + e.message + "</td></tr>";
+      friendlyErr(e) + "</td></tr>";
   }
 }
 
@@ -3634,7 +3669,7 @@ async function stockInvFetchAll() {
 
   } catch (e) {
     tbody.innerHTML = "<tr><td colspan='9' class='ops-empty' style='color:var(--rose)'>" +
-      "Error: " + e.message + "</td></tr>";
+      friendlyErr(e) + "</td></tr>";
   }
 }
 
@@ -3744,7 +3779,7 @@ async function stockInvDelete(sn, tbl) {
     }
   } catch (e) {
     if (msgEl) msgEl.innerHTML =
-      "<span style='color:var(--rose)'>Error: " + e.message + "</span>";
+      "<span style='color:var(--rose)'>Error: " + friendlyErr(e) + "</span>";
   }
 }
 
@@ -3797,7 +3832,7 @@ async function stockInvBulkDelete() {
       if (msgEl) msgEl.innerHTML =
         "<span style='color:var(--muted)'>Deleted " + done + " / " + sns.length + "…</span>";
     } catch (e) {
-      errors = errors.concat(chunk.map(function(s) { return s + ": " + e.message; }));
+      errors = errors.concat(chunk.map(function(s) { return s + ": " + friendlyErr(e); }));
     }
   }
 
@@ -3907,7 +3942,7 @@ async function stockInvExport() {
     setTimeout(function() { if (msgEl) msgEl.innerHTML = ""; }, 4000);
 
   } catch (e) {
-    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Export error: " + escHtml(e.message) + "</span>";
+    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Export error: " + friendlyErr(e) + "</span>";
   }
 }
 
@@ -4076,7 +4111,7 @@ function admMetricsFetch() {
     if (btn) btn.textContent = "⚡ Refresh";
 
   }).catch(function(e) {
-    if (errEl) errEl.innerHTML = "<span style='color:var(--rose);'>Error: " + escHtml(e.message) + "</span>";
+    if (errEl) errEl.innerHTML = "<span style='color:var(--rose);'>Error: " + friendlyErr(e) + "</span>";
     if (tsEl)  { tsEl.textContent = "⚠ Load failed — check your PAT."; tsEl.style.color="var(--rose)"; }
     if (btn)   btn.textContent = "⚡ Refresh";
   });
@@ -4340,7 +4375,7 @@ async function supLoadApprovals() {
       }).join("") +
       "</tbody></table>";
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
+    wrap.innerHTML = "<div class='ops-empty'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -4409,7 +4444,7 @@ async function _supOpsPageFetch() {
     if (nextBtn) nextBtn.disabled = SUP_OPS_PAGE >= totalPages - 1;
     supOpsRender();
   } catch (e) {
-    if (wrap) wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
+    if (wrap) wrap.innerHTML = "<div class='ops-empty'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -4789,7 +4824,7 @@ async function supLoadKpi() {
 
   } catch (e) {
     if (tableEl) tableEl.innerHTML =
-      "<div class='ops-empty'>Error: " + e.message + "</div>";
+      "<div class='ops-empty'>Error: " + friendlyErr(e) + "</div>";
     console.error("supLoadKpi:", e);
   }
 }
@@ -4847,7 +4882,7 @@ async function admLoadApprovals() {
       }).join("") +
       "</tbody></table>";
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
+    wrap.innerHTML = "<div class='ops-empty'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -4900,7 +4935,7 @@ async function supOpsExport() {
     _downloadCsv("OPayPOS_SupOps_" + new Date().toISOString().split("T")[0] + ".csv", rows);
     if (msgEl) msgEl.textContent = "✓ Exported " + rows.length + " records.";
     setTimeout(function(){ if(msgEl) msgEl.textContent = ""; }, 3000);
-  } catch(e) { alert("Export error: " + e.message); }
+  } catch(e) { alert("" + friendlyErr(e)); }
   if (btn) btn.textContent = "⬇ CSV";
 }
 
@@ -4937,7 +4972,7 @@ async function admOpsExport() {
     _downloadCsv("OPayPOS_AdmOps_" + new Date().toISOString().split("T")[0] + ".csv", rows);
     if (msgEl) msgEl.textContent = "✓ Exported " + rows.length + " records.";
     setTimeout(function(){ if(msgEl) msgEl.textContent = ""; }, 3000);
-  } catch(e) { alert("Export error: " + e.message); }
+  } catch(e) { alert("" + friendlyErr(e)); }
   if (btn) btn.textContent = "⬇ CSV";
 }
 
@@ -4985,7 +5020,7 @@ async function _admOpsPageFetch() {
     if (nextBtn) nextBtn.disabled = ADM_OPS_PAGE >= totalPages - 1;
     admOpsRender();
   } catch (e) {
-    if (wrap) wrap.innerHTML = "<div class='ops-empty'>Error: " + e.message + "</div>";
+    if (wrap) wrap.innerHTML = "<div class='ops-empty'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -5418,7 +5453,7 @@ async function admLoadKpi() {
 
   } catch (e) {
     if (tableEl) tableEl.innerHTML =
-      "<div class='ops-empty'>Error: " + e.message + "</div>";
+      "<div class='ops-empty'>Error: " + friendlyErr(e) + "</div>";
     console.error("admLoadKpi:", e);
   }
 }
@@ -5494,7 +5529,7 @@ async function admLoadStaff() {
     admRenderStaff();
   } catch (e) {
     if (wrap) wrap.innerHTML =
-      "<div class='ops-empty' style='color:var(--rose)'>Error: " + e.message + "</div>";
+      "<div class='ops-empty' style='color:var(--rose)'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -5523,7 +5558,7 @@ function admEditStaffName(id, currentName) {
     admRenderStaff();
     alert("✓ Name updated to: " + newName);
   }).catch(function(e) {
-    alert("Update failed: " + e.message);
+    alert("Update failed: " + friendlyErr(e));
   });
 }
 
@@ -5560,7 +5595,7 @@ async function admDeleteStaff(id, name, role) {
     admRenderStaff();
     alert("✓ Staff account deleted: " + name);
   } catch (e) {
-    alert("Delete failed: " + e.message);
+    alert("" + friendlyErr(e));
   }
 }
 
@@ -5699,7 +5734,7 @@ async function admChangeRole(officerId, newRole, name) {
       admRenderStaff();
     }
   } catch (e) {
-    alert("Role change failed: " + e.message);
+    alert("Role change failed: " + friendlyErr(e));
     if (row) {
       row.querySelectorAll("button").forEach(function(b) { b.disabled = false; });
     }
@@ -5741,7 +5776,7 @@ async function admToggleAutoStock(officerId, name, currentlyEnabled) {
       admRenderStaff();
     }
   } catch (e) {
-    alert("Auto-stock toggle failed: " + e.message);
+    alert("Auto-stock toggle failed: " + friendlyErr(e));
     if (row) row.querySelectorAll("button").forEach(function(b) { b.disabled = false; });
   }
 }
@@ -5847,7 +5882,7 @@ async function admCreateOfficer() {
     admLoadStaff();
   } catch (e) {
     if (msg) msg.innerHTML =
-      "<span style='color:var(--rose)'>Error: " + escHtml(e.message) + "</span>";
+      "<span style='color:var(--rose)'>Error: " + friendlyErr(e) + "</span>";
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = "✓ Create Account"; }
   }
@@ -5906,7 +5941,7 @@ async function admResetPassword(officerId, name, btn) {
       }, 30000);
     }
   } catch (e) {
-    alert("Reset failed: " + e.message);
+    alert("Reset failed: " + friendlyErr(e));
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = "🔑 Reset PW"; }
   }
@@ -6030,7 +6065,7 @@ async function admSaveBranchAssign() {
     }
   } catch (e) {
     if (msgEl) msgEl.innerHTML =
-      "<span style='color:var(--rose)'>Error: " + e.message + "</span>";
+      "<span style='color:var(--rose)'>Error: " + friendlyErr(e) + "</span>";
   }
 }
 
@@ -6106,7 +6141,7 @@ async function deleteBranch(branchId, branchName, suffix) {
 
   } catch (e) {
     if (msgEl) msgEl.innerHTML =
-      "<span style='color:var(--rose)'>Delete failed: " + escHtml(e.message) + "</span>";
+      "<span style='color:var(--rose)'>Delete failed: " + friendlyErr(e) + "</span>";
   }
 }
 
@@ -6123,7 +6158,7 @@ async function branchMgmtLoad() {
     branchMgmtRender();
   } catch (e) {
     if (wrap) wrap.innerHTML =
-      "<div class='ops-empty' style='color:var(--rose)'>Error: " + e.message + "</div>";
+      "<div class='ops-empty' style='color:var(--rose)'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -6271,7 +6306,7 @@ async function branchMgmtSave(branchId) {
 
   } catch (e) {
     if (msg) msg.innerHTML =
-      "<span style='color:var(--rose)'>Error: " + escHtml(e.message) + "</span>";
+      "<span style='color:var(--rose)'>Error: " + friendlyErr(e) + "</span>";
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = "💾 Save"; }
   }
@@ -6405,7 +6440,7 @@ async function createBranchSubmit() {
       document.getElementById("cb-sql").textContent       = sql;
       document.getElementById("cb-sql-block").style.display = "block";
     } else {
-      var err = rows && rows.message ? rows.message : "Unknown error";
+      var err = rows && "Something went wrong — please try again." ? "Something went wrong — please try again." : "Unknown error";
       if (msgEl) msgEl.innerHTML =
         "<span style='color:var(--rose)'>Error: " + escHtml(err) + "</span>";
     }
@@ -6413,7 +6448,7 @@ async function createBranchSubmit() {
   } catch (e) {
     setConn("err", "Error");
     if (msgEl) msgEl.innerHTML =
-      "<span style='color:var(--rose)'>Error: " + e.message + "</span>";
+      "<span style='color:var(--rose)'>Error: " + friendlyErr(e) + "</span>";
   }
   unlockSubmit("cb-sub-btn", "🏗️ Create Branch");
 }
@@ -6658,7 +6693,7 @@ async function _pastOpsFetch() {
     var rows    = await dataRes.json();
 
     if (!dataRes.ok) {
-      var msg = rows && rows.message ? rows.message : ("HTTP " + dataRes.status);
+      var msg = rows && "Something went wrong — please try again." ? "Something went wrong — please try again." : ("HTTP " + dataRes.status);
       tbody.innerHTML = "<tr><td colspan='7' class='ops-empty' style='color:var(--rose)'>" +
         "Error: " + escHtml(msg) + "</td></tr>";
       return;
@@ -6684,7 +6719,7 @@ async function _pastOpsFetch() {
     _pastOpsRender();
   } catch (e) {
     tbody.innerHTML = "<tr><td colspan='7' class='ops-empty' style='color:var(--rose)'>" +
-      "Error: " + e.message + "</td></tr>";
+      friendlyErr(e) + "</td></tr>";
   }
 }
 
@@ -6876,7 +6911,7 @@ async function pastOpsExport() {
     _downloadCsv("OPayPOS_PastOps_" + new Date().toISOString().split("T")[0] + ".csv", rows);
     if (msgEl) msgEl.textContent = "✓ Exported " + rows.length + " records.";
     setTimeout(function(){ if(msgEl) msgEl.textContent = ""; }, 3000);
-  } catch(e) { alert("Export error: " + e.message); }
+  } catch(e) { alert("" + friendlyErr(e)); }
 }
 
 
@@ -7118,8 +7153,8 @@ async function offStockSubmit() {
       btn.disabled = false; btn.textContent = "📦 Submit for Approval";
       return;
     } catch(e) {
-      setConn("err", e.message);
-      alert("Stock add failed: " + e.message);
+      setConn("err", friendlyErr(e));
+      alert("Stock add failed: " + friendlyErr(e));
       btn.disabled = false; btn.textContent = "📦 Submit for Approval";
       return;
     }
@@ -7173,8 +7208,8 @@ async function offStockSubmit() {
     // Update nav badge
     updateOffReqBadge();
   } catch (e) {
-    setConn("err", e.message);
-    alert("Submit failed: " + e.message);
+    setConn("err", friendlyErr(e));
+    alert("Submit failed: " + friendlyErr(e));
   }
   btn.disabled    = false;
   btn.textContent = "📦 Submit for Approval";
@@ -7200,7 +7235,7 @@ async function offMyRequestsLoad() {
     offReqRender();
     updateOffReqBadge();
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error: " + e.message + "</div>";
+    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -7284,7 +7319,7 @@ async function offRequestDelete(sn, tbl, branchId) {
     alert("✓ Delete request submitted. Awaiting supervisor approval.");
     updateOffReqBadge();
   } catch (e) {
-    alert("Request failed: " + e.message);
+    alert("Request failed: " + friendlyErr(e));
   }
 }
 
@@ -7385,8 +7420,8 @@ async function _reviewPending(id, decision, note, dataArr, renderFn, wrapId) {
     }
     debouncedFetchLiveStock();
   } catch (e) {
-    setConn("err", e.message);
-    alert("Review failed: " + e.message);
+    setConn("err", friendlyErr(e));
+    alert("Review failed: " + friendlyErr(e));
   }
 }
 
@@ -7450,7 +7485,7 @@ async function supLoadStockPending() {
     supPendingRender();
     _refreshPendingBadges();
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error: " + e.message + "</div>";
+    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -7483,7 +7518,7 @@ async function admLoadStockPending() {
     admPendingRender();
     _refreshPendingBadges();
   } catch (e) {
-    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error: " + e.message + "</div>";
+    wrap.innerHTML = "<div class='ops-empty' style='color:var(--rose);'>Error: " + friendlyErr(e) + "</div>";
   }
 }
 
@@ -7595,7 +7630,7 @@ async function uaValidateSN(idx) {
     inp.dataset.validatedSn = sn;
   } catch (e) {
     st.className = "sn-status err";
-    st.textContent = "✗ Error: " + e.message;
+    st.textContent = "✗ " + friendlyErr(e);
   }
 }
 
@@ -7729,7 +7764,7 @@ async function uaSubmit() {
           })
         }).catch(function(){});
       } catch (e) {
-        errors.push(item.sn + ": " + e.message);
+        errors.push(item.sn + ": " + friendlyErr(e));
       }
     }));
 
@@ -7767,8 +7802,8 @@ async function uaSubmit() {
     setTimeout(function(){ setConn("ok","Connected ✓"); }, 3000);
 
   } catch (e) {
-    setConn("err", e.message);
-    alert("Unassign error: " + e.message);
+    setConn("err", friendlyErr(e));
+    alert("" + friendlyErr(e));
   } finally {
     unlockSubmit("ua-sub-btn", "↩ Confirm Unassign");
   }
@@ -7854,7 +7889,7 @@ async function offBulkDeleteRequest() {
     document.getElementById("inv-bulk-req-reason").value = "";
     updateOffReqBadge();
   } catch (e) {
-    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error: " + e.message + "</span>";
+    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error: " + friendlyErr(e) + "</span>";
   }
 }
 
@@ -8012,7 +8047,7 @@ async function oldStockLoad() {
 
   } catch (e) {
     tbody.innerHTML = "<tr><td colspan='8' class='ops-empty' style='color:var(--rose);'>Error: " +
-      escHtml(e.message) + "</td></tr>";
+      friendlyErr(e) + "</td></tr>";
   }
 }
 
@@ -8273,7 +8308,7 @@ async function osAddSubmit() {
     osAddClear();
 
   } catch (e) {
-    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error: " + escHtml(e.message) + "</span>";
+    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error: " + friendlyErr(e) + "</span>";
   }
 
   btn.disabled    = false;
@@ -8388,7 +8423,7 @@ async function syncLoadAssigned() {
     syncClearResults();
 
   } catch(e) {
-    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error loading assigned POSs: " + escHtml(e.message) + "</span>";
+    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error loading assigned POSs: " + friendlyErr(e) + "</span>";
   } finally {
     if (btn) btn.textContent = "↺ Load from DB";
   }
@@ -8558,7 +8593,7 @@ async function syncDeleteOne(id, sn, source) {
     }
 
   } catch(e) {
-    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error: " + escHtml(e.message) + "</span>";
+    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose);'>Error: " + friendlyErr(e) + "</span>";
   }
 }
 
