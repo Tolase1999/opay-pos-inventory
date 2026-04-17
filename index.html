@@ -225,6 +225,11 @@ select.input{cursor:pointer;background:#fff;}
 #panel-ret  .toggle-btn.active{border-color:var(--violet);background:rgba(91,63,166,.08);color:var(--violet);}
 #panel-atfs .toggle-btn.active{border-color:var(--rose);background:var(--rose2);color:var(--rose);}
 #panel-rcv  .toggle-btn.active{border-color:var(--green3);background:rgba(82,183,136,.1);color:var(--green2);}
+.swap-type-row{display:flex;gap:10px;margin-top:6px;}
+.swap-type-btn{flex:1;padding:11px 10px;border-radius:10px;border:2px solid var(--border);background:var(--surface);color:var(--text2);font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;text-align:center;}
+.swap-type-btn:hover{border-color:var(--green3);background:var(--green4);color:var(--green);}
+.swap-type-btn.active{border-color:var(--green2);background:var(--green4);color:var(--green);box-shadow:0 0 0 3px rgba(64,145,108,.15);}
+.swap-type-btn.active#s-type-exchange{border-color:var(--sky);background:rgba(56,189,248,.08);color:var(--sky);box-shadow:0 0 0 3px rgba(56,189,248,.12);}
 
 .role-lock{background:var(--rose2);border:1.5px solid rgba(192,57,43,.2);border-radius:12px;padding:24px;text-align:center;}
 .role-lock-icon{font-size:36px;margin-bottom:10px;}
@@ -505,7 +510,19 @@ select.input{cursor:pointer;background:#fff;}
     </div>
   </div>
   <div class="tb-sep"></div>
-  <span style="font-size:9px;font-weight:300;font-style:italic;color:rgba(255,255,255,.4);letter-spacing:.8px;white-space:nowrap;margin-right:10px;">Created by Tolase</span>
+  <div style="display:flex;align-items:center;gap:10px;margin-right:10px;">
+    <!-- Network Signal Indicator -->
+    <div id="net-signal" title="Network status" style="display:flex;align-items:center;gap:5px;cursor:default;">
+      <div style="display:flex;align-items:flex-end;gap:2px;height:14px;">
+        <div id="net-bar1" style="width:3px;height:4px;border-radius:1px;background:rgba(255,255,255,.2);transition:background .4s,height .4s;"></div>
+        <div id="net-bar2" style="width:3px;height:7px;border-radius:1px;background:rgba(255,255,255,.2);transition:background .4s,height .4s;"></div>
+        <div id="net-bar3" style="width:3px;height:10px;border-radius:1px;background:rgba(255,255,255,.2);transition:background .4s,height .4s;"></div>
+        <div id="net-bar4" style="width:3px;height:14px;border-radius:1px;background:rgba(255,255,255,.2);transition:background .4s,height .4s;"></div>
+      </div>
+      <span id="net-label" style="font-size:9px;font-weight:700;letter-spacing:.6px;white-space:nowrap;transition:color .4s;color:rgba(255,255,255,.5);">Checking…</span>
+    </div>
+    <span style="font-size:9px;font-weight:300;font-style:italic;color:rgba(255,255,255,.4);letter-spacing:.8px;white-space:nowrap;">Created by Tolase</span>
+  </div>
   <div class="tb-conn" id="tb-conn"><div class="tb-dot loading" id="tb-dot"></div>
     <span class="tb-conn-txt" id="tb-conn-txt" style="font-size:11px;color:var(--muted);">Connecting…</span></div>
   <div class="tb-branch" id="tb-branch"  style="display:none"></div>
@@ -655,7 +672,16 @@ select.input{cursor:pointer;background:#fff;}
       <div class="card-body">
         <div id="s-form">
           <div class="clock-box" id="s-clock">—</div>
-          <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="s-f-cust" placeholder="e.g. AGG-001"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="s-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>MS/BD CODE</span></div><input class="input" id="s-f-agent" placeholder="e.g. BD-001"></div>
+          <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="s-f-cust" placeholder="e.g. AGG-001"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="s-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div>
+          <div class="fg" style="margin-bottom:12px;">
+            <div class="fl"><span>Swap Type <span style="color:var(--rose);font-weight:700;">*</span></span></div>
+            <div class="swap-type-row" id="s-type-row">
+              <button type="button" class="swap-type-btn" id="s-type-normal" onclick="sSetSwapType('Normal Swap', this)">🔧 Normal Swap</button>
+              <button type="button" class="swap-type-btn" id="s-type-exchange" onclick="sSetSwapType('Normal Exchange', this)">🔁 Normal Exchange</button>
+            </div>
+            <div id="s-type-err" style="display:none;font-size:11px;font-weight:700;color:var(--rose);margin-top:5px;">⚠ Please select a swap type to proceed.</div>
+          </div>
+          <div class="fg" style="margin-bottom:12px;"><div class="fl"><span>MS/BD CODE</span></div><input class="input" id="s-f-agent" placeholder="e.g. BD-001"></div>
           <div class="form-grid"><div class="fg"><div class="fl"><span>Faulty POS SN</span></div><div style="display:flex;gap:6px;align-items:center;"><input class="input" id="s-f-faulty" placeholder="POS-00001" oninput="this.value=this.value.toUpperCase()" style="flex:1"><button class="scan-btn" onclick="scanOpenDirect('s-f-faulty')">📷</button></div><div class="fl" style="margin-top:8px;"><span>Faulty POS Type <span style="color:var(--rose);font-weight:700;">*</span></span></div><select class="input" id="s-f-faulty-model" style="margin-top:4px;"><option value="">Select faulty POS type…</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div><div class="fg"><div class="fl"><span>Replacement POS SN</span></div><div style="display:flex;gap:6px;align-items:center;"><input class="input" id="s-f-replace" placeholder="POS-00002" oninput="this.value=this.value.toUpperCase()" style="flex:1"><button class="scan-btn" onclick="scanOpenDirect('s-f-replace')">📷</button></div></div></div>
           <div style="display:flex;gap:8px;margin-top:8px;"><button class="sub-btn" style="flex:1;" id="s-sub-btn" onclick="sSubmit()">🔄 Confirm Swap</button><button type="button" onclick="sClear()" style="padding:13px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">✕ Clear</button></div>
         </div>
@@ -1995,6 +2021,22 @@ async function countRowsByModel(table, model, statusFilter) {
   } catch (e) { return 0; }
 }
 
+// ── Single source of truth for Assigned count ────────────────────────────
+// Always reads from deployed_assigned WHERE operation='Assigned' — matches
+// what the Stock Inventory "Assigned" view shows, so Summary & Inventory agree.
+async function countBranchAssigned(branchId) {
+  try {
+    var res = await fetch(
+      SUPA_URL + "/rest/v1/deployed_assigned?branch_id=eq." + encodeURIComponent(branchId) +
+      "&operation=eq.Assigned&limit=0",
+      { method: "GET", headers: Object.assign(authH(), { "Prefer": "count=exact" }) }
+    );
+    var cr = res.headers.get("content-range") || "";
+    var m  = cr.match(/\/(\d+)/);
+    return m ? parseInt(m[1], 10) : 0;
+  } catch (e) { return 0; }
+}
+
 async function populateStockBranchPicker() { var role = SUPA_OFFICER ? SUPA_OFFICER.role : null; var selectorWrap = document.getElementById("sb-branch-selector"); var pick = document.getElementById("sb-branch-pick"); if (!selectorWrap || !pick) return; if (role === "Officer") { selectorWrap.style.display = "none"; return; } selectorWrap.style.display = "block"; var branches = []; if (role === "Admin") { try { var r = await sf("branches?select=id,name,code,table_suffix,city&order=name"); branches = await r.json() || []; ALL_BRANCHES = branches; } catch (e) { branches = ALL_BRANCHES; } } else { branches = [{ id: SUPA_BRANCH.id, name: SUPA_BRANCH.name, code: SUPA_BRANCH.code, table_suffix: SUPA_BRANCH.table_suffix, city: SUPA_BRANCH.city || null }]; try { var res = await sf("supervisor_branches?select=branch_id,branches(id,name,code,table_suffix,city)&supervisor_id=eq." + SUPA_OFFICER.id); var rows = await res.json() || []; rows.forEach(function(r) { if (r.branches && r.branches.id !== SUPA_BRANCH.id) branches.push(r.branches); }); } catch (e) {} } pick.innerHTML = "<option value=''>🌐 All branches</option>" + branches.map(function(b) { return "<option value='" + b.id + "' data-suffix='" + b.table_suffix + "' data-name='" + escHtml(b.name) + "'>" + escHtml(b.name) + " (" + escHtml(b.code) + ")</option>"; }).join(""); pick._branches = branches; }
 
 // fetchLiveStock kept but widget removed from UI - no longer called automatically
@@ -2458,12 +2500,27 @@ function aClear() { document.getElementById("a-f-agent").value = ""; document.ge
 //  swap.js - NO BULK (as requested)
 // ════════════════════════════════════════════════════════════
 
-var S = {};
+var S = { swapType: null };
+
+function sSetSwapType(type, btn) {
+  S.swapType = type;
+  document.querySelectorAll(".swap-type-btn").forEach(function(b) { b.classList.remove("active"); });
+  if (btn) btn.classList.add("active");
+  var errEl = document.getElementById("s-type-err");
+  if (errEl) errEl.style.display = "none";
+}
 
 async function sSubmit() {
   if (!lockSubmit("s-sub-btn")) return;
   try {
     var off = SUPA_OFFICER.full_name;
+    // ── Swap type is required ──
+    if (!S.swapType) {
+      var errEl = document.getElementById("s-type-err");
+      if (errEl) errEl.style.display = "";
+      unlockSubmit("s-sub-btn", "🔄 Confirm " + APP_CONFIG.opSwap);
+      return;
+    }
     var merchant = document.getElementById("s-f-cust").value.trim();
     if (!merchant) { unlockSubmit("s-sub-btn", "🔄 Confirm " + APP_CONFIG.opSwap); alert("MERCHANT/AGG ID is required."); return; }
     var tid = (document.getElementById("s-f-tid") || {}).value ? document.getElementById("s-f-tid").value.trim() : "";
@@ -2484,9 +2541,11 @@ async function sSubmit() {
     if (_EDIT_OP.s) { setConn("loading", "Reversing previous swap…"); await undoOpDB(_EDIT_OP.s); OP_LOG = OP_LOG.filter(function(o) { return o.id !== _EDIT_OP.s.id; }); delete _EDIT_OP.s; }
     cacheInvalidate(SUPA_BRANCH.table_suffix || "hq");
     var repIsAssigned = !!(repCheck.isAssigned || repCheck.status === "Assigned" || swapGuard.isAssigned);
-    pushOp({ type: "Swap", faultySn: faulty, faultyModel: faultyModel || null, replacementSn: replace, replacementSource: repCheck.source, replacementModel: repCheck.model, repIsAssigned: repIsAssigned, officer: off, merchantId: merchant, tid: tid, agentCode: agentCode, sns: [replace] });
-    recordOp({ type: "Swap", typeKey: "swp", sns: [faulty, replace], faultySn: faulty, replacementSn: replace, officer: off });
-    document.getElementById("s-suc-summary").innerHTML = "<div class='ss-row'><span class='ss-key'>Faulty (logged)</span><span class='ss-val' style='font-family:monospace;color:var(--rose)'>" + escHtml(faulty) + "</span></div><div class='ss-row'><span class='ss-key'>Replacement (sent out)</span><span class='ss-val' style='font-family:monospace;color:var(--green2)'>" + escHtml(replace) + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldCustomer + "</span><span class='ss-val'>" + escHtml(merchant || "—") + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldAgent + "</span><span class='ss-val'>" + escHtml(agentCode || "—") + "</span></div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div><div class='ss-row'><span class='ss-key'>Note</span><span class='ss-val' style='font-size:11px;color:var(--muted)'>Issued record kept for history</span></div>" + (repIsAssigned ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(181,131,74,.1);border:1.5px solid rgba(181,131,74,.25);border-radius:8px;font-size:11px;color:var(--amber);font-weight:600;'>⚠ Assigned POS used as Swap Replacement: " + escHtml(replace) + "</div>" : "");
+    var swapTypeLabel = S.swapType === "Normal Exchange" ? "🔁 Normal Exchange" : "🔧 Normal Swap";
+    var swapTypeColor = S.swapType === "Normal Exchange" ? "var(--sky)" : "var(--green2)";
+    pushOp({ type: "Swap", faultySn: faulty, faultyModel: faultyModel || null, replacementSn: replace, replacementSource: repCheck.source, replacementModel: repCheck.model, repIsAssigned: repIsAssigned, officer: off, merchantId: merchant, tid: tid, agentCode: agentCode, sns: [replace], swapType: S.swapType });
+    recordOp({ type: "Swap", typeKey: "swp", sns: [faulty, replace], faultySn: faulty, replacementSn: replace, officer: off, swapType: S.swapType });
+    document.getElementById("s-suc-summary").innerHTML = "<div class='ss-row'><span class='ss-key'>Swap Type</span><span class='ss-val' style='font-weight:800;color:" + swapTypeColor + ";'>" + swapTypeLabel + "</span></div><div class='ss-row'><span class='ss-key'>Faulty (logged)</span><span class='ss-val' style='font-family:monospace;color:var(--rose)'>" + escHtml(faulty) + "</span></div><div class='ss-row'><span class='ss-key'>Replacement (sent out)</span><span class='ss-val' style='font-family:monospace;color:var(--green2)'>" + escHtml(replace) + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldCustomer + "</span><span class='ss-val'>" + escHtml(merchant || "—") + "</span></div><div class='ss-row'><span class='ss-key'>" + APP_CONFIG.fieldAgent + "</span><span class='ss-val'>" + escHtml(agentCode || "—") + "</span></div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div><div class='ss-row'><span class='ss-key'>Note</span><span class='ss-val' style='font-size:11px;color:var(--muted)'>Issued record kept for history</span></div>" + (repIsAssigned ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(181,131,74,.1);border:1.5px solid rgba(181,131,74,.25);border-radius:8px;font-size:11px;color:var(--amber);font-weight:600;'>⚠ Assigned POS used as Swap Replacement: " + escHtml(replace) + "</div>" : "");
     document.getElementById("s-form").style.display = "none";
     document.getElementById("s-success").style.display = "block";
     startUndoTimer("s");
@@ -2494,8 +2553,8 @@ async function sSubmit() {
 }
 
 function sEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "swp") _EDIT_OP.s = last; } document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; }
-function sNew() { delete _EDIT_OP.s; document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; ["s-f-faulty", "s-f-replace", "s-f-cust", "s-f-tid", "s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = ""; }
-function sClear() { ["s-f-faulty","s-f-replace","s-f-cust","s-f-tid","s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = ""; }
+function sNew() { delete _EDIT_OP.s; S.swapType = null; document.querySelectorAll(".swap-type-btn").forEach(function(b) { b.classList.remove("active"); }); var errEl = document.getElementById("s-type-err"); if (errEl) errEl.style.display = "none"; document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; ["s-f-faulty", "s-f-replace", "s-f-cust", "s-f-tid", "s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = ""; }
+function sClear() { S.swapType = null; document.querySelectorAll(".swap-type-btn").forEach(function(b) { b.classList.remove("active"); }); var errEl = document.getElementById("s-type-err"); if (errEl) errEl.style.display = "none"; ["s-f-faulty","s-f-replace","s-f-cust","s-f-tid","s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = ""; }
 
 // ════════════════════════════════════════════════════════════
 //  return.js - with DYNAMIC BULK ROWS
@@ -2858,38 +2917,40 @@ async function stockInvLoadSummary() {
       var t = branchTables(br.table_suffix);
       var counts = await Promise.all([
         countRows(t.bn,  'Available'),  // 0 bnAvail
-        countRows(t.bn,  'Assigned'),   // 1 bnAsgn
-        countRows(t.rp,  'Available'),  // 2 rpAvail
-        countRows(t.rp,  'Assigned'),   // 3 rpAsgn
-        countRows(t.rt,  'Available'),  // 4 rtAvail
-        countRows(t.rt,  'Assigned'),   // 5 rtAsgn
-        countRows(t.rbn, 'Available'),  // 6 rbnAvail
-        countRows(t.rbn, 'Assigned'),   // 7 rbnAsgn
-        countRows(t.ft,  null)          // 8 faulty total
+        countRows(t.rp,  'Available'),  // 1 rpAvail
+        countRows(t.rt,  'Available'),  // 2 rtAvail
+        countRows(t.rbn, 'Available'),  // 3 rbnAvail
+        countRows(t.ft,  null),         // 4 faulty total
+        countBranchAssigned(br.id)      // 5 true assigned — from deployed_assigned WHERE operation='Assigned'
       ]);
-      var bnAvail  = counts[0], bnAsgn  = counts[1];
-      var rpAvail  = counts[2], rpAsgn  = counts[3];
-      var rtAvail  = counts[4], rtAsgn  = counts[5];
-      var rbnAvail = counts[6], rbnAsgn = counts[7];
-      var ft       = counts[8];
+      var bnAvail  = counts[0];
+      var rpAvail  = counts[1];
+      var rtAvail  = counts[2];
+      var rbnAvail = counts[3];
+      var ft       = counts[4];
+      var trueAsgn = counts[5]; // single source of truth for assigned count
+
+      // Keep legacy bnAsgn/rpAsgn as 0 — assigned count comes from deployed_assigned now
+      var bnAsgn = 0, rpAsgn = 0;
       return {
         name:     br.name,     code:    br.code || '',
-        city:     br.city || '', suffix: br.table_suffix,
-        bnAvail:  bnAvail,  bnAsgn:  bnAsgn,  bnTotal:  bnAvail + bnAsgn,
-        rpAvail:  rpAvail,  rpAsgn:  rpAsgn,  rpTotal:  rpAvail + rpAsgn,
-        rtAvail:  rtAvail,  rtTotal: rtAvail  + rtAsgn,
-        rbnAvail: rbnAvail, rbnTotal:rbnAvail + rbnAsgn,
+        city:     br.city || '', suffix: br.table_suffix, id: br.id,
+        bnAvail:  bnAvail,  bnAsgn:  bnAsgn,  bnTotal:  bnAvail,
+        rpAvail:  rpAvail,  rpAsgn:  rpAsgn,  rpTotal:  rpAvail,
+        rtAvail:  rtAvail,  rtTotal: rtAvail,
+        rbnAvail: rbnAvail, rbnTotal:rbnAvail,
+        trueAsgn: trueAsgn,
         ft:       ft,
         get avail()  { return this.rbnAvail + this.bnAvail + this.rpAvail + this.rtAvail; },
-        get inField(){ return this.bnAsgn + this.rpAsgn; },
-        get total()  { return this.rbnTotal + this.bnTotal + this.rpTotal + this.rtTotal + this.ft; }
+        get inField(){ return this.trueAsgn; },
+        get total()  { return this.rbnAvail + this.bnAvail + this.rpAvail + this.rtAvail + this.trueAsgn + this.ft; }
       };
     }));
 
     // Totals row
     var totals = {
       bnAvail: 0, bnAsgn: 0, rpAsgn: 0, rpAvail: 0, rtAvail: 0, ft: 0,
-      bnTotal: 0, rpTotal: 0, rtTotal: 0, rbnAvail: 0, rbnTotal: 0
+      bnTotal: 0, rpTotal: 0, rtTotal: 0, rbnAvail: 0, rbnTotal: 0, trueAsgn: 0
     };
     results.forEach(function(r) {
       totals.bnAvail  += r.bnAvail;  totals.bnAsgn   += r.bnAsgn;
@@ -2897,11 +2958,11 @@ async function stockInvLoadSummary() {
       totals.rtAvail  += r.rtAvail; totals.ft        += r.ft;
       totals.bnTotal  += r.bnTotal; totals.rpTotal   += r.rpTotal;
       totals.rtTotal  += r.rtTotal; totals.rbnAvail  += r.rbnAvail;
-      totals.rbnTotal += r.rbnTotal;
+      totals.rbnTotal += r.rbnTotal; totals.trueAsgn += r.trueAsgn;
     });
-    var grandTotal   = totals.rbnTotal + totals.bnTotal + totals.rpTotal + totals.rtTotal + totals.ft;
+    var grandTotal   = totals.rbnAvail + totals.bnAvail + totals.rpAvail + totals.rtAvail + totals.trueAsgn + totals.ft;
     var grandAvail   = totals.rbnAvail + totals.bnAvail + totals.rpAvail + totals.rtAvail;
-    var grandInField = totals.bnAsgn + totals.rpAsgn; // Only Assigned counts as On Field
+    var grandInField = totals.trueAsgn; // From deployed_assigned — matches Inventory view exactly
 
     // Sort branches by total desc
     results.sort(function(a, b) { return b.total - a.total; });
@@ -2974,7 +3035,7 @@ async function stockInvLoadSummary() {
         "</td>" +
         "<td style='text-align:center;'>" +
           "<span style='font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--amber);'>" +
-            (br.bnAsgn + (br.rpAsgn||0)) + "</span>" +
+            br.trueAsgn + "</span>" +
         "</td>" +
         "<td style='text-align:center;'>" +
           "<span style='font-family:Syne,sans-serif;font-size:16px;font-weight:800;color:var(--text);'>" +
@@ -2993,7 +3054,7 @@ async function stockInvLoadSummary() {
         "<td style='text-align:center;'><strong style='color:var(--sky);font-family:Syne,sans-serif;font-size:14px;'>"    + totals.rpAvail + "</strong></td>" +
         "<td style='text-align:center;'><strong style='color:var(--violet);font-family:Syne,sans-serif;font-size:14px;'>" + totals.rtAvail + "</strong></td>" +
         "<td style='text-align:center;'><strong style='color:var(--rose);font-family:Syne,sans-serif;font-size:14px;'>"   + totals.ft      + "</strong></td>" +
-        "<td style='text-align:center;'><strong style='color:var(--amber);font-family:Syne,sans-serif;font-size:14px;'>"  + (totals.bnAsgn + totals.rpAsgn) + "</strong></td>" +
+        "<td style='text-align:center;'><strong style='color:var(--amber);font-family:Syne,sans-serif;font-size:14px;'>"  + totals.trueAsgn + "</strong></td>" +
         "<td style='text-align:center;'><strong style='color:var(--text);font-family:Syne,sans-serif;font-size:15px;'>"   + grandTotal     + "</strong></td>" +
       "</tr>";
 
@@ -3301,7 +3362,7 @@ async function stockInvFetchField() {
 
   try {
     var operationFilter = _invCat === "deployed"
-      ? "&operation=in.(Deployed,Swap (replacement))"
+      ? "&operation=in.(Deployed,Swap (replacement),Deployed (Assigned POS),Swap (Assigned POS))"
       : "&operation=eq.Assigned";
 
     var snFilter = INV_FILTER_Q
@@ -8657,6 +8718,56 @@ document.addEventListener("DOMContentLoaded", function() {
   loadBranchesForSignup();
   testConn();
   if (!checkSession()) { }
+
+  // ── Network Signal Indicator ──────────────────────────────────────────────
+  function updateNetSignal() {
+    const label  = document.getElementById('net-label');
+    const bars   = [
+      document.getElementById('net-bar1'),
+      document.getElementById('net-bar2'),
+      document.getElementById('net-bar3'),
+      document.getElementById('net-bar4')
+    ];
+    if (!bars[0] || !label) return;
+
+    const heights = ['4px','7px','10px','14px'];
+
+    if (!navigator.onLine) {
+      bars.forEach((b, i) => { b.style.height = heights[i]; b.style.background = 'rgba(239,68,68,.85)'; });
+      label.textContent = 'Offline';
+      label.style.color  = 'rgba(239,68,68,.95)';
+      document.getElementById('net-signal').title = 'Network: Offline';
+      return;
+    }
+
+    // Use Network Information API when available for quality level
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    let level = 4, color = '#6ee7b7', text = 'Good';
+    if (conn) {
+      const ect = conn.effectiveType;
+      if      (ect === 'slow-2g') { level = 1; color = '#f87171'; text = 'Very Slow'; }
+      else if (ect === '2g')      { level = 2; color = '#fbbf24'; text = 'Slow';      }
+      else if (ect === '3g')      { level = 3; color = '#fbbf24'; text = 'Fair';      }
+      else                         { level = 4; color = '#6ee7b7'; text = 'Good';      }
+      if (conn.saveData) { text += ' (Data Saver)'; }
+    }
+
+    bars.forEach((b, i) => {
+      b.style.height     = heights[i];
+      b.style.background = i < level ? color : 'rgba(255,255,255,.18)';
+    });
+    label.textContent = text;
+    label.style.color = color;
+    document.getElementById('net-signal').title = 'Network: ' + text;
+  }
+
+  // Run on load, on status change events, and every 10 s
+  updateNetSignal();
+  window.addEventListener('online',  updateNetSignal);
+  window.addEventListener('offline', updateNetSignal);
+  if (navigator.connection) navigator.connection.addEventListener('change', updateNetSignal);
+  setInterval(updateNetSignal, 10000);
+  // ─────────────────────────────────────────────────────────────────────────
 });
 </script>
 </body>
