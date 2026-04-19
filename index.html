@@ -237,7 +237,7 @@ select.input{cursor:pointer;background:#fff;}
 .role-lock-sub{font-size:12px;color:var(--muted);line-height:1.6;}
 .role-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(181,131,74,.1);border:1px solid rgba(181,131,74,.2);color:var(--amber);margin-bottom:14px;}
 
-.ops-wrap{border:1px solid var(--border);border-radius:12px;overflow:hidden;max-height:420px;overflow-y:auto;margin-bottom:14px;background:var(--surface);}
+.ops-wrap{border:1px solid var(--border);border-radius:12px;overflow-x:auto;overflow-y:auto;max-height:420px;margin-bottom:14px;background:var(--surface);}
 .ops-table{width:100%;border-collapse:collapse;font-size:12px;}
 .ops-table th{padding:10px 12px;text-align:left;font-weight:700;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);background:var(--bg3);border-bottom:2px solid var(--border);position:sticky;top:0;}
 .ops-table td{padding:9px 12px;border-bottom:1px solid var(--border2);color:var(--text);vertical-align:middle;}
@@ -1826,26 +1826,50 @@ async function validateSNForSwap(sn) {
   labels[t.bn] = "Brand New";
   labels[t.rp] = "Repaired";
   labels[t.rt] = "R&R Working Good";
+
+  // Helper: resolve a stock hit into a full result object
+  async function resolveHit(hit, tbl) {
+    if (hit.status === "Deployed") return { ok: false, msg: "SN is Issued — cannot use an issued " + asset() + " for swap" };
+    if (hit.status === "Assigned") {
+      var aRes = await sf("deployed_assigned?select=sn,model,source,operation&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id).catch(function(){return null;});
+      var aRows = aRes ? await aRes.json().catch(function(){return [];}) : [];
+      var aRow  = Array.isArray(aRows) && aRows.length ? aRows[0] : null;
+      var src   = aRow ? (aRow.source || tbl) : tbl;
+      return { ok: true, msg: "⚠ Assigned POS · " + labels[tbl] + (hit.model ? " · " + hit.model : ""), sn: hit.sn, model: hit.model, source: src, status: "Assigned", isAssigned: true };
+    }
+    return { ok: true, msg: labels[tbl] + " · Available" + (hit.model ? " · " + hit.model : ""), sn: hit.sn, model: hit.model, source: tbl, status: "Available" };
+  }
+
   try {
     var cache = await cacheFetch(suffix);
     if (!cache) return { ok: false, msg: "Cache error" };
     if (cache.faulty.find(function(r) { return r.sn === sn; })) return { ok: false, msg: "In faulty log — mark as Repaired first" };
-    var tables = [{ tbl: t.rbn, rows: cache.rbn || [] }, { tbl: t.bn, rows: cache.bn }, { tbl: t.rp, rows: cache.rp }, { tbl: t.rt, rows: cache.rt }];
+    var tables = [{ tbl: t.rbn, rows: cache.rbn || [] }, { tbl: t.bn, rows: cache.bn || [] }, { tbl: t.rp, rows: cache.rp || [] }, { tbl: t.rt, rows: cache.rt || [] }];
     for (var i = 0; i < tables.length; i++) {
       var hit = tables[i].rows.find(function(r) { return r.sn === sn; });
-      if (hit) {
-        if (hit.status === "Deployed") return { ok: false, msg: "SN is Issued — cannot use an issued " + asset() + " for swap" };
-        if (hit.status === "Assigned") {
-          // Assigned POS found in stock cache — look up source from deployed_assigned for accuracy
-          var aRes = await sf("deployed_assigned?select=sn,model,source,operation&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id).catch(function(){return null;});
-          var aRows = aRes ? await aRes.json().catch(function(){return [];}) : [];
-          var aRow = Array.isArray(aRows) && aRows.length ? aRows[0] : null;
-          var srcForAssigned = aRow ? (aRow.source || tables[i].tbl) : tables[i].tbl;
-          return { ok: true, msg: "⚠ Assigned POS · " + labels[tables[i].tbl] + (hit.model ? " · " + hit.model : ""), sn: hit.sn, model: hit.model, source: srcForAssigned, status: "Assigned", isAssigned: true };
-        }
-        return { ok: true, msg: labels[tables[i].tbl] + " · Available" + (hit.model ? " · " + hit.model : ""), sn: hit.sn, model: hit.model, source: tables[i].tbl, status: "Available" };
-      }
+      if (hit) return resolveHit(hit, tables[i].tbl);
     }
+
+    // ── Cache miss fallback: query DB directly (same as validateSN) ──
+    // Handles stale cache, recently approved stock, or cross-branch transfers.
+    try {
+      var freshResults = await Promise.all([
+        sf(t.rbn + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn)).then(function(r){return r.json();}).catch(function(){return [];}),
+        sf(t.bn  + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn)).then(function(r){return r.json();}).catch(function(){return [];}),
+        sf(t.rp  + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn)).then(function(r){return r.json();}).catch(function(){return [];}),
+        sf(t.rt  + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn)).then(function(r){return r.json();}).catch(function(){return [];})
+      ]);
+      var freshTbls = [t.rbn, t.bn, t.rp, t.rt];
+      for (var fi = 0; fi < freshResults.length; fi++) {
+        var freshRows = freshResults[fi];
+        if (Array.isArray(freshRows) && freshRows.length) {
+          cacheInvalidate(suffix); // force fresh cache on next call
+          return resolveHit(freshRows[0], freshTbls[fi]);
+        }
+      }
+    } catch (_fe) {}
+
+    // ── Check deployed_assigned (Assigned POSs not yet in stock tables) ──
     var res = await sf("deployed_assigned?select=sn,model,source,operation&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id);
     var rows = await res.json();
     if (Array.isArray(rows) && rows.length) {
@@ -2522,11 +2546,13 @@ async function edtRefresh() {
       "ATFS": "ATFS", "POS ATFS": "ATFS"
     };
     var typeKeyMap = { "Issued": "dep", "Assigned": "asg", "Swap": "swp", "Return": "ret", "ATFS": "atfs" };
+    // ── First pass: build entries into a temp array ─────────────────────
+    var newEntries = [];
     dbRows.forEach(function(row) {
-      if (existingDbIds[row.id]) return; // already tracked this session via DB id
+      if (existingDbIds[row.id]) return;
       var sn = row.sn;
       if (!sn) return;
-      if (existingSns[sn]) return; // SN already in OP_LOG from this session — prevents bulk-op duplicates
+      if (existingSns[sn]) return;
       var rawOp = row.operation || "";
       var opType = opTypeMap[rawOp] || null;
       if (!opType) {
@@ -2535,30 +2561,75 @@ async function edtRefresh() {
         else if (rawOp.toLowerCase().includes("swap")) opType = "Swap";
         else if (rawOp.toLowerCase().includes("return")) opType = "Return";
         else if (rawOp.toLowerCase().includes("atfs")) opType = "ATFS";
-        else return; // skip unknown (receive stock etc.)
+        else return;
       }
       var typeKey = typeKeyMap[opType] || "dep";
       var entry = {
         id: OP_NEXT++,
         type: opType,
         typeKey: typeKey,
-        sns: [sn],            // ← exactly 1 SN per entry so it can be deleted alone
+        sns: [sn],
         officer: row.officer || SUPA_OFFICER.full_name,
         ts: row.date + " " + (row.time || "").substring(0, 8),
         reason: row.reason || "",
-        dbIds: [row.id],      // ← exactly 1 DB row id per entry
+        dbIds: [row.id],
         deleted: false,
         fromDB: true
       };
-      // For Swap rows keep faulty/replacement metadata
+      // MID/BD Code lives in reason text — same source as _extractOpId / past-ops
+      var _midM = (row.reason||"").match(/MERCHANT\/AGG ID:\s*([^\s·|]+)/i) || (row.reason||"").match(/MID:\s*([^\s·|]+)/i);
+      var _bdM  = (row.reason||"").match(/MS\/BD CODE:\s*([^\s·|]+)/i)      || (row.reason||"").match(/BD CODE:\s*([^\s·|]+)/i);
+      var _tidM = (row.reason||"").match(/TID:\s*([^\s·|]+)/i);
+      if (_midM) entry.merchantId = _midM[1];
+      if (_bdM)  entry.agentCode  = _bdM[1];
+      if (_tidM) entry.tid        = _tidM[1];
       if (opType === "Swap") {
-        if (rawOp.toLowerCase().includes("faulty") || rawOp.includes("in)")) {
-          entry.faultySn = sn; entry.replacementSn = null;
-        } else {
-          entry.faultySn = null; entry.replacementSn = sn;
-        }
+        var isF = rawOp.toLowerCase().includes("faulty") || rawOp.includes("in)");
+        entry.faultySn      = isF ? sn : null;
+        entry.replacementSn = isF ? null : sn;
+        entry._rawTime      = row.time || "00:00:00";
       }
-      OP_LOG.push(entry);
+      newEntries.push(entry);
+    });
+
+    // ── Swap pairing: merge "faulty in" + "new out" into one OP_LOG entry ─
+    // Mirrors _mergeSwapRows so Edit/Delete shows ⚠ faultySN → ✓ replaceSN.
+    function _edtTimeSec(t) {
+      var p = (t || "00:00:00").split(":");
+      return parseInt(p[0]||0,10)*3600 + parseInt(p[1]||0,10)*60 + parseInt(p[2]||0,10);
+    }
+    var faultyEntries = newEntries.filter(function(e){ return e.type === "Swap" && e.faultySn; });
+    var outEntries    = newEntries.filter(function(e){ return e.type === "Swap" && e.replacementSn && !e.faultySn; });
+    var usedOutIds    = {};
+
+    faultyEntries.forEach(function(fEntry) {
+      var best = null, bestDiff = Infinity;
+      outEntries.forEach(function(oEntry) {
+        if (usedOutIds[oEntry.id]) return;
+        if ((oEntry.officer || "") !== (fEntry.officer || "")) return;
+        var diff = Math.abs(_edtTimeSec(fEntry._rawTime) - _edtTimeSec(oEntry._rawTime));
+        if (diff < bestDiff && diff <= 900) { best = oEntry; bestDiff = diff; }
+      });
+      if (best) {
+        usedOutIds[best.id] = true;
+        fEntry.replacementSn = best.replacementSn;
+        fEntry.sns = [fEntry.faultySn, best.replacementSn].filter(Boolean);
+        fEntry.dbIds = (fEntry.dbIds || []).concat(best.dbIds || []);
+        var swType = _extractSwapType(fEntry.reason) || _extractSwapType(best.reason);
+        if (swType) fEntry.swapType = swType;
+        // MID/BD Code is on the "new out" leg — carry it onto the merged entry
+        if (!fEntry.merchantId && best.merchantId) fEntry.merchantId = best.merchantId;
+        if (!fEntry.agentCode  && best.agentCode)  fEntry.agentCode  = best.agentCode;
+        if (!fEntry.tid        && best.tid)         fEntry.tid        = best.tid;
+      }
+      delete fEntry._rawTime;
+    });
+
+    // Push to OP_LOG — skip "new out" half-entries that were merged into their pair
+    newEntries.forEach(function(e) {
+      if (e.type === "Swap" && !e.faultySn && e.replacementSn && usedOutIds[e.id]) return;
+      delete e._rawTime;
+      OP_LOG.push(e);
     });
     edtRender();
     edtUpdateBadge();
@@ -2614,11 +2685,12 @@ function edtRender() {
     var tsDate   = tsParts[0] || "";
     var tsTime   = tsParts.slice(1).join(" ") || "";
     return "<tr class='" + (op.deleted ? "op-deleted" : "") + "'>" +
-      "<td class='td-date' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsDate) + "</td>" +
-      "<td class='td-time' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsTime) + "</td>" +
+      "<td style='font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;'>" + escHtml(tsDate) + "</td>" +
+      "<td style='font-size:11px;color:var(--muted);'>" + escHtml(tsTime) + "</td>" +
       "<td>" + opChipHtml(op.type, op.condition) + (op.type === "Swap" && op.swapType ? _swapTypeBadgeHtml(op.swapType) : "") + "</td>" +
-      "<td style='font-size:11px;color:var(--text2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'>" + midCell + "</td>" +
-      "<td class='td-officer'>" + escHtml(op.officer || "") + "</td>" +
+      "<td style='white-space:nowrap;'>" + snCell + "</td>" +
+      "<td style='font-size:11px;color:var(--text2);font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'>" + midCell + "</td>" +
+      "<td style='font-size:11px;font-weight:600;color:var(--sky);'>" + escHtml(op.officer || "") + "</td>" +
       "<td><div class='td-actions'>" +
         "<button class='act-btn act-edit'" + dis + " onclick='edtOpenEdit(" + op.id + ")'>✎</button>" +
         "<button class='act-btn act-del'"  + dis + " onclick='edtConfirmDelete(" + op.id + ")'>🗑</button>" +
@@ -2627,7 +2699,7 @@ function edtRender() {
   }).join("");
   wrap.innerHTML =
     "<table class='ops-table'><thead><tr>" +
-    "<th>Date</th><th>Time</th><th>Type</th><th>SNs</th><th>MID / BD Code</th><th>Officer</th><th>Actions</th>" +
+    "<th>Date</th><th>Time</th><th>Operation</th><th>Serial Number</th><th>MID / BD Code</th><th>Officer</th><th>Actions</th>" +
     "</tr></thead><tbody>" + rows + "</tbody></table>";
 }
 
