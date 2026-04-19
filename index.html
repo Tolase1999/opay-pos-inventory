@@ -931,7 +931,47 @@ select.input{cursor:pointer;background:#fff;}
     <div class="panel" id="panel-stock-inv">
       <div class="page-label"><div class="op-chip inv">🔍 Stock Inventory</div><div class="crumb">→ Browse SNs by branch &amp; category</div></div>
       <div class="card" id="inv-summary-card"><div class="card-header inv"><div class="card-icon inv">📊</div><div><h2>Stock Breakdown by Branch</h2><p>Live count of all SNs across every branch and category</p></div><button class="act-btn act-edit" onclick="stockInvLoadSummary()" id="inv-summary-refresh-btn" style="margin-left:auto;padding:6px 14px;white-space:nowrap;">↺ Refresh Summary</button></div><div class="card-body" style="padding:16px 20px;"><div id="inv-summary-wrap"><div class="ops-empty" style="padding:18px 0;">Click <strong>Refresh Summary</strong> to load the breakdown.</div></div></div></div>
-      <div class="card"><div class="card-header"><div class="card-icon inv">🔍</div><div><h2>Stock Inventory</h2><p>View all serial numbers in any branch stock — search, filter, and delete</p></div></div><div class="card-body"><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;"><div class="fg" style="margin:0;min-width:180px;"><div class="fl" style="margin-bottom:4px;"><span>Branch</span></div><select class="input" id="inv-branch-select" onchange="stockInvLoad()"><option value="__all__">🌐 All Branches</option></select></div><div class="fg" style="margin:0;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span>Category</span></div><select class="input" id="inv-cat-select" onchange="stockInvLoad()"><optgroup label="── IN OFFICE STOCK ──"><option value="__all__">📊 All Office Stock</option><option value="rbn">🆕 R&amp;R Brand New</option><option value="bn">📦 Brand New</option><option value="rp">🔧 Repaired</option><option value="rt">↩ Return</option><option value="ft">⚡ Faulty</option></optgroup><optgroup label="── ON FIELD ──"><option value="deployed">🚀 Deployed (Issued)</option><option value="assigned">📋 Assigned (MS/BD)</option></optgroup></select></div><div class="fg" style="margin:0;min-width:170px;"><div class="fl" style="margin-bottom:4px;"><span>POS Type</span></div><select class="input" id="inv-model-filter" onchange="stockInvLoad()" style="padding:10px 13px;"><option value="">All Types</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div><div class="fg" style="margin:0;flex:1;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span>Search SN</span></div><input class="input ed-search" id="inv-search" placeholder="Filter serial numbers…" oninput="stockInvFilter()" style="height:42px;"></div><button class="act-btn act-edit" onclick="stockInvLoad()" style="padding:10px 18px;height:42px;">↺ Refresh</button><button class="act-btn act-edit" onclick="stockInvExport()" style="padding:10px 18px;height:42px;">⬇ Export CSV</button></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;"><div id="inv-count-bar" style="font-size:11px;color:var(--muted);font-weight:600;"></div><div style="display:flex;align-items:center;gap:6px;"><button class="act-btn act-edit" id="inv-prev-btn" onclick="stockInvPage(-1)" style="padding:4px 10px;" disabled>‹ Prev</button><span id="inv-page-lbl" style="font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap;">Page 1</span><button class="act-btn act-edit" id="inv-next-btn" onclick="stockInvPage(1)" style="padding:4px 10px;" disabled>Next ›</button></div></div><div class="inv-table-wrap"><table class="inv-table" id="inv-table"><thead><tr id="inv-thead-row"><th>#</th><th>Serial Number</th><th>POS Type</th><th>Status</th><th>Branch</th><th>Category</th><th>Added By</th><th>Added</th><th>Actions</th></tr></thead><tbody id="inv-tbody"><tr><td colspan="9" class="ops-empty">Select a branch and category above.</td></tr></tbody></table></div><div id="inv-msg" style="margin-top:10px;font-size:12px;font-weight:600;"></div><div id="inv-bulk-del-section" style="margin-top:18px;padding:14px;background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">🗑 Bulk Delete SNs</div><div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Paste serial numbers (one per line or comma separated). Only deletes from the currently selected branch &amp; category.</div><textarea class="bulk-area" id="inv-bulk-del-area" placeholder="POS-00001&#10;POS-00002" rows="4" style="margin-bottom:8px;"></textarea><div style="display:flex;gap:8px;"><button class="bval-btn" onclick="stockInvBulkDelete()" style="background:linear-gradient(135deg,var(--rose),#B91C1C);color:#fff;border-color:transparent;">🗑 Delete All Listed</button><div id="inv-bulk-del-msg" style="font-size:11px;font-weight:700;line-height:36px;color:var(--muted);"></div></div></div><div id="inv-bulk-req-section" style="display:none;margin-top:18px;padding:14px;background:rgba(192,57,43,.04);border:1.5px solid rgba(192,57,43,.2);border-radius:12px;"><div style="font-size:11px;font-weight:700;color:var(--rose);margin-bottom:6px;">🗑 Bulk Delete Request</div><div style="padding:8px 12px;background:rgba(181,131,74,.08);border:1px solid rgba(181,131,74,.2);border-radius:8px;font-size:11px;color:var(--amber);margin-bottom:10px;line-height:1.6;">⏳ Deletion requests require supervisor/admin approval before SNs are removed.</div><textarea class="bulk-area" id="inv-bulk-req-area" placeholder="POS-00001&#10;POS-00002&#10;POS-00003" rows="4" style="margin-bottom:8px;"></textarea><div class="fg" style="margin-bottom:8px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">Reason for deletion <span style="font-size:10px;font-weight:400;color:var(--muted);">(optional)</span></span></div><input class="input" id="inv-bulk-req-reason" placeholder="e.g. Damaged, lost, duplicates…" style="padding:8px 12px;"></div><div style="display:flex;gap:8px;align-items:center;"><button class="bval-btn" onclick="offBulkDeleteRequest()" style="background:linear-gradient(135deg,var(--rose),#B91C1C);color:#fff;border-color:transparent;padding:8px 18px;">🗑 Submit Delete Request</button><div id="inv-bulk-req-msg" style="font-size:11px;font-weight:700;color:var(--muted);"></div></div></div></div></div>
+      <div class="card"><div class="card-header"><div class="card-icon inv">🔍</div><div><h2>Stock Inventory</h2><p>View all serial numbers in any branch stock — search, filter, and delete</p></div></div><div class="card-body"><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;"><div class="fg" style="margin:0;min-width:180px;"><div class="fl" style="margin-bottom:4px;"><span>Branch</span></div><select class="input" id="inv-branch-select" onchange="stockInvLoad()"><option value="__all__">🌐 All Branches</option></select></div><div class="fg" style="margin:0;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span>Category</span></div><select class="input" id="inv-cat-select" onchange="stockInvLoad()"><optgroup label="── IN OFFICE STOCK ──"><option value="__all__">📊 All Office Stock</option><option value="rbn">🆕 R&amp;R Brand New</option><option value="bn">📦 Brand New</option><option value="rp">🔧 Repaired</option><option value="rt">↩ Return</option><option value="ft">⚡ Faulty</option></optgroup><optgroup label="── ON FIELD ──"><option value="deployed">🚀 Deployed (Issued)</option><option value="assigned">📋 Assigned (MS/BD)</option></optgroup></select></div><div class="fg" style="margin:0;min-width:170px;"><div class="fl" style="margin-bottom:4px;"><span>POS Type</span></div><select class="input" id="inv-model-filter" onchange="stockInvLoad()" style="padding:10px 13px;"><option value="">All Types</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS">MPOS (Mini POS)</option></select></div><div class="fg" style="margin:0;flex:1;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span>Search SN</span></div><input class="input ed-search" id="inv-search" placeholder="Filter serial numbers…" oninput="stockInvFilter()" style="height:42px;"></div><button class="act-btn act-edit" onclick="stockInvLoad()" style="padding:10px 18px;height:42px;">↺ Refresh</button><button class="act-btn act-edit" onclick="stockInvExport()" style="padding:10px 18px;height:42px;">⬇ Export CSV</button></div><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;"><div id="inv-count-bar" style="font-size:11px;color:var(--muted);font-weight:600;"></div><div style="display:flex;align-items:center;gap:6px;"><button class="act-btn act-edit" id="inv-prev-btn" onclick="stockInvPage(-1)" style="padding:4px 10px;" disabled>‹ Prev</button><span id="inv-page-lbl" style="font-size:11px;color:var(--muted);font-weight:700;white-space:nowrap;">Page 1</span><button class="act-btn act-edit" id="inv-next-btn" onclick="stockInvPage(1)" style="padding:4px 10px;" disabled>Next ›</button></div></div><div class="inv-table-wrap"><table class="inv-table" id="inv-table"><thead><tr id="inv-thead-row"><th>#</th><th>Serial Number</th><th>POS Type</th><th>Status</th><th>Branch</th><th>Category</th><th>Added By</th><th>Added</th><th>Actions</th></tr></thead><tbody id="inv-tbody"><tr><td colspan="9" class="ops-empty">Select a branch and category above.</td></tr></tbody></table></div><div id="inv-msg" style="margin-top:10px;font-size:12px;font-weight:600;"></div><div id="inv-bulk-del-section" style="margin-top:18px;padding:16px;background:var(--bg3);border:1.5px solid var(--border);border-radius:12px;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+    <span style="font-size:12px;font-weight:700;color:var(--text2);">🗑 Bulk Delete SNs</span>
+    <span style="background:rgba(45,106,79,.13);color:var(--green2);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.3px;">Smart Mode</span>
+  </div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Validates and locates SNs across all accessible branches. Assigned or Deployed SNs cannot be deleted until returned.</div>
+  <div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;">📋 Paste serial numbers (one per line or comma separated)</div>
+  <textarea class="bulk-area" id="inv-bulk-del-area" placeholder="POS-00001&#10;POS-00002&#10;POS-00003" rows="4" style="margin-bottom:10px;"></textarea>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:4px;">
+    <button class="bval-btn" onclick="smartBulkValidate()" style="background:linear-gradient(135deg,#0ea5e9,#0369a1);color:#fff;border-color:transparent;padding:8px 16px;">🔍 Validate &amp; Locate SNs</button>
+    <button class="act-btn act-edit" onclick="smartBulkClear()" style="padding:8px 14px;">✕ Clear</button>
+    <div id="inv-bulk-del-msg" style="font-size:11px;font-weight:700;color:var(--muted);line-height:1.5;"></div>
+  </div>
+  <div id="smart-bulk-results" style="display:none;margin-top:14px;border-top:1px solid var(--border);padding-top:14px;">
+    <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;letter-spacing:.3px;">── Validation Results ──</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <label style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;color:var(--text2);cursor:pointer;">
+        <input type="checkbox" id="smart-select-all" onchange="smartBulkToggleAll(this.checked)" style="width:14px;height:14px;accent-color:var(--green2);">
+        ☑ Select All Deletable
+      </label>
+      <span id="smart-sel-count" style="font-size:11px;color:var(--muted);font-weight:600;"></span>
+    </div>
+    <div style="overflow-x:auto;border-radius:8px;border:1px solid var(--border);margin-bottom:12px;">
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr style="background:var(--bg2);">
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);width:36px;">☑</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);">SN</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);">Branch</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);">Status</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);">Category</th>
+            <th style="padding:8px 10px;text-align:left;font-weight:700;color:var(--text2);">Action Preview</th>
+          </tr>
+        </thead>
+        <tbody id="smart-bulk-tbody"></tbody>
+      </table>
+    </div>
+    <button id="smart-del-btn" class="bval-btn" onclick="smartBulkDeleteSelected()" style="background:linear-gradient(135deg,var(--rose),#B91C1C);color:#fff;border-color:transparent;padding:9px 20px;">🗑 Delete Selected</button>
+  </div>
+</div>
+<div id="inv-bulk-req-section" style="display:none;margin-top:18px;padding:14px;background:rgba(192,57,43,.04);border:1.5px solid rgba(192,57,43,.2);border-radius:12px;"><div style="font-size:11px;font-weight:700;color:var(--rose);margin-bottom:6px;">🗑 Bulk Delete Request</div><div style="padding:8px 12px;background:rgba(181,131,74,.08);border:1px solid rgba(181,131,74,.2);border-radius:8px;font-size:11px;color:var(--amber);margin-bottom:10px;line-height:1.6;">⏳ Deletion requests require supervisor/admin approval before SNs are removed.</div><textarea class="bulk-area" id="inv-bulk-req-area" placeholder="POS-00001&#10;POS-00002&#10;POS-00003" rows="4" style="margin-bottom:8px;"></textarea><div class="fg" style="margin-bottom:8px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">Reason for deletion <span style="font-size:10px;font-weight:400;color:var(--muted);">(optional)</span></span></div><input class="input" id="inv-bulk-req-reason" placeholder="e.g. Damaged, lost, duplicates…" style="padding:8px 12px;"></div><div style="display:flex;gap:8px;align-items:center;"><button class="bval-btn" onclick="offBulkDeleteRequest()" style="background:linear-gradient(135deg,var(--rose),#B91C1C);color:#fff;border-color:transparent;padding:8px 18px;">🗑 Submit Delete Request</button><div id="inv-bulk-req-msg" style="font-size:11px;font-weight:700;color:var(--muted);"></div></div></div></div></div>
     </div>
 
     <div class="panel" id="panel-create-branch"><div class="page-label"><div class="op-chip br">🏗️ Create Branch</div><div class="crumb">→ Register a new branch</div></div><div class="card"><div class="card-header"><div class="card-icon br">🏗️</div><div><h2>Create New Branch</h2><p>Register a new office branch — creates stock tables in the database</p></div></div><div class="card-body"><div style="background:rgba(181,131,74,.08);border:1.5px solid rgba(181,131,74,.25);border-radius:10px;padding:12px 14px;margin-bottom:18px;font-size:12px;color:var(--amber);line-height:1.6;">⚠️ <strong>Important:</strong> The <em>Table Suffix</em> names stock tables in the database (e.g. suffix <code>lag</code> creates <code>stock_rbn_lag</code>, <code>stock_bn_lag</code>, etc.). Use lowercase letters only, no spaces. Run the generated SQL in Supabase after saving.</div><div class="form-grid"><div class="fg"><div class="fl"><span>Branch Name</span></div><input class="input" id="cb-name" placeholder="e.g. Lagos Island Branch"></div><div class="fg"><div class="fl"><span>Branch Code</span></div><input class="input" id="cb-code" placeholder="e.g. LGI" oninput="this.value=this.value.toUpperCase();" maxlength="6"></div></div><div class="fg"><div class="fl"><span>Table Suffix <span class="optional">(lowercase, no spaces)</span></span></div><input class="input" id="cb-suffix" placeholder="e.g. lag" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9]/g,'');" maxlength="10"><div id="cb-suffix-preview" style="margin-top:6px;font-size:11px;color:var(--muted);font-family:monospace;"></div></div><div class="fg"><div class="fl"><span>City / Location</span></div><input class="input" id="cb-city" placeholder="e.g. Lagos"></div><button class="sub-btn" id="cb-sub-btn" onclick="createBranchSubmit()">🏗️ Create Branch</button><div id="cb-msg" style="margin-top:12px;font-size:12px;font-weight:600;"></div><div id="cb-sql-block" style="display:none;margin-top:16px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;">Run this SQL in Supabase to create stock tables:</div><pre id="cb-sql" style="font-size:11px;color:var(--text);font-family:monospace;white-space:pre-wrap;line-height:1.6;overflow-x:auto;"></pre><button class="bval-btn" onclick="navigator.clipboard.writeText(document.getElementById('cb-sql').textContent).then(function(){alert('SQL copied!');})" style="margin-top:8px;">📋 Copy SQL</button></div></div></div><div class="card" style="margin-top:18px;"><div class="card-header"><div class="card-icon br">✏️</div><div><h2>Manage Branches</h2><p>Edit branch name or city — code and suffix are permanent</p></div></div><div class="card-body"><div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;"><input class="input ed-search" id="branch-mgmt-search" placeholder="Search branch…" oninput="branchMgmtRender()" style="flex:1;"><button class="act-btn act-edit" onclick="branchMgmtLoad()" style="padding:6px 14px;">↺ Refresh</button></div><div id="branch-mgmt-msg" style="font-size:12px;font-weight:600;margin-bottom:8px;min-height:18px;"></div><div id="branch-mgmt-wrap"><div class="ops-empty">Click Refresh to load branches.</div></div></div></div></div>
@@ -1161,6 +1201,28 @@ function sf(path, opts) {
 }
 
 // ── Shared auth header helpers (avoids 55x inline duplication) ────────
+// ── RPC helper — calls a Supabase Postgres function via /rpc/ ────────────
+// Returns parsed JSON. Throws on HTTP error or network failure.
+// Falls back gracefully when function does not exist (404 → throws → caller catches).
+async function rpcPost(funcName, params) {
+  var res = await fetch(SUPA_URL + "/rest/v1/rpc/" + funcName, {
+    method: "POST",
+    headers: {
+      "apikey":        SUPA_KEY,
+      "Authorization": "Bearer " + SUPA_KEY,
+      "Content-Type":  "application/json",
+      "Accept-Encoding": "gzip, deflate, br"
+    },
+    body: JSON.stringify(params || {})
+  });
+  if (!res.ok) {
+    var txt = await res.text().catch(function() { return ""; });
+    throw new Error("RPC " + funcName + " HTTP " + res.status + ": " + txt.substring(0, 80));
+  }
+  return res.json();
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function authH()  {
   return { "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY,
            "Accept-Encoding": "gzip, deflate, br", "Prefer": "return=minimal" };
@@ -1329,79 +1391,134 @@ function _extractOpId(operation, reason, model) {
   return model ? model : "—";
 }
 
+// ── _extractSwapType: parse "SwapType: X" out of a reason string ─────
+// Returns "Normal Swap" | "Normal Exchange" | null
+function _extractSwapType(reason) {
+  var m = (reason || "").match(/SwapType:\s*([^·\|]+)/i);
+  return m ? m[1].trim() : null;
+}
+
+// ── _swapTypeBadgeHtml: small inline badge for swap sub-type ──────────
+function _swapTypeBadgeHtml(swapType) {
+  if (!swapType) return "";
+  var isExchange = swapType.toLowerCase().indexOf("exchange") !== -1;
+  var label = isExchange ? "🔁 Exchange" : "🔧 Normal";
+  var bg    = isExchange ? "rgba(56,189,248,.12)"    : "rgba(64,145,108,.1)";
+  var color = isExchange ? "var(--sky)"               : "var(--green2)";
+  var border= isExchange ? "rgba(56,189,248,.3)"      : "rgba(64,145,108,.25)";
+  return "<span style='display:inline-block;font-size:9.5px;font-weight:700;" +
+         "background:" + bg + ";color:" + color + ";border:1px solid " + border + ";" +
+         "border-radius:6px;padding:1px 7px;margin-left:5px;vertical-align:middle;" +
+         "letter-spacing:.2px;white-space:nowrap;'>" + label + "</span>";
+}
+// Produces a single inline display: ⚠ FAULTY → ✓ REPLACEMENT
+// Handles full pairs, orphaned faulty, and orphaned replacement uniformly.
+function _swapSnCellHtml(faultySn, replaceSn) {
+  var html = "";
+  if (faultySn) {
+    html += "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);" +
+            "border-color:rgba(192,57,43,.2);white-space:nowrap;'>⚠ " + escHtml(faultySn) + "</span>";
+  }
+  if (faultySn && replaceSn) {
+    html += "<span style='font-size:11px;color:var(--muted);margin:0 5px;font-weight:700;'>→</span>";
+  }
+  if (replaceSn) {
+    html += "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);" +
+            "border-color:rgba(64,145,108,.2);white-space:nowrap;'>✓ " + escHtml(replaceSn) + "</span>";
+  }
+  return html || "<span class='sn-tag' style='color:var(--muted);'>—</span>";
+}
+
 // ── _mergeSwapRows: pair "Swap (faulty in)" + "Swap (new out)" into 1 row ──
 // A Swap logs 2 DB rows (one per leg). This collapses them into a single
 // display row so it counts as 1 operation, just like every other op.
+// Uses proximity matching (15-min window, same officer+date) so legs that
+// cross a minute or second boundary are always correctly paired.
 function _mergeSwapRows(rows) {
   if (!rows || !rows.length) return rows;
 
-  // Key = officer + date + HH:MM (both legs are written within the same minute)
-  function rowKey(r) {
-    return (r.officer || "") + "|" + (r.date || "") + "|" + (r.time || "").substring(0, 5);
+  // Convert "HH:MM:SS" → total seconds
+  function timeSec(r) {
+    var parts = (r.time || "00:00:00").split(":");
+    return parseInt(parts[0] || 0, 10) * 3600 +
+           parseInt(parts[1] || 0, 10) * 60  +
+           parseInt(parts[2] || 0, 10);
   }
 
-  // Index each swap leg
-  var faultyMap = {};  // key → row
-  var outMap    = {};  // key → row
-
+  var faultyRows = [], outRows = [], others = [];
   rows.forEach(function(r) {
     var op = (r.operation || "").toLowerCase();
-    var k  = rowKey(r);
-    if (op === "swap (faulty in)") { if (!faultyMap[k]) faultyMap[k] = r; }
-    else if (op === "swap (new out)") { if (!outMap[k]) outMap[k] = r;  }
+    if      (op === "swap (faulty in)") faultyRows.push(r);
+    else if (op === "swap (new out)")   outRows.push(r);
+    else                                others.push(r);
   });
 
-  // Identify fully-paired keys (both legs present)
-  var pairedKeys = {};
-  Object.keys(faultyMap).forEach(function(k) {
-    if (outMap[k]) pairedKeys[k] = true;
+  var usedF = {}, usedO = {};
+  var pairByOutId = {}, pairedFaultyIds = {};
+
+  // For each faulty-in row find the closest-in-time new-out row:
+  // same officer, same date, within 15 minutes.
+  faultyRows.forEach(function(fRow) {
+    var best = null, bestDiff = Infinity;
+    outRows.forEach(function(oRow) {
+      if (usedO[oRow.id]) return;
+      if ((oRow.officer || "") !== (fRow.officer || "")) return;
+      if ((oRow.date    || "") !== (fRow.date    || "")) return;
+      var diff = Math.abs(timeSec(oRow) - timeSec(fRow));
+      if (diff < 900 && diff < bestDiff) { bestDiff = diff; best = oRow; }
+    });
+    if (best) {
+      usedF[fRow.id]   = true;
+      usedO[best.id]   = true;
+      pairByOutId[best.id]   = { fRow: fRow, oRow: best };
+      pairedFaultyIds[fRow.id] = true;
+    }
   });
 
-  var suppressFaultyIds = {}; // faulty-in rows consumed by a merge
+  // Rebuild rows in original order, emitting merged entries at the new-out position
   var result = [];
-
   rows.forEach(function(r) {
     var op = (r.operation || "").toLowerCase();
-    var k  = rowKey(r);
 
-    if (op === "swap (new out)" && pairedKeys[k]) {
-      var fRow = faultyMap[k];
-      suppressFaultyIds[fRow.id] = true;
-      // Emit merged row — shows both SNs, counts as 1 op, MID comes from new-out reason
-      result.push({
-        id:              r.id,
-        _pairId:         fRow.id,
-        operation:       "Swap",
-        _swapFaultySn:   fRow.sn,
-        _swapReplaceSn:  r.sn,
-        sn:              r.sn,
-        model:           r.model || fRow.model || null,
-        officer:         r.officer,
-        reason:          r.reason,
-        date:            r.date,
-        time:            r.time,
-        branch_id:       r.branch_id,
-        _merged:         true
-      });
-      return;
-    }
-
-    // Faulty-in that was paired — skip (already emitted above via new-out)
-    if (op === "swap (faulty in)" && pairedKeys[k]) return;
-
-    // Orphaned faulty-in (no matching new-out found): show as Swap with just the faulty SN
     if (op === "swap (faulty in)") {
+      if (pairedFaultyIds[r.id]) return; // emitted via its matching new-out below
+      // Orphaned faulty-in — still show with ⚠ styling
       result.push(Object.assign({}, r, {
-        operation: "Swap", _swapFaultySn: r.sn, _swapReplaceSn: null, _merged: true
+        operation: "Swap", _swapFaultySn: r.sn, _swapReplaceSn: null, _merged: true,
+        _swapType: _extractSwapType(r.reason)
       }));
       return;
     }
 
-    // Orphaned new-out (no matching faulty-in): show as Swap with just the replacement SN
     if (op === "swap (new out)") {
-      result.push(Object.assign({}, r, {
-        operation: "Swap", _swapFaultySn: null, _swapReplaceSn: r.sn, _merged: true
-      }));
+      var pair = pairByOutId[r.id];
+      if (pair) {
+        // Fully-paired — emit single merged row
+        // swapType may be in either leg's reason; prefer the new-out leg
+        var swapType = _extractSwapType(r.reason) || _extractSwapType(pair.fRow.reason);
+        result.push({
+          id:             r.id,
+          _pairId:        pair.fRow.id,
+          operation:      "Swap",
+          _swapFaultySn:  pair.fRow.sn,
+          _swapReplaceSn: r.sn,
+          _swapType:      swapType,
+          sn:             r.sn,
+          model:          r.model || pair.fRow.model || null,
+          officer:        r.officer,
+          reason:         r.reason,
+          date:           r.date,
+          time:           r.time,
+          branch_id:      r.branch_id,
+          _merged:        true
+        });
+      } else {
+        // Orphaned new-out — show with ✓ styling
+        result.push(Object.assign({}, r, {
+          operation: "Swap", _swapFaultySn: null, _swapReplaceSn: r.sn, _merged: true,
+          _swapType: _extractSwapType(r.reason)
+        }));
+      }
       return;
     }
 
@@ -2199,53 +2316,136 @@ async function pushOp(payload) {
       if (payload.faultySn) {
         var tFt = branchTables(suffix).ft;
         stockCalls.push(post(tFt, { sn: payload.faultySn, model: payload.faultyModel || null, source: "Field (Issued)", reason: "Swapped out", officer: officer, branch_id: branchId, status: "Faulty" }));
-        logCalls.push(logDaily("Swap (faulty in)", payload.faultySn, null, {}));
+        logCalls.push(logDaily("Swap (faulty in)", payload.faultySn, null, {
+          reason: payload.swapType ? "SwapType: " + payload.swapType : null
+        }));
       }
       if (payload.replacementSn) {
         var src = payload.replacementSource || defaultSrc;
         // Patch source stock table: Assigned → Deployed (DELETE already done in Phase 0)
         stockCalls.push(patch(src, "sn=eq." + payload.replacementSn, { status: "Deployed" }));
         stockCalls.push(post("deployed_assigned", { sn: payload.replacementSn, model: payload.replacementModel || null, operation: payload.repIsAssigned ? "Swap (Assigned POS)" : "Swap (replacement)", source: src, customer_id: payload.merchantId || null, agent_id: payload.agentCode || null, officer: officer, branch_id: branchId }));
-        logCalls.push(logDaily("Swap (new out)", payload.replacementSn, null, { reason: payload.merchantId ? APP_CONFIG.fieldCustomer + ": " + payload.merchantId : null }));
+        var swapOutReason = [];
+        if (payload.merchantId) swapOutReason.push(APP_CONFIG.fieldCustomer + ": " + payload.merchantId);
+        if (payload.swapType)   swapOutReason.push("SwapType: " + payload.swapType);
+        logCalls.push(logDaily("Swap (new out)", payload.replacementSn, null, {
+          reason: swapOutReason.length ? swapOutReason.join(" · ") : null
+        }));
       }
       break;
   }
 
   setConn("loading", "Saving…");
-  // FIXED: Using allSettled for proper error handling
-  Promise.allSettled(stockCalls).then(function(stockResults) {
-    var stockFailed = stockResults.filter(function(r) { return r.status === 'rejected'; }).length;
-    return Promise.allSettled(logCalls).then(function(logResults) {
-      var logFailed = logResults.filter(function(r) { return r.status === 'rejected'; }).length;
-      // Build per-SN id map from log results (logCalls are in same order as payload.sns)
-      var payloadSns = payload.sns || [];
+
+  // ── Shared: distribute daily_operations IDs back into OP_LOG entries ──
+  // Used by both the RPC path and the fallback path below.
+  var _distIds = function(snIdMap) {
+    OP_LOG.forEach(function(entry) {
+      if (entry.deleted || entry.fromDB || (entry.dbIds && entry.dbIds.length)) return;
+      var entrySn = entry.sns && entry.sns[0];
+      if (entrySn && snIdMap[entrySn]) { entry.dbIds = [snIdMap[entrySn]]; return; }
+      if (entry.faultySn      && snIdMap[entry.faultySn])      { entry.dbIds = [snIdMap[entry.faultySn]];      return; }
+      if (entry.replacementSn && snIdMap[entry.replacementSn]) { entry.dbIds = [snIdMap[entry.replacementSn]]; return; }
+    });
+  };
+
+  // ── Fallback: original individual HTTP call path ───────────────────────
+  var _runFallback = function() {
+    Promise.allSettled(stockCalls).then(function(stockResults) {
+      var stockFailed = stockResults.filter(function(r) { return r.status === 'rejected'; }).length;
+      return Promise.allSettled(logCalls).then(function(logResults) {
+        var logFailed = logResults.filter(function(r) { return r.status === 'rejected'; }).length;
+        var payloadSns = payload.sns || [];
+        var snIdMap = {};
+        if (payload.type !== "Swap") {
+          payloadSns.forEach(function(sn, i) {
+            var r = logResults[i];
+            if (r && r.status === 'fulfilled' && r.value) snIdMap[sn] = r.value;
+          });
+        } else {
+          if (payload.faultySn      && logResults[0] && logResults[0].status === 'fulfilled') snIdMap[payload.faultySn]      = logResults[0].value;
+          if (payload.replacementSn && logResults[1] && logResults[1].status === 'fulfilled') snIdMap[payload.replacementSn] = logResults[1].value;
+        }
+        _distIds(snIdMap);
+        if (stockFailed > 0 || logFailed > 0) { setConn("err", "Partial save - " + stockFailed + " stock, " + logFailed + " log errors"); }
+        else { setConn("ok", "Saved ✓"); }
+        cacheInvalidate(SUPA_BRANCH.table_suffix || "hq");
+        debouncedFetchLiveStock();
+        setTimeout(function() { setConn("ok", "Connected ✓"); }, 3000);
+      });
+    }).catch(function(e) { setConn("err", "Save error"); console.error("pushOp fallback error:", e); });
+  };
+
+  // ── RPC path: build params and fire single server-side function ───────
+  var _rpcParams = null;
+  try {
+    var _today   = new Date().toISOString().split("T")[0];
+    var _timeStr = new Date().toTimeString().split(" ")[0];
+    var _pSns    = payload.sns || [];
+
+    if (payload.type === "Issued" || payload.type === "Assigned" || payload.type === "ATFS") {
+      _rpcParams = {
+        p_type:        payload.type,
+        p_officer:     officer,
+        p_branch_id:   branchId,
+        p_suffix:      suffix,
+        p_today:       _today,
+        p_time_str:    _timeStr,
+        p_sns:         _pSns,
+        p_sources:     _pSns.map(function(sn) { return payload.sourceMap ? (payload.sourceMap[sn] || defaultSrc) : defaultSrc; }),
+        p_models:      _pSns.map(function(sn) { return (payload.modelMap && payload.modelMap[sn]) || null; }),
+        p_pre_deletes: (payload.assignedSns && payload.assignedSns.length) ? payload.assignedSns : null,
+        p_is_asgn:     _pSns.map(function(sn) { return !!(payload.assignedSns && payload.assignedSns.indexOf(sn) !== -1); }),
+        p_merchant:    payload.merchantId || null,
+        p_agent:       payload.agentCode  || null,
+        p_reason:      payload.reason     || null
+      };
+    } else if (payload.type === "Swap") {
+      _rpcParams = {
+        p_type:        "Swap",
+        p_officer:     officer,
+        p_branch_id:   branchId,
+        p_suffix:      suffix,
+        p_today:       _today,
+        p_time_str:    _timeStr,
+        p_pre_deletes: null,
+        p_faulty_sn:   payload.faultySn          || null,
+        p_faulty_model:payload.faultyModel        || null,
+        p_rep_sn:      payload.replacementSn      || null,
+        p_rep_src:     payload.replacementSource  || defaultSrc,
+        p_rep_model:   payload.replacementModel   || null,
+        p_rep_is_asgn: !!payload.repIsAssigned,
+        p_merchant:    payload.merchantId         || null,
+        p_agent:       payload.agentCode          || null,
+        p_swap_type:   payload.swapType           || null
+      };
+    }
+  } catch (_pErr) { _rpcParams = null; }
+
+  if (_rpcParams) {
+    rpcPost('push_operation', _rpcParams).then(function(_result) {
+      // Build snIdMap from RPC result and distribute to OP_LOG
       var snIdMap = {};
       if (payload.type !== "Swap") {
-        payloadSns.forEach(function(sn, i) {
-          var r = logResults[i];
-          if (r && r.status === 'fulfilled' && r.value) snIdMap[sn] = r.value;
-        });
+        var _logIds = _result.log_ids || {};
+        Object.keys(_logIds).forEach(function(sn) { snIdMap[sn] = _logIds[sn]; });
       } else {
-        // Swap: logCalls[0]=faulty in, logCalls[1]=replacement out
-        if (payload.faultySn      && logResults[0] && logResults[0].status === 'fulfilled') snIdMap[payload.faultySn]      = logResults[0].value;
-        if (payload.replacementSn && logResults[1] && logResults[1].status === 'fulfilled') snIdMap[payload.replacementSn] = logResults[1].value;
+        if (payload.faultySn      && _result.faulty_log_id) snIdMap[payload.faultySn]      = _result.faulty_log_id;
+        if (payload.replacementSn && _result.rep_log_id)    snIdMap[payload.replacementSn] = _result.rep_log_id;
       }
-      // Distribute IDs to all matching OP_LOG entries that have no dbIds yet
-      OP_LOG.forEach(function(entry) {
-        if (entry.deleted || entry.fromDB || (entry.dbIds && entry.dbIds.length)) return;
-        var entrySn = entry.sns && entry.sns[0];
-        if (entrySn && snIdMap[entrySn]) { entry.dbIds = [snIdMap[entrySn]]; return; }
-        if (entry.faultySn      && snIdMap[entry.faultySn])      { entry.dbIds = [snIdMap[entry.faultySn]];      return; }
-        if (entry.replacementSn && snIdMap[entry.replacementSn]) { entry.dbIds = [snIdMap[entry.replacementSn]]; return; }
-      });
-      var ids = Object.values(snIdMap).filter(Boolean);
-      if (stockFailed > 0 || logFailed > 0) { setConn("err", "Partial save - " + stockFailed + " stock, " + logFailed + " log errors"); }
-      else { setConn("ok", "Saved ✓"); }
+      _distIds(snIdMap);
+      setConn("ok", "Saved ✓");
       cacheInvalidate(SUPA_BRANCH.table_suffix || "hq");
       debouncedFetchLiveStock();
       setTimeout(function() { setConn("ok", "Connected ✓"); }, 3000);
+    }).catch(function(_rpcErr) {
+      // RPC not yet deployed or failed — transparently fall back to individual calls
+      console.warn("push_operation RPC failed, using fallback:", _rpcErr.message);
+      _runFallback();
     });
-  }).catch(function(e) { setConn("err", "Save error"); console.error("pushOp error:", e); });
+  } else {
+    _runFallback();
+  }
 }
 
 async function undoOpDB(payload) {
@@ -2368,7 +2568,68 @@ async function edtRefresh() {
     console.error("edtRefresh DB error:", e);
   }
 }
-function edtRender() { var search = ((document.getElementById("edt-search") || {}).value || "").toLowerCase().trim(); var filtered = OP_LOG.filter(function(op) { if (EDT_FILTER !== "all" && op.type !== EDT_FILTER) return false; if (search) { var hay = (op.sns || []).join(" ").toLowerCase() + " " + (op.officer || "").toLowerCase() + " " + (op.type || "").toLowerCase(); if (!hay.includes(search)) return false; } return true; }); var count = document.getElementById("edt-count"); if (count) count.textContent = filtered.length + " op" + (filtered.length === 1 ? "" : "s"); var wrap = document.getElementById("edt-table-wrap"); if (!wrap) return; if (!filtered.length) { wrap.innerHTML = "<div class='ops-empty'>" + (OP_LOG.length ? "No ops match this filter." : "No operations recorded yet today.") + "</div>"; return; } var rows = filtered.map(function(op) { var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(op.faultySn) + "</span><span style='font-size:10px;color:var(--muted);margin:0 4px;'>→</span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>✓ " + escHtml(op.replacementSn) + "</span>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(""); }; var dis = op.deleted ? " disabled" : ""; var tsParts = (op.ts || "").split(" "); var tsDate = tsParts[0] || ""; var tsTime = tsParts.slice(1).join(" ") || ""; return "<tr class='" + (op.deleted ? "op-deleted" : "") + "'><td class='td-date' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsDate) + "</td><td class='td-time' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsTime) + "</td><td>" + opChipHtml(op.type, op.condition) + "</td><td>" + tags + "</td><td class='td-officer'>" + escHtml(op.officer || "") + "</td><td><div class='td-actions'><button class='act-btn act-edit'" + dis + " onclick='edtOpenEdit(" + op.id + ")'>✎</button><button class='act-btn act-del'" + dis + " onclick='edtConfirmDelete(" + op.id + ")'>🗑</button></div></td></tr>"; }).join(""); wrap.innerHTML = "<table class='ops-table'><thead><tr><th>Date</th><th>Time</th><th>Type</th><th>SNs</th><th>Officer</th><th>Actions</th></tr></thead><tbody>" + rows + "</tbody></table>"; }
+function edtRender() {
+  var search   = ((document.getElementById("edt-search") || {}).value || "").toLowerCase().trim();
+  var filtered = OP_LOG.filter(function(op) {
+    if (EDT_FILTER !== "all" && op.type !== EDT_FILTER) return false;
+    if (search) {
+      var hay = ((op.faultySn || "") + " " + (op.replacementSn || "") + " " +
+                 (op.sns || []).join(" ") + " " + (op.officer || "") + " " +
+                 (op.type || "") + " " + (op.merchantId || "") + " " + (op.agentCode || "")).toLowerCase();
+      if (!hay.includes(search)) return false;
+    }
+    return true;
+  });
+  var count = document.getElementById("edt-count");
+  if (count) count.textContent = filtered.length + " op" + (filtered.length === 1 ? "" : "s");
+  var wrap = document.getElementById("edt-table-wrap");
+  if (!wrap) return;
+  if (!filtered.length) {
+    wrap.innerHTML = "<div class='ops-empty'>" +
+      (OP_LOG.length ? "No ops match this filter." : "No operations recorded yet today.") +
+      "</div>";
+    return;
+  }
+  var rows = filtered.map(function(op) {
+    var snCell;
+    if (op.type === "Swap") {
+      snCell = _swapSnCellHtml(op.faultySn || null, op.replacementSn || null);
+    } else {
+      snCell = (op.sns || []).map(function(s) {
+        return "<span class='sn-tag'>" + escHtml(s) + "</span>";
+      }).join("");
+    }
+    // MID / BD Code cell — mirrors the format in other ops tables
+    var midCell = "";
+    if (op.merchantId) {
+      midCell = "<span style='font-size:11px;color:var(--text2);font-weight:600;'>" +
+                "MID: " + escHtml(op.merchantId) + "</span>";
+      if (op.tid) midCell += "<span style='font-size:10px;color:var(--muted);'> · TID: " + escHtml(op.tid) + "</span>";
+    } else if (op.agentCode) {
+      midCell = "<span style='font-size:11px;color:var(--text2);font-weight:600;'>BD: " +
+                escHtml(op.agentCode) + "</span>";
+    }
+    var dis      = op.deleted ? " disabled" : "";
+    var tsParts  = (op.ts || "").split(" ");
+    var tsDate   = tsParts[0] || "";
+    var tsTime   = tsParts.slice(1).join(" ") || "";
+    return "<tr class='" + (op.deleted ? "op-deleted" : "") + "'>" +
+      "<td class='td-date' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsDate) + "</td>" +
+      "<td class='td-time' style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(tsTime) + "</td>" +
+      "<td>" + opChipHtml(op.type, op.condition) + (op.type === "Swap" && op.swapType ? _swapTypeBadgeHtml(op.swapType) : "") + "</td>" +
+      "<td style='font-size:11px;color:var(--text2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'>" + midCell + "</td>" +
+      "<td class='td-officer'>" + escHtml(op.officer || "") + "</td>" +
+      "<td><div class='td-actions'>" +
+        "<button class='act-btn act-edit'" + dis + " onclick='edtOpenEdit(" + op.id + ")'>✎</button>" +
+        "<button class='act-btn act-del'"  + dis + " onclick='edtConfirmDelete(" + op.id + ")'>🗑</button>" +
+      "</div></td>" +
+      "</tr>";
+  }).join("");
+  wrap.innerHTML =
+    "<table class='ops-table'><thead><tr>" +
+    "<th>Date</th><th>Time</th><th>Type</th><th>SNs</th><th>MID / BD Code</th><th>Officer</th><th>Actions</th>" +
+    "</tr></thead><tbody>" + rows + "</tbody></table>";
+}
 
 function edtOpenEdit(id) { var op = OP_LOG.find(function(o) { return o.id === id; }); if (!op || op.deleted) return; var tags; if (op.type === "Swap" && op.faultySn && op.replacementSn) { tags = "<div style='font-size:11px;margin-bottom:6px;'><span style='color:var(--muted);'>Faulty (in): </span><span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>" + escHtml(op.faultySn) + "</span>&nbsp;&nbsp;<span style='color:var(--muted);'>Replacement (out): </span><span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>" + escHtml(op.replacementSn) + "</span></div>"; } else { tags = (op.sns || []).map(function(s) { return "<span class='sn-tag'>" + escHtml(s) + "</span>"; }).join(" "); } document.getElementById("modal-root").innerHTML = "<div class='modal-overlay' onclick='closeModal(event)'><div class='modal' onclick='event.stopPropagation()'><h3>✎ Edit Operation</h3><div class='modal-sub'>" + opChip(op.type, op.condition).label + " · " + op.ts + "</div><div class='auth-fg'>" + (op.type === "Swap" ? "<label class='auth-lbl' style='color:var(--rose);'>⚠ Faulty SN (cannot change)</label><div style='padding:8px 12px;background:var(--rose2);border-radius:8px;border:1.5px solid rgba(192,57,43,.2);font-family:monospace;font-size:13px;font-weight:700;color:var(--rose);margin-bottom:10px;'>" + escHtml(op.faultySn||"—") + "</div><label class='auth-lbl' style='color:var(--green2);'>✓ Replacement SN (editable)</label><input class='auth-inp' id='em-replace-sn' value='" + escHtml(op.replacementSn||"") + "' style='font-family:monospace;font-weight:700;' oninput='this.value=this.value.toUpperCase()'><input type='hidden' id='em-sns' value='" + escHtml((op.sns||[]).join(",")) + "'>" : "<label class='auth-lbl'>SNs (comma-separated)</label><input class='auth-inp' id='em-sns' value='" + escHtml((op.sns||[]).join(", ")) + "'>") + "</div><div id='em-save-msg' style='font-size:11px;margin-top:6px;'></div><div class='modal-btns'><button class='modal-cancel' onclick='closeModal()'>Cancel</button><button class='modal-save' id='em-save-btn' onclick='edtSaveEdit(" + id + ")'>💾 Save</button></div></div></div>"; }
 
@@ -2949,15 +3210,25 @@ async function stockInvLoadSummary() {
   // more than 1000 SNs in any category now display the correct figure.
   try {
     var results = await Promise.all(branches.map(async function(br) {
-      var t = branchTables(br.table_suffix);
-      var counts = await Promise.all([
-        countRows(t.bn,  'Available'),  // 0 bnAvail
-        countRows(t.rp,  'Available'),  // 1 rpAvail
-        countRows(t.rt,  'Available'),  // 2 rtAvail
-        countRows(t.rbn, 'Available'),  // 3 rbnAvail
-        countRows(t.ft,  null),         // 4 faulty total
-        countBranchAssigned(br.id)      // 5 true assigned — from deployed_assigned WHERE operation='Assigned'
-      ]);
+      var counts;
+      // ── RPC path: 1 call instead of 6 per branch ──────────────────────
+      try {
+        var _s = await rpcPost('get_branch_summary',
+          { p_suffix: br.table_suffix, p_branch_id: br.id });
+        counts = [_s.bn, _s.rp, _s.rt, _s.rbn, _s.ft, _s.asgn];
+      } catch (_rpcErr) {
+        // Fallback: individual HTTP count calls (runs if SQL function not yet deployed)
+        console.warn('get_branch_summary RPC unavailable, using fallback:', _rpcErr.message);
+        var _t0 = branchTables(br.table_suffix);
+        counts = await Promise.all([
+          countRows(_t0.bn,  'Available'),
+          countRows(_t0.rp,  'Available'),
+          countRows(_t0.rt,  'Available'),
+          countRows(_t0.rbn, 'Available'),
+          countRows(_t0.ft,  null),
+          countBranchAssigned(br.id)
+        ]);
+      }
       var bnAvail  = counts[0];
       var rpAvail  = counts[1];
       var rtAvail  = counts[2];
@@ -3128,26 +3399,47 @@ async function stockInvLoadSummary() {
     // grand totals computed earlier (also via count=exact).
     try {
       await Promise.all(branches.map(async function(br) {
-        var t = branchTables(br.table_suffix);
-        await Promise.all(posTypes.map(async function(model) {
-          var c = await Promise.all([
-            countRowsByModel(t.rbn, model, 'Available'),  // 0
-            countRowsByModel(t.rbn, model, 'Assigned'),   // 1
-            countRowsByModel(t.bn,  model, 'Available'),  // 2
-            countRowsByModel(t.bn,  model, 'Assigned'),   // 3
-            countRowsByModel(t.rp,  model, 'Available'),  // 4
-            countRowsByModel(t.rp,  model, 'Assigned'),   // 5
-            countRowsByModel(t.rt,  model, 'Available'),  // 6
-            countRowsByModel(t.rt,  model, 'Assigned'),   // 7
-            countRowsByModel(t.ft,  model, null)          // 8 faulty (no status)
-          ]);
-          posTypeData[model].rbn  += c[0];
-          posTypeData[model].asgn += c[1] + c[3] + c[5] + c[7]; // Assigned across all 4 tables
-          posTypeData[model].bn   += c[2];
-          posTypeData[model].rp   += c[4];
-          posTypeData[model].rt   += c[6];
-          posTypeData[model].ft   += c[8];
-        }));
+        // ── RPC path: 1 call replaces 36 count requests per branch ────────
+        var _mc = null;
+        try {
+          _mc = await rpcPost('get_branch_model_counts', { p_suffix: br.table_suffix });
+        } catch (_rpcErr) {
+          console.warn('get_branch_model_counts RPC unavailable, using fallback:', _rpcErr.message);
+        }
+
+        if (_mc) {
+          // RPC returned a flat object keyed as "MODEL_cat"
+          posTypes.forEach(function(model) {
+            posTypeData[model].rbn  += _mc[model + '_rbn']  || 0;
+            posTypeData[model].bn   += _mc[model + '_bn']   || 0;
+            posTypeData[model].rp   += _mc[model + '_rp']   || 0;
+            posTypeData[model].rt   += _mc[model + '_rt']   || 0;
+            posTypeData[model].ft   += _mc[model + '_ft']   || 0;
+            posTypeData[model].asgn += _mc[model + '_asgn'] || 0;
+          });
+        } else {
+          // Fallback: individual HTTP count calls
+          var t = branchTables(br.table_suffix);
+          await Promise.all(posTypes.map(async function(model) {
+            var c = await Promise.all([
+              countRowsByModel(t.rbn, model, 'Available'),  // 0
+              countRowsByModel(t.rbn, model, 'Assigned'),   // 1
+              countRowsByModel(t.bn,  model, 'Available'),  // 2
+              countRowsByModel(t.bn,  model, 'Assigned'),   // 3
+              countRowsByModel(t.rp,  model, 'Available'),  // 4
+              countRowsByModel(t.rp,  model, 'Assigned'),   // 5
+              countRowsByModel(t.rt,  model, 'Available'),  // 6
+              countRowsByModel(t.rt,  model, 'Assigned'),   // 7
+              countRowsByModel(t.ft,  model, null)          // 8 faulty (no status)
+            ]);
+            posTypeData[model].rbn  += c[0];
+            posTypeData[model].asgn += c[1] + c[3] + c[5] + c[7];
+            posTypeData[model].bn   += c[2];
+            posTypeData[model].rp   += c[4];
+            posTypeData[model].rt   += c[6];
+            posTypeData[model].ft   += c[8];
+          }));
+        }
       }));
 
       // Derive "Other" = accurate grand total − sum of all known-model counts
@@ -3317,6 +3609,11 @@ async function stockInvBoot() {
         " data-name='"   + escHtml(b.name) + "'>" +
         escHtml(b.name) + " (" + escHtml(b.code) + ")</option>";
     }).join("");
+
+  // Store for Smart Bulk Delete
+  window._invAccessibleBranches = branches.filter(function(b) {
+    return b.table_suffix && b.table_suffix !== "null" && b.table_suffix !== "undefined";
+  });
 }
 
 // ── Load inventory (routes to fetch or fetchAll) ───────────────────────
@@ -3848,6 +4145,289 @@ async function stockInvBulkDelete() {
     setTimeout(function() { if (msgEl) msgEl.textContent = ""; }, 5000);
   }
   document.getElementById("inv-bulk-del-area").value = "";
+}
+
+// ── Smart Bulk Delete (Admin / Supervisor) ─────────────────────────────
+
+window._smartBulkResults = [];
+window._invAccessibleBranches = [];
+
+function smartBulkClear() {
+  var area = document.getElementById("inv-bulk-del-area");
+  var res  = document.getElementById("smart-bulk-results");
+  var msg  = document.getElementById("inv-bulk-del-msg");
+  if (area) area.value = "";
+  if (res)  res.style.display = "none";
+  if (msg)  msg.innerHTML = "";
+  window._smartBulkResults = [];
+}
+
+async function smartBulkValidate() {
+  var role = SUPA_OFFICER ? SUPA_OFFICER.role : "Officer";
+  if (role === "Officer") return;
+
+  var msgEl      = document.getElementById("inv-bulk-del-msg");
+  var resultsDiv = document.getElementById("smart-bulk-results");
+
+  var raw = (document.getElementById("inv-bulk-del-area") || {}).value || "";
+  var sns = raw.split(/[\n,;]+/).map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean);
+  if (!sns.length) {
+    if (msgEl) msgEl.innerHTML = "<span style='color:var(--muted)'>Paste SNs above first.</span>";
+    return;
+  }
+
+  if (msgEl) msgEl.innerHTML = "<span style='color:var(--muted)'>🔍 Searching across branches…</span>";
+  if (resultsDiv) resultsDiv.style.display = "none";
+
+  // Resolve accessible branches
+  var branches = (window._invAccessibleBranches || []).slice();
+  if (!branches.length) {
+    // Fallback: build list on demand
+    if (role === "Admin") {
+      branches = ALL_BRANCHES.filter(function(b) {
+        return b.table_suffix && b.table_suffix !== "null" && b.table_suffix !== "undefined";
+      });
+      if (!branches.length) {
+        try {
+          var r = await sf("branches?select=id,name,code,table_suffix&order=name");
+          branches = (await r.json() || []).filter(function(b) {
+            return b.table_suffix && b.table_suffix !== "null" && b.table_suffix !== "undefined";
+          });
+        } catch (e) {}
+      }
+    } else {
+      branches = [{ id: SUPA_BRANCH.id, name: SUPA_BRANCH.name, code: SUPA_BRANCH.code, table_suffix: SUPA_BRANCH.table_suffix }];
+      try {
+        var res = await sf("supervisor_branches?select=branch_id,branches(id,name,code,table_suffix)&supervisor_id=eq." + SUPA_OFFICER.id);
+        var rows = await res.json() || [];
+        rows.forEach(function(r) {
+          if (r.branches && r.branches.id !== SUPA_BRANCH.id) branches.push(r.branches);
+        });
+      } catch (e) {}
+      branches = branches.filter(function(b) {
+        return b.table_suffix && b.table_suffix !== "null" && b.table_suffix !== "undefined";
+      });
+    }
+    window._invAccessibleBranches = branches;
+  }
+
+  if (!branches.length) {
+    if (msgEl) msgEl.innerHTML = "<span style='color:var(--rose)'>No accessible branches found. Reload the page.</span>";
+    return;
+  }
+
+  var catNamesFixed = { rbn: "R&R Brand New", bn: "Brand New", rp: "Repaired", rt: "Return", ft: "Faulty" };
+
+  // Fetch all branch caches in parallel
+  var branchCaches = await Promise.all(branches.map(async function(br) {
+    try {
+      var cache = await cacheFetch(br.table_suffix);
+      return { branch: br, cache: cache };
+    } catch (e) {
+      return { branch: br, cache: null };
+    }
+  }));
+
+  // Build SN lookup map
+  var snMap = {};
+  branchCaches.forEach(function(bc) {
+    if (!bc.cache) return;
+    var br     = bc.branch;
+    var cache  = bc.cache;
+    var suffix = br.table_suffix;
+    var cats = [
+      { key: "rbn", arr: cache.rbn    || [], tbl: "stock_rbn_" + suffix },
+      { key: "bn",  arr: cache.bn     || [], tbl: "stock_bn_"  + suffix },
+      { key: "rp",  arr: cache.rp     || [], tbl: "stock_rp_"  + suffix },
+      { key: "rt",  arr: cache.rt     || [], tbl: "stock_rt_"  + suffix },
+      { key: "ft",  arr: cache.faulty || [], tbl: "stock_ft_"  + suffix }
+    ];
+    cats.forEach(function(c) {
+      c.arr.forEach(function(row) {
+        var sn = ((row.sn || "")).toUpperCase();
+        if (sn && !snMap[sn]) {
+          snMap[sn] = {
+            found:       true,
+            branchName:  br.name,
+            branchId:    br.id,
+            suffix:      suffix,
+            category:    catNamesFixed[c.key] || c.key,
+            categoryKey: c.key,
+            status:      row.status || "Available",
+            sourceTable: c.tbl
+          };
+        }
+      });
+    });
+  });
+
+  // Build results list (deduplicated by SN)
+  var seen = {}, results = [];
+  sns.forEach(function(sn) {
+    if (seen[sn]) return;
+    seen[sn] = true;
+    var hit = snMap[sn];
+    if (hit) {
+      results.push(Object.assign({ sn: sn }, hit));
+    } else {
+      results.push({ sn: sn, found: false });
+    }
+  });
+
+  window._smartBulkResults = results;
+  smartBulkRenderResults(results);
+  if (msgEl) msgEl.innerHTML = "<span style='color:var(--green2)'>✓ Found " +
+    results.filter(function(r) { return r.found; }).length + " of " + results.length + " SNs</span>";
+}
+
+function smartBulkRenderResults(results) {
+  var tbody      = document.getElementById("smart-bulk-tbody");
+  var resultsDiv = document.getElementById("smart-bulk-results");
+  var selectAll  = document.getElementById("smart-select-all");
+  if (!tbody || !resultsDiv) return;
+
+  tbody.innerHTML = results.map(function(r, i) {
+    if (!r.found) {
+      return "<tr style='opacity:.6;'>" +
+        "<td style='padding:7px 10px;text-align:center;'><input type='checkbox' disabled></td>" +
+        "<td style='padding:7px 10px;'><span class='sn-tag' style='color:var(--muted);'>" + escHtml(r.sn) + "</span></td>" +
+        "<td style='padding:7px 10px;color:var(--rose);font-weight:600;'>❌ Not found</td>" +
+        "<td style='padding:7px 10px;color:var(--muted);'>—</td>" +
+        "<td style='padding:7px 10px;color:var(--muted);'>—</td>" +
+        "<td style='padding:7px 10px;font-size:10px;color:var(--muted);'>No action</td>" +
+        "</tr>";
+    }
+    var isBlocked = r.status === "Assigned" || r.status === "Deployed";
+    var statusColor = r.status === "Available" ? "var(--green2)" :
+                      r.status === "Faulty"    ? "var(--rose)"   : "var(--amber)";
+    var preview = isBlocked
+      ? "<span style='color:var(--amber);font-weight:600;'>⚠️ " + escHtml(r.status) + " — must return first</span>"
+      : "<span style='color:var(--rose);font-weight:600;'>Will be deleted</span>";
+    return "<tr style='border-bottom:1px solid var(--border2);background:" + (isBlocked ? "rgba(181,131,74,.04)" : "") + "'>" +
+      "<td style='padding:7px 10px;text-align:center;'>" +
+        "<input type='checkbox' class='smart-row-cb' data-idx='" + i + "'" +
+          (isBlocked ? " disabled title='Unassign/return this device first'" : " checked") +
+          " onchange='smartBulkUpdateCount()' style='width:14px;height:14px;accent-color:var(--green2);'>" +
+      "</td>" +
+      "<td style='padding:7px 10px;'><span class='sn-tag' style='color:var(--sky);'>" + escHtml(r.sn) + "</span></td>" +
+      "<td style='padding:7px 10px;font-size:11px;color:var(--text2);'>🏢 " + escHtml(r.branchName) + "</td>" +
+      "<td style='padding:7px 10px;'><span style='font-size:11px;font-weight:700;color:" + statusColor + ";'>" + escHtml(r.status) + "</span></td>" +
+      "<td style='padding:7px 10px;font-size:11px;color:var(--muted);'>" + escHtml(r.category) + "</td>" +
+      "<td style='padding:7px 10px;font-size:11px;'>" + preview + "</td>" +
+      "</tr>";
+  }).join("");
+
+  if (selectAll) selectAll.checked = false;
+  resultsDiv.style.display = "";
+  smartBulkUpdateCount();
+}
+
+function smartBulkUpdateCount() {
+  var allCbs     = document.querySelectorAll(".smart-row-cb:not(:disabled)");
+  var checkedCbs = document.querySelectorAll(".smart-row-cb:checked:not(:disabled)");
+  var selCount   = document.getElementById("smart-sel-count");
+  var delBtn     = document.getElementById("smart-del-btn");
+  var n = checkedCbs.length;
+  if (selCount) selCount.textContent = n + " of " + allCbs.length + " selected";
+  if (delBtn)   delBtn.textContent   = "🗑 Delete Selected (" + n + " SN" + (n === 1 ? "" : "s") + ")";
+}
+
+function smartBulkToggleAll(checked) {
+  document.querySelectorAll(".smart-row-cb:not(:disabled)").forEach(function(cb) {
+    cb.checked = checked;
+  });
+  smartBulkUpdateCount();
+}
+
+async function smartBulkDeleteSelected() {
+  var results    = window._smartBulkResults || [];
+  var checkedCbs = document.querySelectorAll(".smart-row-cb:checked:not(:disabled)");
+  var toDelete   = [];
+  checkedCbs.forEach(function(cb) {
+    var idx = parseInt(cb.dataset.idx, 10);
+    if (results[idx] && results[idx].found) toDelete.push(results[idx]);
+  });
+
+  if (!toDelete.length) {
+    alert("No SNs selected for deletion.");
+    return;
+  }
+
+  var confirmMsg = "⚠️ Permanently delete " + toDelete.length + " SN(s)?\n\n" +
+    toDelete.slice(0, 10).map(function(r) {
+      return "• " + r.sn + "  (" + r.branchName + ")";
+    }).join("\n") +
+    (toDelete.length > 10 ? "\n  …and " + (toDelete.length - 10) + " more" : "") +
+    "\n\nThis action CANNOT be undone.";
+  if (!confirm(confirmMsg)) return;
+
+  var delBtn = document.getElementById("smart-del-btn");
+  var msgEl  = document.getElementById("inv-bulk-del-msg");
+  if (delBtn) { delBtn.disabled = true; delBtn.textContent = "Deleting…"; }
+  if (msgEl)  msgEl.innerHTML = "<span style='color:var(--muted)'>Deleting " + toDelete.length + " SNs…</span>";
+
+  var H  = authH();
+  var HJ = authHJ();
+  var off       = SUPA_OFFICER ? SUPA_OFFICER.full_name : "Unknown";
+  var today     = new Date().toISOString().split("T")[0];
+  var timeNow   = new Date().toTimeString().split(" ")[0];
+  var done = 0, errors = [];
+  var affectedSuffixes = {};
+
+  for (var i = 0; i < toDelete.length; i++) {
+    var r   = toDelete[i];
+    var enc = encodeURIComponent(r.sn);
+    try {
+      var delRes = await fetch(SUPA_URL + "/rest/v1/" + r.sourceTable + "?sn=eq." + enc, {
+        method: "DELETE", headers: H
+      });
+      if (!delRes.ok && delRes.status !== 404) {
+        var errBody = await delRes.text().catch(function() { return ""; });
+        throw new Error(delRes.status + " " + errBody);
+      }
+      // Log to daily_operations
+      fetch(SUPA_URL + "/rest/v1/daily_operations", {
+        method:  "POST",
+        headers: HJ,
+        body:    JSON.stringify({
+          operation: "Delete",
+          sn:        r.sn,
+          officer:   off,
+          branch_id: r.branchId,
+          reason:    "Bulk delete via Smart Delete tool (" + r.category + ")",
+          date:      today,
+          time:      timeNow
+        })
+      }).catch(function() {});
+      affectedSuffixes[r.suffix] = true;
+      done++;
+      if (msgEl) msgEl.innerHTML =
+        "<span style='color:var(--muted)'>Deleted " + done + " / " + toDelete.length + "…</span>";
+    } catch (e) {
+      errors.push(r.sn + ": " + friendlyErr(e));
+    }
+  }
+
+  // Invalidate caches for all affected branches
+  Object.keys(affectedSuffixes).forEach(function(s) { cacheInvalidate(s); });
+  debouncedFetchLiveStock();
+  stockInvLoad();
+
+  if (delBtn) { delBtn.disabled = false; smartBulkUpdateCount(); }
+
+  var msg = "<span style='color:var(--green2)'>✓ Deleted " + done + " SN" + (done === 1 ? "" : "s") + "</span>";
+  if (errors.length) msg += " <span style='color:var(--rose);margin-left:6px;'>· " + errors.length + " error(s)</span>";
+  if (msgEl) {
+    msgEl.innerHTML = msg;
+    setTimeout(function() { if (msgEl) msgEl.textContent = ""; }, 6000);
+  }
+
+  // Reset state
+  window._smartBulkResults = [];
+  var resultsDiv = document.getElementById("smart-bulk-results");
+  if (resultsDiv) resultsDiv.style.display = "none";
+  var area = document.getElementById("inv-bulk-del-area");
+  if (area) area.value = "";
 }
 
 // ── Export CSV ─────────────────────────────────────────────────────────
@@ -4489,7 +5069,8 @@ function supOpsRender() {
       return false;
     if (officerFilter && op.officer !== officerFilter) return false;
     if (search) {
-      var hay = (op.sn || "").toLowerCase() + " " + (op.officer || "").toLowerCase();
+      var hay = ((op._swapFaultySn || "") + " " + (op._swapReplaceSn || "") + " " +
+                 (op.sn || "") + " " + (op.officer || "")).toLowerCase();
       if (!hay.includes(search)) return false;
     }
     return true;
@@ -4516,12 +5097,9 @@ function supOpsRender() {
     "<th>Date</th><th>Time</th><th>Operation</th><th>Serial Number</th><th>MID / BD Code</th><th>Officer</th><th>Actions</th>" +
     "</tr></thead><tbody>" +
     filtered.map(function(op) {
-      var snCell;
-      if (op._merged && op._swapFaultySn && op._swapReplaceSn) {
-        snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(op._swapFaultySn) + "</span>" +
-                 "<span style='font-size:10px;color:var(--muted);margin:0 3px;'>→</span>" +
-                 "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>✓ " + escHtml(op._swapReplaceSn) + "</span>";
-      } else { snCell = "<span class='sn-tag'>" + escHtml(op.sn || "—") + "</span>"; }
+      var snCell  = op._merged
+        ? _swapSnCellHtml(op._swapFaultySn, op._swapReplaceSn)
+        : "<span class='sn-tag'>" + escHtml(op.sn || "—") + "</span>";
       var idLabel = _extractOpId(op.operation, op.reason, op.model);
       var delBtn  = op._pairId
         ? "<button class='act-btn act-del' onclick='supDeleteSwapOp(\"" + op.id + "\",\"" + op._pairId + "\")'>🗑</button>"
@@ -4529,8 +5107,8 @@ function supOpsRender() {
       return "<tr>" +
         "<td style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(op.date || "—") + "</td>" +
         "<td style='font-size:11px;color:var(--muted)'>" + (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
-        "<td>" + opChipHtml(op.operation, op.reason) + "</td>" +
-        "<td>" + snCell + "</td>" +
+        "<td>" + opChipHtml(op.operation, op.reason) + (op._swapType ? _swapTypeBadgeHtml(op._swapType) : "") + "</td>" +
+        "<td style='white-space:nowrap;'>" + snCell + "</td>" +
         "<td style='font-size:11px;color:var(--text2);font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(idLabel) + "'>" + escHtml(idLabel) + "</td>" +
         "<td style='font-size:11px;'>" + escHtml(op.officer || "—") + "</td>" +
         "<td>" + delBtn + "</td>" +
@@ -5065,7 +5643,8 @@ function admOpsRender() {
       return false;
     if (officerFilter && op.officer !== officerFilter) return false;
     if (search) {
-      var hay = (op.sn || "").toLowerCase() + " " + (op.officer || "").toLowerCase();
+      var hay = ((op._swapFaultySn || "") + " " + (op._swapReplaceSn || "") + " " +
+                 (op.sn || "") + " " + (op.officer || "")).toLowerCase();
       if (!hay.includes(search)) return false;
     }
     return true;
@@ -5092,12 +5671,9 @@ function admOpsRender() {
     "<th>Date</th><th>Time</th><th>Operation</th><th>Serial Number</th><th>MID / BD Code</th><th>Officer</th><th>Actions</th>" +
     "</tr></thead><tbody>" +
     filtered.map(function(op) {
-      var snCell;
-      if (op._merged && op._swapFaultySn && op._swapReplaceSn) {
-        snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(op._swapFaultySn) + "</span>" +
-                 "<span style='font-size:10px;color:var(--muted);margin:0 3px;'>→</span>" +
-                 "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.2);'>✓ " + escHtml(op._swapReplaceSn) + "</span>";
-      } else { snCell = "<span class='sn-tag'>" + escHtml(op.sn || "—") + "</span>"; }
+      var snCell  = op._merged
+        ? _swapSnCellHtml(op._swapFaultySn, op._swapReplaceSn)
+        : "<span class='sn-tag'>" + escHtml(op.sn || "—") + "</span>";
       var idLabel = _extractOpId(op.operation, op.reason, op.model);
       var delBtn  = op._pairId
         ? "<button class='act-btn act-del' onclick='admDeleteSwapOp(\"" + op.id + "\",\"" + op._pairId + "\")'>🗑</button>"
@@ -5105,8 +5681,8 @@ function admOpsRender() {
       return "<tr>" +
         "<td style='font-size:11px;color:var(--muted);white-space:nowrap;'>" + escHtml(op.date || "—") + "</td>" +
         "<td style='font-size:11px;color:var(--muted)'>" + (op.time ? op.time.substring(0, 5) : "—") + "</td>" +
-        "<td>" + opChipHtml(op.operation, op.reason) + "</td>" +
-        "<td>" + snCell + "</td>" +
+        "<td>" + opChipHtml(op.operation, op.reason) + (op._swapType ? _swapTypeBadgeHtml(op._swapType) : "") + "</td>" +
+        "<td style='white-space:nowrap;'>" + snCell + "</td>" +
         "<td style='font-size:11px;color:var(--text2);font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(idLabel) + "'>" + escHtml(idLabel) + "</td>" +
         "<td style='font-size:11px;'>" + escHtml(op.officer || "—") + "</td>" +
         "<td>" + delBtn + "</td>" +
@@ -6815,22 +7391,9 @@ function _pastOpsRender() {
     var idLabel  = _extractOpId(r.operation, r.reason, r.model);
 
     // SN cell: merged Swap shows faulty → replacement; others show the single SN
-    var snCell;
-    if (r._merged && r._swapFaultySn && r._swapReplaceSn) {
-      snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);" +
-               "border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(r._swapFaultySn) + "</span>" +
-               "<span style='font-size:10px;color:var(--muted);margin:0 4px;'>→</span>" +
-               "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);" +
-               "border-color:rgba(64,145,108,.2);'>✓ " + escHtml(r._swapReplaceSn) + "</span>";
-    } else if (r._merged && r._swapFaultySn) {
-      snCell = "<span class='sn-tag' style='background:var(--rose2);color:var(--rose);" +
-               "border-color:rgba(192,57,43,.2);'>⚠ " + escHtml(r._swapFaultySn) + "</span>";
-    } else if (r._merged && r._swapReplaceSn) {
-      snCell = "<span class='sn-tag' style='background:rgba(64,145,108,.1);color:var(--green2);" +
-               "border-color:rgba(64,145,108,.2);'>✓ " + escHtml(r._swapReplaceSn) + "</span>";
-    } else {
-      snCell = "<span class='sn-tag'>" + escHtml(r.sn || "—") + "</span>";
-    }
+    var snCell = r._merged
+      ? _swapSnCellHtml(r._swapFaultySn, r._swapReplaceSn)
+      : "<span class='sn-tag'>" + escHtml(r.sn || "—") + "</span>";
 
     return "<tr" + (isToday ? " style='background:rgba(64,145,108,.03);'" : "") + ">" +
       "<td style='font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap;'>" +
@@ -6840,8 +7403,8 @@ function _pastOpsRender() {
       "</td>" +
       "<td style='font-size:11px;color:var(--muted);'>" +
         (r.time ? r.time.substring(0,5) : "—") + "</td>" +
-      "<td>" + opChipHtml(r.operation, r.reason) + "</td>" +
-      "<td>" + snCell + "</td>" +
+      "<td>" + opChipHtml(r.operation, r.reason) + (r._swapType ? _swapTypeBadgeHtml(r._swapType) : "") + "</td>" +
+      "<td style='white-space:nowrap;'>" + snCell + "</td>" +
       "<td style='font-size:11px;color:var(--text2);font-weight:600;max-width:180px;overflow:hidden;" +
         "text-overflow:ellipsis;white-space:nowrap;' title='" + escHtml(idLabel) + "'>" +
         escHtml(idLabel) + "</td>" +
