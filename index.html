@@ -231,6 +231,21 @@ select.input{cursor:pointer;background:#fff;}
 .swap-type-btn.active{border-color:var(--green2);background:var(--green4);color:var(--green);box-shadow:0 0 0 3px rgba(64,145,108,.15);}
 .swap-type-btn.active#s-type-exchange{border-color:var(--sky);background:rgba(56,189,248,.08);color:var(--sky);box-shadow:0 0 0 3px rgba(56,189,248,.12);}
 
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+@keyframes gasPulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+.ticker-paused #tb-ticker-inner{animation-play-state:paused;}
+.tb-ticker-has-msg #tb-ticker-inner{animation-duration:22s;}
+.tb-ticker-msg-color{color:#FFE57A !important;}
+.broadcast-list-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;background:var(--surface);transition:all .2s;}
+.broadcast-list-item.active-msg{border-color:rgba(64,145,108,.4);background:rgba(64,145,108,.05);}
+.broadcast-list-item.inactive-msg{opacity:.55;}
+.bcast-msg-txt{font-size:12px;font-weight:600;color:var(--text);flex:1;line-height:1.5;word-break:break-word;}
+.bcast-msg-meta{font-size:10px;color:var(--muted);margin-top:3px;}
+.bcast-del-btn{flex-shrink:0;padding:4px 10px;border-radius:6px;border:1px solid rgba(192,57,43,.25);background:var(--rose2);color:var(--rose);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.bcast-del-btn:hover{background:var(--rose);color:#fff;}
+.bcast-activate-btn{flex-shrink:0;padding:4px 10px;border-radius:6px;border:1px solid rgba(64,145,108,.25);background:var(--green4);color:var(--green2);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+.bcast-activate-btn:hover{background:var(--green2);color:#fff;}
+.bcast-sql-box{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:11px;color:var(--text2);white-space:pre-wrap;overflow-x:auto;margin-top:8px;line-height:1.6;}
 .role-lock{background:var(--rose2);border:1.5px solid rgba(192,57,43,.2);border-radius:12px;padding:24px;text-align:center;}
 .role-lock-icon{font-size:36px;margin-bottom:10px;}
 .role-lock-title{font-family:Syne,sans-serif;font-size:16px;font-weight:700;color:var(--rose);margin-bottom:6px;}
@@ -509,7 +524,15 @@ select.input{cursor:pointer;background:#fff;}
       <span style="font-size:9px;font-weight:800;letter-spacing:2.5px;color:#A7E3C0;text-transform:uppercase;white-space:nowrap;">INVENTORY MANAGEMENT SYSTEM</span>
     </div>
   </div>
-  <div class="tb-sep"></div>
+  <!-- Broadcast Ticker -->
+  <div id="tb-ticker-wrap" style="flex:1;min-width:0;max-width:420px;height:34px;border:1.5px solid rgba(255,255,255,.25);border-radius:8px;overflow:hidden;background:rgba(0,0,0,.18);position:relative;display:flex;align-items:center;">
+    <div id="tb-ticker-icon" style="flex-shrink:0;padding:0 8px;font-size:16px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.15);height:100%;background:rgba(255,255,255,.06);">📢</div>
+    <div style="flex:1;overflow:hidden;height:100%;display:flex;align-items:center;">
+      <div id="tb-ticker-inner" style="display:flex;align-items:center;white-space:nowrap;animation:tickerScroll 30s linear infinite;padding-left:100%;">
+        <span id="tb-ticker-text" style="font-size:11px;font-weight:700;color:#A7E3C0;letter-spacing:.4px;padding-right:80px;">📢 GAS DISPENSER INVENTORY SYSTEM — Loading broadcast…</span>
+      </div>
+    </div>
+  </div>
   <div style="display:flex;align-items:center;gap:10px;margin-right:10px;">
     <!-- Network Signal Indicator -->
     <div id="net-signal" title="Network status" style="display:flex;align-items:center;gap:5px;cursor:default;">
@@ -573,6 +596,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="nav-item rcv" onclick="showPanel('sup-stock-pending');supLoadStockPending()"><div class="nav-icon">📦</div><div><div class="nav-title">Stock Approvals</div><div class="nav-desc" id="nav-sup-stock-desc">Officer stock requests</div></div><span id="sup-stock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
       <div class="nav-item sup" onclick="showPanel('sup-ops');supLoadOps()"><div class="nav-icon">📊</div><div><div class="nav-title">Officer Operations</div><div class="nav-desc">View &amp; edit ops</div></div></div>
       <div class="nav-item sup" onclick="showPanel('sup-kpi');supLoadKpi()"><div class="nav-icon">📈</div><div><div class="nav-title">Officer KPIs</div><div class="nav-desc">Daily &amp; monthly</div></div></div>
+      <div class="nav-item sup" onclick="showPanel('sup-broadcast');broadcastLoad()"><div class="nav-icon">📢</div><div><div class="nav-title">Broadcast</div><div class="nav-desc">Send ticker messages</div></div></div>
       <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">Browse &amp; manage SNs</div></div></div>
       <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
       <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">📦</div><div><div class="nav-title">Old Stock</div><div class="nav-desc" id="nav-old-stock-desc">30+ days in inventory</div></div><span id="old-stock-badge" style="display:none;background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
@@ -597,6 +621,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="nav-item br" onclick="showPanel('create-branch');createBranchBoot()"><div class="nav-icon">🏗️</div><div><div class="nav-title">Create Branch</div><div class="nav-desc">Add new branch</div></div></div>
       <div class="nav-item adm" onclick="showPanel('low-stock');loadLowStockAlerts()"><div class="nav-icon">⚠️</div><div><div class="nav-title">Low Stock Alerts</div><div class="nav-desc" id="nav-adm-lowstock-desc">Branches below threshold</div></div><span id="adm-lowstock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
       <div class="nav-item adm" onclick="showPanel('adm-analytics');admAnalyticsBoot()"><div class="nav-icon">📡</div><div><div class="nav-title">Analytics</div><div class="nav-desc">Grafana &amp; system usage</div></div></div>
+      <div class="nav-item adm" onclick="showPanel('adm-broadcast');broadcastLoad()"><div class="nav-icon">📢</div><div><div class="nav-title">Broadcast</div><div class="nav-desc">Send ticker messages</div></div></div>
     </div>
 
     <!-- STOCK WIDGET - REMOVED COMPLETELY -->
@@ -1103,6 +1128,80 @@ select.input{cursor:pointer;background:#fff;}
       <div class="card-body"><div id="old-stock-summary" style="display:none;margin-bottom:18px;"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"><div style="background:rgba(196,94,40,.06);border:1.5px solid rgba(196,94,40,.2);border-radius:12px;padding:14px 16px;text-align:center;"><div id="os-count-30" style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--orange);">—</div><div style="font-size:10px;color:var(--muted);margin-top:3px;font-weight:600;">🟡 30 – 60 Days</div></div><div style="background:rgba(192,57,43,.06);border:1.5px solid rgba(192,57,43,.2);border-radius:12px;padding:14px 16px;text-align:center;"><div id="os-count-60" style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--rose);">—</div><div style="font-size:10px;color:var(--muted);margin-top:3px;font-weight:600;">🟠 61 – 90 Days</div></div><div style="background:rgba(139,21,21,.08);border:1.5px solid rgba(139,21,21,.3);border-radius:12px;padding:14px 16px;text-align:center;"><div id="os-count-90" style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:#8B1515;">—</div><div style="font-size:10px;color:var(--muted);margin-top:3px;font-weight:600;">🔴 90+ Days</div></div></div><div id="os-total-bar" style="margin-top:10px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--muted);"></div></div><div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end;"><div class="fg" style="margin:0;min-width:180px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">Branch</span></div><select class="input" id="os-branch-select" onchange="oldStockLoad()" style="padding:6px 10px;"><option value="__all__">🌐 All Branches</option></select></div><div class="fg" style="margin:0;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">Age Filter</span></div><select class="input" id="os-age-filter" onchange="oldStockRender()" style="padding:6px 10px;"><option value="all">📦 All Old Stock (30+)</option><option value="30">🟡 30 – 60 Days</option><option value="60">🟠 61 – 90 Days</option><option value="90">🔴 90+ Days</option></select></div><div class="fg" style="margin:0;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">Model</span></div><select class="input" id="os-model-filter" onchange="oldStockRender()" style="padding:6px 10px;"><option value="">All Models</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS (Mini POS)">MPOS (Mini POS)</option></select></div><div class="fg" style="margin:0;flex:1;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span style="font-size:11px;font-weight:700;color:var(--text2);">Search SN</span></div><input class="input" id="os-search" placeholder="Filter serial number…" oninput="oldStockRender()" style="padding:6px 10px;"></div><button class="act-btn act-edit" onclick="oldStockLoad()" style="padding:8px 16px;height:38px;">↺ Refresh</button><button class="act-btn act-edit" onclick="oldStockExport()" style="padding:8px 16px;height:38px;">⬇ Export CSV</button></div><div id="os-count-bar" style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px;"></div><div class="inv-table-wrap"><table class="inv-table" id="os-table"><thead><tr><th>#</th><th>Serial Number</th><th>POS Type</th><th>Branch</th><th>Date Added</th><th>Days in Stock</th><th>Age</th><th>Officer</th></tr></thead><tbody id="os-tbody"><tr><td colspan="8" class="ops-empty">Click Refresh to load old stock.</td></tr></tbody></table></div><div style="margin-top:14px;padding:10px 14px;background:rgba(196,94,40,.06);border:1.5px solid rgba(196,94,40,.2);border-radius:10px;font-size:11px;color:var(--muted);line-height:1.7;">⏱ <strong style="color:var(--orange);">How Old Stock works:</strong> Each SN's age is calculated from its <strong>original receipt date</strong> (when it was first added to inventory). SNs returned from on-field as Brand New keep their original age — the clock does not reset on return. Any Brand New SN with <strong>status = Available</strong> older than 30 days appears here.</div></div></div>
       <div class="card" id="os-add-card" style="display:none;margin-top:18px;"><div class="card-header rcv"><div class="card-icon rcv">➕</div><div><h2>Add Old Stock Manually</h2><p>Manually register Brand New SNs as old stock — useful for stock imported before the system was set up</p></div><button onclick="document.getElementById('os-add-form-wrap').style.display=document.getElementById('os-add-form-wrap').style.display==='none'?'':'none'" class="act-btn act-edit" style="margin-left:auto;padding:6px 14px;">Toggle Form</button></div><div id="os-add-form-wrap" class="card-body" style="display:none;"><div class="form-grid"><div class="fg"><div class="fl"><span>Branch</span></div><select class="input" id="os-add-branch"><option value="">Select branch…</option></select></div><div class="fg"><div class="fl"><span>POS Type</span></div><select class="input" id="os-add-model"><option value="">Select type…</option><option value="SMARTPOS (SECTOR)">SMARTPOS (SECTOR)</option><option value="SMARTPOS (BRANCHLESS)">SMARTPOS (BRANCHLESS)</option><option value="TPOS">TPOS</option><option value="MPOS (Mini POS)">MPOS (Mini POS)</option></select></div></div><div class="fg"><div class="fl"><span>Original Date Added <span class="optional">(backdated)</span></span></div><input type="date" class="input" id="os-add-date" style="max-width:220px;"><div style="font-size:11px;color:var(--muted);margin-top:4px;">Set a date more than 30 days ago to make this stock appear as old stock immediately.</div></div><div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Serial Numbers</span><div class="divider-line"></div></div><div class="mode-toggle"><button class="mode-btn active" onclick="osAddSetMode('single')">Single Entry</button><button class="mode-btn" onclick="osAddSetMode('bulk')">Bulk Paste</button></div><div id="os-add-single"><div id="os-add-sn-rows"></div><button class="add-btn" onclick="osAddRow()"><div class="add-plus">+</div>Add Serial Number</button></div><div id="os-add-bulk" style="display:none;"><textarea class="bulk-area" id="os-add-bulk-area" placeholder="POS-00001&#10;POS-00002&#10;POS-00003" rows="6"></textarea></div><div style="display:flex;gap:8px;margin-top:12px;"><button class="sub-btn" id="os-add-sub-btn" onclick="osAddSubmit()" style="flex:1;">➕ Add to Old Stock</button><button onclick="osAddClear()" style="padding:13px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;">✕ Clear</button></div><div id="os-add-msg" style="margin-top:10px;font-size:12px;font-weight:600;"></div></div></div>
     </div>
+
+  <!-- ══ SUPERVISOR BROADCAST PANEL ══ -->
+  <div class="panel" id="panel-sup-broadcast">
+    <div class="page-label"><div class="op-chip sup">📢 Broadcast Message</div><div class="crumb">→ Send scrolling ticker messages to all officers</div></div>
+    <div class="card">
+      <div class="card-header sup"><div class="card-icon sup">📢</div><div><h2>Broadcast to Officers</h2><p>Type a message — it appears as a live scrolling ticker on every officer's screen</p></div></div>
+      <div class="card-body">
+        <div style="background:rgba(26,111,168,.07);border:1.5px solid rgba(26,111,168,.2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--sky);line-height:1.7;">
+          ⚠️ <strong>One-time Supabase setup:</strong> Copy and run this SQL in your Supabase dashboard → SQL Editor to create the broadcast table:
+          <pre class="bcast-sql-box" id="bcast-sql-box-sup" style="margin-top:8px;">CREATE TABLE IF NOT EXISTS broadcast_messages (
+  id BIGSERIAL PRIMARY KEY,
+  message TEXT NOT NULL,
+  sender TEXT NOT NULL,
+  role TEXT NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE broadcast_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "anon_all" ON broadcast_messages FOR ALL USING (true) WITH CHECK (true);</pre>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('bcast-sql-box-sup').textContent).then(function(){alert('SQL copied to clipboard!')})" class="bval-btn" style="margin-top:6px;padding:4px 14px;font-size:11px;">📋 Copy SQL</button>
+        </div>
+        <div class="fg"><div class="fl"><span>New Broadcast Message</span></div>
+          <textarea class="bulk-area" id="sup-bcast-input" rows="3" placeholder="e.g. ⛽ All officers: please update your daily dispenser readings before 5PM today…" style="resize:none;"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+          <button class="sub-btn" onclick="broadcastSend('sup')" style="padding:10px 24px;flex-shrink:0;">📢 Send Broadcast</button>
+          <div id="sup-bcast-msg" style="font-size:12px;font-weight:700;color:var(--muted);"></div>
+        </div>
+        <div class="divider-row" style="margin:18px 0 12px;"><div class="divider-line"></div><span class="divider-lbl">Active &amp; Past Messages</span><div class="divider-line"></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button class="act-btn act-edit" onclick="broadcastLoad()" style="padding:5px 14px;">↺ Refresh</button>
+          <span id="bcast-list-count" style="font-size:11px;color:var(--muted);align-self:center;"></span>
+        </div>
+        <div id="bcast-list-wrap"><div class="ops-empty">Loading messages…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ADMIN BROADCAST PANEL ══ -->
+  <div class="panel" id="panel-adm-broadcast">
+    <div class="page-label"><div class="op-chip adm">📢 Broadcast Message</div><div class="crumb">→ Send scrolling ticker messages to all officers</div></div>
+    <div class="card">
+      <div class="card-header adm"><div class="card-icon adm">📢</div><div><h2>Broadcast to All Officers</h2><p>Type a message — it appears as a live scrolling ticker on every officer's screen</p></div></div>
+      <div class="card-body">
+        <div style="background:rgba(26,111,168,.07);border:1.5px solid rgba(26,111,168,.2);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--sky);line-height:1.7;">
+          ⚠️ <strong>One-time Supabase setup:</strong> Copy and run this SQL in your Supabase dashboard → SQL Editor to create the broadcast table:
+          <pre class="bcast-sql-box" id="bcast-sql-box-adm" style="margin-top:8px;">CREATE TABLE IF NOT EXISTS broadcast_messages (
+  id BIGSERIAL PRIMARY KEY,
+  message TEXT NOT NULL,
+  sender TEXT NOT NULL,
+  role TEXT NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE broadcast_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "anon_all" ON broadcast_messages FOR ALL USING (true) WITH CHECK (true);</pre>
+          <button onclick="navigator.clipboard.writeText(document.getElementById('bcast-sql-box-adm').textContent).then(function(){alert('SQL copied to clipboard!')})" class="bval-btn" style="margin-top:6px;padding:4px 14px;font-size:11px;">📋 Copy SQL</button>
+        </div>
+        <div class="fg"><div class="fl"><span>New Broadcast Message</span></div>
+          <textarea class="bulk-area" id="adm-bcast-input" rows="3" placeholder="e.g. ⛽ SYSTEM NOTICE: Maintenance window tonight 10PM–12AM. Save all work before 9:45PM." style="resize:none;"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+          <button class="sub-btn" onclick="broadcastSend('adm')" style="padding:10px 24px;flex-shrink:0;background:linear-gradient(135deg,var(--amber),var(--amber2));">📢 Send Broadcast</button>
+          <div id="adm-bcast-msg" style="font-size:12px;font-weight:700;color:var(--muted);"></div>
+        </div>
+        <div class="divider-row" style="margin:18px 0 12px;"><div class="divider-line"></div><span class="divider-lbl">Active &amp; Past Messages</span><div class="divider-line"></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button class="act-btn act-edit" onclick="broadcastLoad()" style="padding:5px 14px;">↺ Refresh</button>
+          <span id="bcast-list-count2" style="font-size:11px;color:var(--muted);align-self:center;"></span>
+        </div>
+        <div id="bcast-list-wrap2"><div class="ops-empty">Loading messages…</div></div>
+      </div>
+    </div>
+  </div>
 
   </div>
 </div>
@@ -9438,6 +9537,228 @@ document.addEventListener("DOMContentLoaded", function() {
   if (navigator.connection) navigator.connection.addEventListener('change', updateNetSignal);
   setInterval(updateNetSignal, 10000);
   // ─────────────────────────────────────────────────────────────────────────
+});
+
+// ════════════════════════════════════════════════════════════
+//  BROADCAST MESSAGE SYSTEM
+// ════════════════════════════════════════════════════════════
+
+var BCAST_TABLE = 'broadcast_messages';
+var BCAST_REFRESH_INTERVAL = 30000; // 30s auto-refresh for ticker
+var _bcastTimer = null;
+var _bcastTickerTimer = null;
+var _bcastMessages = [];
+
+/* ── Fetch all messages from Supabase ── */
+async function broadcastFetch() {
+  try {
+    var res = await sf(BCAST_TABLE + '?select=*&order=created_at.desc&limit=50');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  } catch(e) {
+    return null;
+  }
+}
+
+/* ── Update the ticker in the topbar ── */
+async function broadcastUpdateTicker() {
+  try {
+    var msgs = await broadcastFetch();
+    if (!msgs || !msgs.length) {
+      // Default gas dispenser ticker
+      tickerSetDefault();
+      return;
+    }
+    // Show only the most recent active message
+    var active = msgs.filter(function(m){ return m.is_active; });
+    if (!active.length) {
+      tickerSetDefault();
+      return;
+    }
+    var msg = active[0];
+    var el = document.getElementById('tb-ticker-text');
+    var inner = document.getElementById('tb-ticker-inner');
+    var wrap = document.getElementById('tb-ticker-wrap');
+    if (el) {
+      el.textContent = '📢 ' + msg.message + '   —   Sent by ' + msg.sender + ' (' + msg.role + ')';
+      el.classList.add('tb-ticker-msg-color');
+    }
+    if (inner) {
+      inner.style.animationDuration = Math.max(18, msg.message.length * 0.35) + 's';
+    }
+    if (wrap) {
+      wrap.style.borderColor = 'rgba(255,230,80,.4)';
+      wrap.style.background = 'rgba(181,131,74,.18)';
+    }
+    var icon = document.getElementById('tb-ticker-icon');
+    if (icon) icon.textContent = '📢';
+  } catch(e) {}
+}
+
+/* ── Default ticker: gas dispenser theme ── */
+function tickerSetDefault() {
+  var el = document.getElementById('tb-ticker-text');
+  var inner = document.getElementById('tb-ticker-inner');
+  var wrap = document.getElementById('tb-ticker-wrap');
+  var icon = document.getElementById('tb-ticker-icon');
+  if (el) {
+    el.textContent = '⛽ GAS DISPENSER INVENTORY SYSTEM   ·   OPay POS Management   ·   Track · Assign · Monitor   ·   All operations logged in real-time   ·   ⛽';
+    el.style.color = '#A7E3C0';
+  }
+  if (inner) inner.style.animationDuration = '38s';
+  if (wrap) {
+    wrap.style.borderColor = 'rgba(255,255,255,.25)';
+    wrap.style.background = 'rgba(0,0,0,.18)';
+  }
+  if (icon) icon.textContent = '⛽';
+}
+
+/* ── Start auto-refresh of ticker ── */
+function broadcastStartTicker() {
+  broadcastUpdateTicker();
+  if (_bcastTickerTimer) clearInterval(_bcastTickerTimer);
+  _bcastTickerTimer = setInterval(broadcastUpdateTicker, BCAST_REFRESH_INTERVAL);
+}
+
+/* ── Send a new broadcast message ── */
+async function broadcastSend(prefix) {
+  var inputId = prefix + '-bcast-input';
+  var msgId   = prefix + '-bcast-msg';
+  var inp = document.getElementById(inputId);
+  var msgEl = document.getElementById(msgId);
+  if (!inp || !inp.value.trim()) {
+    if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '⚠ Please type a message first.'; }
+    return;
+  }
+  var text = inp.value.trim();
+  if (text.length > 280) {
+    if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '⚠ Message too long (max 280 chars).'; }
+    return;
+  }
+  if (msgEl) { msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Sending…'; }
+  try {
+    // First deactivate all existing active messages
+    await sf(BCAST_TABLE + '?is_active=eq.true', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ is_active: false })
+    });
+    // Insert new message
+    var officer = (SUPA_OFFICER && SUPA_OFFICER.name) ? SUPA_OFFICER.name : 'Unknown';
+    var role    = (SUPA_OFFICER && SUPA_OFFICER.role) ? SUPA_OFFICER.role : 'Staff';
+    var res = await sf(BCAST_TABLE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ message: text, sender: officer, role: role, is_active: true })
+    });
+    if (!res.ok) {
+      var errText = await res.text();
+      throw new Error(errText || 'HTTP ' + res.status);
+    }
+    inp.value = '';
+    if (msgEl) { msgEl.style.color = 'var(--green2)'; msgEl.textContent = '✓ Broadcast sent! Ticker updated.'; }
+    setTimeout(function(){ if (msgEl) msgEl.textContent = ''; }, 4000);
+    broadcastLoad();
+    broadcastUpdateTicker();
+  } catch(e) {
+    if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '✗ Error: ' + (e.message || 'Failed. Did you run the SQL setup?'); }
+  }
+}
+
+/* ── Delete a message ── */
+async function broadcastDelete(id) {
+  if (!confirm('Delete this broadcast message?')) return;
+  try {
+    var res = await sf(BCAST_TABLE + '?id=eq.' + id, {
+      method: 'DELETE',
+      headers: { 'Prefer': 'return=minimal' }
+    });
+    broadcastLoad();
+    broadcastUpdateTicker();
+  } catch(e) {
+    alert('Delete failed: ' + (e.message || e));
+  }
+}
+
+/* ── Toggle active/inactive ── */
+async function broadcastToggleActive(id, current) {
+  try {
+    if (!current) {
+      // activating: first deactivate all
+      await sf(BCAST_TABLE + '?is_active=eq.true', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ is_active: false })
+      });
+    }
+    await sf(BCAST_TABLE + '?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ is_active: !current })
+    });
+    broadcastLoad();
+    broadcastUpdateTicker();
+  } catch(e) {
+    alert('Update failed: ' + (e.message || e));
+  }
+}
+
+/* ── Render the messages list ── */
+function broadcastRender(msgs, wrapId, countId) {
+  var wrap = document.getElementById(wrapId);
+  var countEl = document.getElementById(countId);
+  if (!wrap) return;
+  if (!msgs || !msgs.length) {
+    wrap.innerHTML = '<div class="ops-empty">No broadcast messages yet.</div>';
+    if (countEl) countEl.textContent = '';
+    return;
+  }
+  if (countEl) countEl.textContent = msgs.length + ' message(s)';
+  var html = '';
+  msgs.forEach(function(m) {
+    var dt = m.created_at ? new Date(m.created_at).toLocaleString('en-NG', {
+      day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+    }) : '';
+    var isActive = !!m.is_active;
+    html += '<div class="broadcast-list-item ' + (isActive ? 'active-msg' : 'inactive-msg') + '">' +
+      '<div style="flex-shrink:0;font-size:20px;line-height:1;">' + (isActive ? '📢' : '🔇') + '</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="bcast-msg-txt">' + escHtml(m.message) + '</div>' +
+        '<div class="bcast-msg-meta">Sent by <strong>' + escHtml(m.sender) + '</strong> · ' + escHtml(m.role) + ' · ' + dt +
+          (isActive ? ' · <span style="color:var(--green2);font-weight:700;">● LIVE</span>' : ' · <span style="color:var(--muted);">Inactive</span>') +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex;gap:6px;flex-direction:column;flex-shrink:0;">' +
+        '<button class="bcast-activate-btn" onclick="broadcastToggleActive(' + m.id + ',' + isActive + ')">' +
+          (isActive ? '⏸ Deactivate' : '▶ Activate') +
+        '</button>' +
+        '<button class="bcast-del-btn" onclick="broadcastDelete(' + m.id + ')">🗑 Delete</button>' +
+      '</div>' +
+    '</div>';
+  });
+  wrap.innerHTML = html;
+}
+
+/* ── Load messages and populate both panels ── */
+async function broadcastLoad() {
+  var msgs = await broadcastFetch();
+  if (msgs === null) {
+    var errHtml = '<div class="ops-empty" style="color:var(--rose);">⚠ Could not load messages. Make sure the broadcast table exists — use the SQL setup above.</div>';
+    var w1 = document.getElementById('bcast-list-wrap');
+    var w2 = document.getElementById('bcast-list-wrap2');
+    if (w1) w1.innerHTML = errHtml;
+    if (w2) w2.innerHTML = errHtml;
+    return;
+  }
+  _bcastMessages = msgs;
+  broadcastRender(msgs, 'bcast-list-wrap',  'bcast-list-count');
+  broadcastRender(msgs, 'bcast-list-wrap2', 'bcast-list-count2');
+}
+
+// Start ticker on page load (called once app boots)
+document.addEventListener('DOMContentLoaded', function() {
+  // Small delay to let the app authenticate first
+  setTimeout(broadcastStartTicker, 3000);
 });
 </script>
 </body>
