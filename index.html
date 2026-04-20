@@ -527,7 +527,7 @@ select.input{cursor:pointer;background:#fff;}
   </div>
   <!-- Broadcast Ticker -->
   <div id="tb-ticker-wrap" style="flex:1;min-width:0;max-width:420px;height:34px;border:1.5px solid rgba(255,255,255,.25);border-radius:8px;overflow:hidden;background:rgba(0,0,0,.18);position:relative;display:flex;align-items:center;">
-    <div id="tb-ticker-icon" style="flex-shrink:0;padding:0 8px;font-size:16px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.15);height:100%;background:rgba(255,255,255,.06);">⛽</div>
+    <div id="tb-ticker-icon" style="flex-shrink:0;padding:0 8px;font-size:16px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.15);height:100%;background:rgba(255,255,255,.06);">📢</div>
     <div style="flex:1;overflow:hidden;height:100%;display:flex;align-items:center;">
       <div id="tb-ticker-inner" style="display:flex;align-items:center;white-space:nowrap;animation:tickerScroll 30s linear infinite;padding-left:100%;">
         <span id="tb-ticker-text" style="font-size:11px;font-weight:700;color:#A7E3C0;letter-spacing:.4px;padding-right:80px;">📢 ANNOUNCEMENT — Loading broadcast…</span>
@@ -1154,7 +1154,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE broadcast_messages;</pre>
           <button onclick="navigator.clipboard.writeText(document.getElementById('bcast-sql-box-sup').textContent).then(function(){alert('SQL copied to clipboard!')})" class="bval-btn" style="margin-top:6px;padding:4px 14px;font-size:11px;">📋 Copy SQL</button>
         </div>
         <div class="fg"><div class="fl"><span>New Broadcast Message</span></div>
-          <textarea class="bulk-area" id="sup-bcast-input" rows="3" placeholder="e.g. ⛽ All officers: please update your daily dispenser readings before 5PM today…" style="resize:none;"></textarea>
+          <textarea class="bulk-area" id="sup-bcast-input" rows="3" placeholder="e.g. 📢 All officers: please update your daily dispenser readings before 5PM today…" style="resize:none;"></textarea>
         </div>
         <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
           <button class="sub-btn" onclick="broadcastSend('sup')" style="padding:10px 24px;flex-shrink:0;">📢 Send Broadcast</button>
@@ -1194,7 +1194,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE broadcast_messages;</pre>
           <button onclick="navigator.clipboard.writeText(document.getElementById('bcast-sql-box-adm').textContent).then(function(){alert('SQL copied to clipboard!')})" class="bval-btn" style="margin-top:6px;padding:4px 14px;font-size:11px;">📋 Copy SQL</button>
         </div>
         <div class="fg"><div class="fl"><span>New Broadcast Message</span></div>
-          <textarea class="bulk-area" id="adm-bcast-input" rows="3" placeholder="e.g. ⛽ SYSTEM NOTICE: Maintenance window tonight 10PM–12AM. Save all work before 9:45PM." style="resize:none;"></textarea>
+          <textarea class="bulk-area" id="adm-bcast-input" rows="3" placeholder="e.g. 📢 SYSTEM NOTICE: Maintenance window tonight 10PM–12AM. Save all work before 9:45PM." style="resize:none;"></textarea>
         </div>
         <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
           <button class="sub-btn" onclick="broadcastSend('adm')" style="padding:10px 24px;flex-shrink:0;background:linear-gradient(135deg,var(--amber),var(--amber2));">📢 Send Broadcast</button>
