@@ -435,6 +435,7 @@ select.input{cursor:pointer;background:#fff;}
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 
@@ -526,10 +527,10 @@ select.input{cursor:pointer;background:#fff;}
   </div>
   <!-- Broadcast Ticker -->
   <div id="tb-ticker-wrap" style="flex:1;min-width:0;max-width:420px;height:34px;border:1.5px solid rgba(255,255,255,.25);border-radius:8px;overflow:hidden;background:rgba(0,0,0,.18);position:relative;display:flex;align-items:center;">
-    <div id="tb-ticker-icon" style="flex-shrink:0;padding:0 8px;font-size:16px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.15);height:100%;background:rgba(255,255,255,.06);">📢</div>
+    <div id="tb-ticker-icon" style="flex-shrink:0;padding:0 8px;font-size:16px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.15);height:100%;background:rgba(255,255,255,.06);">⛽</div>
     <div style="flex:1;overflow:hidden;height:100%;display:flex;align-items:center;">
       <div id="tb-ticker-inner" style="display:flex;align-items:center;white-space:nowrap;animation:tickerScroll 30s linear infinite;padding-left:100%;">
-        <span id="tb-ticker-text" style="font-size:11px;font-weight:700;color:#A7E3C0;letter-spacing:.4px;padding-right:80px;">📢 GAS DISPENSER INVENTORY SYSTEM — Loading broadcast…</span>
+        <span id="tb-ticker-text" style="font-size:11px;font-weight:700;color:#A7E3C0;letter-spacing:.4px;padding-right:80px;">⛽ GAS DISPENSER INVENTORY SYSTEM — Loading broadcast…</span>
       </div>
     </div>
   </div>
@@ -1146,7 +1147,10 @@ select.input{cursor:pointer;background:#fff;}
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE broadcast_messages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "anon_all" ON broadcast_messages FOR ALL USING (true) WITH CHECK (true);</pre>
+CREATE POLICY "anon_all" ON broadcast_messages FOR ALL USING (true) WITH CHECK (true);
+
+-- Enable Realtime (required for instant ticker updates)
+ALTER PUBLICATION supabase_realtime ADD TABLE broadcast_messages;</pre>
           <button onclick="navigator.clipboard.writeText(document.getElementById('bcast-sql-box-sup').textContent).then(function(){alert('SQL copied to clipboard!')})" class="bval-btn" style="margin-top:6px;padding:4px 14px;font-size:11px;">📋 Copy SQL</button>
         </div>
         <div class="fg"><div class="fl"><span>New Broadcast Message</span></div>
@@ -1183,7 +1187,10 @@ CREATE POLICY "anon_all" ON broadcast_messages FOR ALL USING (true) WITH CHECK (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE broadcast_messages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "anon_all" ON broadcast_messages FOR ALL USING (true) WITH CHECK (true);</pre>
+CREATE POLICY "anon_all" ON broadcast_messages FOR ALL USING (true) WITH CHECK (true);
+
+-- Enable Realtime (required for instant ticker updates)
+ALTER PUBLICATION supabase_realtime ADD TABLE broadcast_messages;</pre>
           <button onclick="navigator.clipboard.writeText(document.getElementById('bcast-sql-box-adm').textContent).then(function(){alert('SQL copied to clipboard!')})" class="bval-btn" style="margin-top:6px;padding:4px 14px;font-size:11px;">📋 Copy SQL</button>
         </div>
         <div class="fg"><div class="fl"><span>New Broadcast Message</span></div>
@@ -9540,128 +9547,159 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // ════════════════════════════════════════════════════════════
-//  BROADCAST MESSAGE SYSTEM
+//  BROADCAST MESSAGE SYSTEM  —  Native WebSocket Realtime
+//  Zero polling. Only fires when admin/supervisor changes data.
 // ════════════════════════════════════════════════════════════
 
-var BCAST_TABLE = 'broadcast_messages';
-var BCAST_REFRESH_INTERVAL = 30000; // 30s auto-refresh for ticker
-var _bcastTimer = null;
-var _bcastTickerTimer = null;
+var BCAST_TABLE    = 'broadcast_messages';
 var _bcastMessages = [];
+var _bcastSocket   = null;
+var _bcastHB       = null;
+var _bcastRef      = 0;
 
-/* ── Fetch all messages from Supabase ── */
+/* ── Single REST fetch (called once on boot + once per WS event) ── */
 async function broadcastFetch() {
   try {
     var res = await sf(BCAST_TABLE + '?select=*&order=created_at.desc&limit=50');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     return await res.json();
-  } catch(e) {
-    return null;
-  }
+  } catch(e) { return null; }
 }
 
-/* ── Update the ticker in the topbar ── */
+/* ── Update the topbar ticker display ── */
 async function broadcastUpdateTicker() {
   try {
     var msgs = await broadcastFetch();
-    if (!msgs || !msgs.length) {
-      // Default gas dispenser ticker
-      tickerSetDefault();
-      return;
-    }
-    // Show only the most recent active message
+    if (!msgs || !msgs.length) { tickerSetDefault(); return; }
     var active = msgs.filter(function(m){ return m.is_active; });
-    if (!active.length) {
-      tickerSetDefault();
-      return;
-    }
-    var msg = active[0];
-    var el = document.getElementById('tb-ticker-text');
-    var inner = document.getElementById('tb-ticker-inner');
+    if (!active.length) { tickerSetDefault(); return; }
+    var msg  = active[0];
+    var el   = document.getElementById('tb-ticker-text');
+    var inner= document.getElementById('tb-ticker-inner');
     var wrap = document.getElementById('tb-ticker-wrap');
-    if (el) {
-      el.textContent = '📢 ' + msg.message + '   —   Sent by ' + msg.sender + ' (' + msg.role + ')';
-      el.classList.add('tb-ticker-msg-color');
-    }
-    if (inner) {
-      inner.style.animationDuration = Math.max(18, msg.message.length * 0.35) + 's';
-    }
-    if (wrap) {
-      wrap.style.borderColor = 'rgba(255,230,80,.4)';
-      wrap.style.background = 'rgba(181,131,74,.18)';
-    }
     var icon = document.getElementById('tb-ticker-icon');
-    if (icon) icon.textContent = '📢';
+    if (el)    { el.textContent = '📢 ' + msg.message + '   —   ' + msg.sender + ' (' + msg.role + ')'; el.style.color = '#FFE57A'; }
+    if (inner) inner.style.animationDuration = Math.max(18, msg.message.length * 0.35) + 's';
+    if (wrap)  { wrap.style.borderColor = 'rgba(255,230,80,.4)'; wrap.style.background = 'rgba(181,131,74,.18)'; }
+    if (icon)  icon.textContent = '📢';
   } catch(e) {}
 }
 
-/* ── Default ticker: gas dispenser theme ── */
+/* ── Default ticker when no active message ── */
 function tickerSetDefault() {
-  var el = document.getElementById('tb-ticker-text');
-  var inner = document.getElementById('tb-ticker-inner');
+  var el   = document.getElementById('tb-ticker-text');
+  var inner= document.getElementById('tb-ticker-inner');
   var wrap = document.getElementById('tb-ticker-wrap');
   var icon = document.getElementById('tb-ticker-icon');
-  if (el) {
-    el.textContent = '⛽ GAS DISPENSER INVENTORY SYSTEM   ·   OPay POS Management   ·   Track · Assign · Monitor   ·   All operations logged in real-time   ·   ⛽';
-    el.style.color = '#A7E3C0';
-  }
+  if (el)    { el.textContent = '📢 GAS DISPENSER INVENTORY SYSTEM   ·   OPay POS Management   ·   Track · Assign · Monitor   ·   All operations logged in real-time'; el.style.color = '#A7E3C0'; }
   if (inner) inner.style.animationDuration = '38s';
-  if (wrap) {
-    wrap.style.borderColor = 'rgba(255,255,255,.25)';
-    wrap.style.background = 'rgba(0,0,0,.18)';
-  }
-  if (icon) icon.textContent = '⛽';
+  if (wrap)  { wrap.style.borderColor = 'rgba(255,255,255,.25)'; wrap.style.background = 'rgba(0,0,0,.18)'; }
+  if (icon)  icon.textContent = '📢';
 }
 
-/* ── Start auto-refresh of ticker ── */
-function broadcastStartTicker() {
-  broadcastUpdateTicker();
-  if (_bcastTickerTimer) clearInterval(_bcastTickerTimer);
-  _bcastTickerTimer = setInterval(broadcastUpdateTicker, BCAST_REFRESH_INTERVAL);
+/* ─────────────────────────────────────────────────────────────
+   Native WebSocket Realtime
+   • Connects once to Supabase Realtime via raw WS
+   • Heartbeat (no DB query) every 25 s keeps connection alive
+   • broadcastUpdateTicker() is called ONLY when the server
+     pushes a postgres_changes event (INSERT / UPDATE / DELETE)
+   • Auto-reconnects on drop
+───────────────────────────────────────────────────────────── */
+function broadcastStartRealtime() {
+  if (_bcastSocket) { try { _bcastSocket.close(); } catch(e){} }
+  clearInterval(_bcastHB);
+
+  var wsUrl = SUPA_URL.replace('https://', 'wss://')
+            + '/realtime/v1/websocket?apikey=' + SUPA_KEY + '&vsn=1.0.0';
+
+  try { _bcastSocket = new WebSocket(wsUrl); } catch(e) { return; }
+
+  _bcastSocket.onopen = function() {
+    // Subscribe to all changes on broadcast_messages
+    _bcastRef++;
+    _bcastSocket.send(JSON.stringify({
+      topic:   'realtime:public:broadcast_messages',
+      event:   'phx_join',
+      payload: {
+        config: {
+          broadcast:        { self: false },
+          presence:         { key: '' },
+          postgres_changes: [{ event: '*', schema: 'public', table: 'broadcast_messages' }]
+        }
+      },
+      ref: String(_bcastRef)
+    }));
+
+    // Heartbeat — just a WS ping, zero DB queries
+    _bcastHB = setInterval(function() {
+      if (_bcastSocket && _bcastSocket.readyState === WebSocket.OPEN) {
+        _bcastRef++;
+        _bcastSocket.send(JSON.stringify({
+          topic: 'phoenix', event: 'heartbeat', payload: {}, ref: String(_bcastRef)
+        }));
+      }
+    }, 25000);
+  };
+
+  _bcastSocket.onmessage = function(raw) {
+    try {
+      var msg = JSON.parse(raw.data);
+      // postgres_changes event = real data change by admin/supervisor
+      if (msg.event === 'postgres_changes' ||
+         (msg.payload && msg.payload.data && msg.payload.data.record)) {
+        broadcastUpdateTicker();
+        // Refresh panel list only if the panel is currently visible
+        var sp = document.getElementById('panel-sup-broadcast');
+        var ap = document.getElementById('panel-adm-broadcast');
+        if (sp && sp.classList.contains('active')) broadcastLoad();
+        if (ap && ap.classList.contains('active')) broadcastLoad();
+      }
+    } catch(err) {}
+  };
+
+  _bcastSocket.onclose = function() {
+    clearInterval(_bcastHB);
+    setTimeout(broadcastStartRealtime, 6000); // reconnect after 6 s
+  };
+
+  _bcastSocket.onerror = function() { _bcastSocket.close(); };
 }
 
 /* ── Send a new broadcast message ── */
 async function broadcastSend(prefix) {
-  var inputId = prefix + '-bcast-input';
-  var msgId   = prefix + '-bcast-msg';
-  var inp = document.getElementById(inputId);
-  var msgEl = document.getElementById(msgId);
+  var inp   = document.getElementById(prefix + '-bcast-input');
+  var msgEl = document.getElementById(prefix + '-bcast-msg');
   if (!inp || !inp.value.trim()) {
     if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '⚠ Please type a message first.'; }
     return;
   }
   var text = inp.value.trim();
   if (text.length > 280) {
-    if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '⚠ Message too long (max 280 chars).'; }
+    if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '⚠ Max 280 characters.'; }
     return;
   }
   if (msgEl) { msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Sending…'; }
   try {
-    // First deactivate all existing active messages
     await sf(BCAST_TABLE + '?is_active=eq.true', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ is_active: false })
     });
-    // Insert new message
     var officer = (SUPA_OFFICER && SUPA_OFFICER.name) ? SUPA_OFFICER.name : 'Unknown';
-    var role    = (SUPA_OFFICER && SUPA_OFFICER.role) ? SUPA_OFFICER.role : 'Staff';
+    var role    = (SUPA_OFFICER && SUPA_OFFICER.role)  ? SUPA_OFFICER.role  : 'Staff';
     var res = await sf(BCAST_TABLE, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ message: text, sender: officer, role: role, is_active: true })
     });
-    if (!res.ok) {
-      var errText = await res.text();
-      throw new Error(errText || 'HTTP ' + res.status);
-    }
+    if (!res.ok) throw new Error(await res.text() || 'HTTP ' + res.status);
     inp.value = '';
-    if (msgEl) { msgEl.style.color = 'var(--green2)'; msgEl.textContent = '✓ Broadcast sent! Ticker updated.'; }
+    if (msgEl) { msgEl.style.color = 'var(--green2)'; msgEl.textContent = '✓ Broadcast sent!'; }
     setTimeout(function(){ if (msgEl) msgEl.textContent = ''; }, 4000);
     broadcastLoad();
     broadcastUpdateTicker();
   } catch(e) {
-    if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '✗ Error: ' + (e.message || 'Failed. Did you run the SQL setup?'); }
+    if (msgEl) { msgEl.style.color = 'var(--rose)'; msgEl.textContent = '✗ ' + (e.message || 'Failed — run the SQL setup first.'); }
   }
 }
 
@@ -9669,22 +9707,15 @@ async function broadcastSend(prefix) {
 async function broadcastDelete(id) {
   if (!confirm('Delete this broadcast message?')) return;
   try {
-    var res = await sf(BCAST_TABLE + '?id=eq.' + id, {
-      method: 'DELETE',
-      headers: { 'Prefer': 'return=minimal' }
-    });
-    broadcastLoad();
-    broadcastUpdateTicker();
-  } catch(e) {
-    alert('Delete failed: ' + (e.message || e));
-  }
+    await sf(BCAST_TABLE + '?id=eq.' + id, { method: 'DELETE', headers: { 'Prefer': 'return=minimal' } });
+    // WS event will auto-refresh ticker + panel
+  } catch(e) { alert('Delete failed: ' + (e.message || e)); }
 }
 
 /* ── Toggle active/inactive ── */
 async function broadcastToggleActive(id, current) {
   try {
     if (!current) {
-      // activating: first deactivate all
       await sf(BCAST_TABLE + '?is_active=eq.true', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
@@ -9696,16 +9727,13 @@ async function broadcastToggleActive(id, current) {
       headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ is_active: !current })
     });
-    broadcastLoad();
-    broadcastUpdateTicker();
-  } catch(e) {
-    alert('Update failed: ' + (e.message || e));
-  }
+    // WS event will auto-refresh
+  } catch(e) { alert('Update failed: ' + (e.message || e)); }
 }
 
-/* ── Render the messages list ── */
+/* ── Render message list ── */
 function broadcastRender(msgs, wrapId, countId) {
-  var wrap = document.getElementById(wrapId);
+  var wrap    = document.getElementById(wrapId);
   var countEl = document.getElementById(countId);
   if (!wrap) return;
   if (!msgs || !msgs.length) {
@@ -9724,14 +9752,12 @@ function broadcastRender(msgs, wrapId, countId) {
       '<div style="flex-shrink:0;font-size:20px;line-height:1;">' + (isActive ? '📢' : '🔇') + '</div>' +
       '<div style="flex:1;min-width:0;">' +
         '<div class="bcast-msg-txt">' + escHtml(m.message) + '</div>' +
-        '<div class="bcast-msg-meta">Sent by <strong>' + escHtml(m.sender) + '</strong> · ' + escHtml(m.role) + ' · ' + dt +
+        '<div class="bcast-msg-meta">By <strong>' + escHtml(m.sender) + '</strong> · ' + escHtml(m.role) + ' · ' + dt +
           (isActive ? ' · <span style="color:var(--green2);font-weight:700;">● LIVE</span>' : ' · <span style="color:var(--muted);">Inactive</span>') +
         '</div>' +
       '</div>' +
       '<div style="display:flex;gap:6px;flex-direction:column;flex-shrink:0;">' +
-        '<button class="bcast-activate-btn" onclick="broadcastToggleActive(' + m.id + ',' + isActive + ')">' +
-          (isActive ? '⏸ Deactivate' : '▶ Activate') +
-        '</button>' +
+        '<button class="bcast-activate-btn" onclick="broadcastToggleActive(' + m.id + ',' + isActive + ')">' + (isActive ? '⏸ Deactivate' : '▶ Activate') + '</button>' +
         '<button class="bcast-del-btn" onclick="broadcastDelete(' + m.id + ')">🗑 Delete</button>' +
       '</div>' +
     '</div>';
@@ -9739,13 +9765,12 @@ function broadcastRender(msgs, wrapId, countId) {
   wrap.innerHTML = html;
 }
 
-/* ── Load messages and populate both panels ── */
+/* ── Load messages into both panels ── */
 async function broadcastLoad() {
   var msgs = await broadcastFetch();
   if (msgs === null) {
-    var errHtml = '<div class="ops-empty" style="color:var(--rose);">⚠ Could not load messages. Make sure the broadcast table exists — use the SQL setup above.</div>';
-    var w1 = document.getElementById('bcast-list-wrap');
-    var w2 = document.getElementById('bcast-list-wrap2');
+    var errHtml = '<div class="ops-empty" style="color:var(--rose);">⚠ Could not load — run the SQL setup above first.</div>';
+    var w1 = document.getElementById('bcast-list-wrap'),  w2 = document.getElementById('bcast-list-wrap2');
     if (w1) w1.innerHTML = errHtml;
     if (w2) w2.innerHTML = errHtml;
     return;
@@ -9755,10 +9780,12 @@ async function broadcastLoad() {
   broadcastRender(msgs, 'bcast-list-wrap2', 'bcast-list-count2');
 }
 
-// Start ticker on page load (called once app boots)
+/* ── Boot: one fetch on load, then pure event-driven via WS ── */
 document.addEventListener('DOMContentLoaded', function() {
-  // Small delay to let the app authenticate first
-  setTimeout(broadcastStartTicker, 3000);
+  setTimeout(function() {
+    broadcastUpdateTicker();  // 1 REST call on load only
+    broadcastStartRealtime(); // open WS — no further queries until DB changes
+  }, 3000);
 });
 </script>
 </body>
