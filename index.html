@@ -530,7 +530,7 @@ select.input{cursor:pointer;background:#fff;}
     <div id="tb-ticker-icon" style="flex-shrink:0;padding:0 8px;font-size:16px;display:flex;align-items:center;border-right:1px solid rgba(255,255,255,.15);height:100%;background:rgba(255,255,255,.06);">⛽</div>
     <div style="flex:1;overflow:hidden;height:100%;display:flex;align-items:center;">
       <div id="tb-ticker-inner" style="display:flex;align-items:center;white-space:nowrap;animation:tickerScroll 30s linear infinite;padding-left:100%;">
-        <span id="tb-ticker-text" style="font-size:11px;font-weight:700;color:#A7E3C0;letter-spacing:.4px;padding-right:80px;">⛽ GAS DISPENSER INVENTORY SYSTEM — Loading broadcast…</span>
+        <span id="tb-ticker-text" style="font-size:11px;font-weight:700;color:#A7E3C0;letter-spacing:.4px;padding-right:80px;">📢 ANNOUNCEMENT — Loading broadcast…</span>
       </div>
     </div>
   </div>
@@ -9591,7 +9591,7 @@ function tickerSetDefault() {
   var inner= document.getElementById('tb-ticker-inner');
   var wrap = document.getElementById('tb-ticker-wrap');
   var icon = document.getElementById('tb-ticker-icon');
-  if (el)    { el.textContent = '📢 GAS DISPENSER INVENTORY SYSTEM   ·   OPay POS Management   ·   Track · Assign · Monitor   ·   All operations logged in real-time'; el.style.color = '#A7E3C0'; }
+  if (el)    { el.textContent = '📢 ANNOUNCEMENT  ·   OPay POS Management   ·   Track · Assign · Monitor   ·   All operations logged in real-time'; el.style.color = '#A7E3C0'; }
   if (inner) inner.style.animationDuration = '38s';
   if (wrap)  { wrap.style.borderColor = 'rgba(255,255,255,.25)'; wrap.style.background = 'rgba(0,0,0,.18)'; }
   if (icon)  icon.textContent = '📢';
