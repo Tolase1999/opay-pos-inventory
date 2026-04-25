@@ -9685,7 +9685,7 @@ async function broadcastSend(prefix) {
       headers: { 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ is_active: false })
     });
-    var officer = (SUPA_OFFICER && SUPA_OFFICER.name) ? SUPA_OFFICER.name : 'Unknown';
+    var officer = (SUPA_OFFICER && SUPA_OFFICER.name) ? SUPA_OFFICER.name : 'TL';
     var role    = (SUPA_OFFICER && SUPA_OFFICER.role)  ? SUPA_OFFICER.role  : 'Staff';
     var res = await sf(BCAST_TABLE, {
       method: 'POST',
