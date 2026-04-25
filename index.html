@@ -579,6 +579,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="nav-item ret" onclick="showPanel('ret')"><div class="nav-icon">↩</div><div><div class="nav-title">Return POS</div><div class="nav-desc">Back to stock</div></div></div>
       <div class="nav-item atfs" onclick="showPanel('atfs')"><div class="nav-icon">⚡</div><div><div class="nav-title">POS ATFS</div><div class="nav-desc">Fault at stock</div></div></div>
       <div class="nav-item edt" onclick="showPanel('edt');edtRefresh()"><div class="nav-icon">✏️</div><div><div class="nav-title">Edit / Delete</div><div class="nav-desc" id="nav-edt-desc">Today's ops</div></div></div>
+      <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
       <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">View branch stock</div></div></div>
       <div class="nav-item edt" onclick="showPanel('past-ops');pastOpsLoad()"><div class="nav-icon">📜</div><div><div class="nav-title">Past Operations</div><div class="nav-desc">Full history</div></div></div>
       <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
@@ -596,6 +597,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="nav-item sup" onclick="showPanel('sup-approvals');supLoadApprovals();supLoadStockPending()"><div class="nav-icon">✅</div><div><div class="nav-title">Approvals</div><div class="nav-desc">Officer signups &amp; stock</div></div><span id="sup-pending-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
       <div class="nav-item rcv" onclick="showPanel('sup-stock-pending');supLoadStockPending()"><div class="nav-icon">📦</div><div><div class="nav-title">Stock Approvals</div><div class="nav-desc" id="nav-sup-stock-desc">Officer stock requests</div></div><span id="sup-stock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
       <div class="nav-item sup" onclick="showPanel('sup-ops');supLoadOps()"><div class="nav-icon">📊</div><div><div class="nav-title">Officer Operations</div><div class="nav-desc">View &amp; edit ops</div></div></div>
+      <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
       <div class="nav-item sup" onclick="showPanel('sup-kpi');supLoadKpi()"><div class="nav-icon">📈</div><div><div class="nav-title">Officer KPIs</div><div class="nav-desc">Daily &amp; monthly</div></div></div>
       <div class="nav-item sup" onclick="showPanel('sup-broadcast');broadcastLoad()"><div class="nav-icon">📢</div><div><div class="nav-title">Broadcast</div><div class="nav-desc">Send ticker messages</div></div></div>
       <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">Browse &amp; manage SNs</div></div></div>
@@ -616,6 +618,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="nav-item adm" onclick="showPanel('adm-staff');admLoadStaff()"><div class="nav-icon">👥</div><div><div class="nav-title">All Staff</div><div class="nav-desc">Manage roles &amp; promotions</div></div></div>
       <div class="nav-item sup" onclick="showPanel('sup-kpi');supLoadKpi()"><div class="nav-icon">👤</div><div><div class="nav-title">Staff KPIs</div><div class="nav-desc">Per-officer performance</div></div></div>
       <div class="nav-item sup" onclick="showPanel('sup-ops');supLoadOps()"><div class="nav-icon">📋</div><div><div class="nav-title">Staff Operations</div><div class="nav-desc">All officer activity</div></div></div>
+      <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
       <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">Browse &amp; delete SNs</div></div></div>
       <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
       <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">📦</div><div><div class="nav-title">Old Stock</div><div class="nav-desc">30+ days in inventory</div></div></div>
@@ -654,7 +657,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="card-body">
         <div id="d-form">
           <div class="clock-box" id="d-clock">—</div>
-          <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="d-f-cust" placeholder="e.g. AGG-001"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="d-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>Logging As</span></div><div class="input" style="opacity:.6;cursor:not-allowed;" id="d-officer-display">—</div></div>
+          <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="d-f-cust" placeholder="e.g. AGG-001"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="d-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>TEAM <span style="color:var(--rose);font-weight:700;">*</span></span></div><select class="input" id="d-f-team" onchange="dOnTeamChange(this.value)"><option value="">Select team…</option><option value="CDL TEAM">CDL TEAM</option><option value="BD TEAM">BD TEAM</option><option value="KA/MM TEAM">KA/MM TEAM</option></select></div><div class="form-grid" id="d-cdl-fields" style="display:none;margin-bottom:12px;"><div class="fg"><div class="fl"><span>CDL Name</span></div><input class="input" id="d-f-cdl-name" placeholder="e.g. John Doe"></div><div class="fg"><div class="fl"><span>CDL Phone Number</span></div><input class="input" id="d-f-cdl-phone" placeholder="e.g. 08012345678"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>Logging As</span></div><div class="input" style="opacity:.6;cursor:not-allowed;" id="d-officer-display">—</div></div>
           <div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Entry Mode</span><div class="divider-line"></div></div>
           <div class="mode-toggle"><button class="mode-btn active" onclick="dSetMode('single')">Single Entry</button><button class="mode-btn" onclick="dSetMode('bulk')">Bulk Entry</button></div>
           <div id="d-single-mode"><div id="d-sn-rows"></div><button class="add-btn" onclick="dAddRow()"><div class="add-plus">+</div>Add Serial Number</button></div>
@@ -769,6 +772,23 @@ select.input{cursor:pointer;background:#fff;}
         <div class="ed-filter-bar"><button class="ed-filter-btn active" data-filter="all" onclick="edtFilter('all')">All</button><button class="ed-filter-btn" data-filter="Issued" onclick="edtFilter('Issued')">🚀 Issued</button><button class="ed-filter-btn" data-filter="Assigned" onclick="edtFilter('Assigned')">📋 Assigned</button><button class="ed-filter-btn" data-filter="Swap" onclick="edtFilter('Swap')">🔄 Swap</button><button class="ed-filter-btn" data-filter="Return" onclick="edtFilter('Return')">↩ Return</button><button class="ed-filter-btn" data-filter="ATFS" onclick="edtFilter('ATFS')">⚡ ATFS</button><input class="ed-search" id="edt-search" placeholder="Search SN or officer…" oninput="edtRender()"><span class="ed-count" id="edt-count">0 ops</span></div>
         <div class="ops-wrap" id="edt-table-wrap"><div class="ops-empty">No operations recorded yet today.</div></div>
         <button class="act-btn act-edit" onclick="edtRefresh()" style="padding:8px 16px;font-size:12px;margin-top:8px;">↺ Refresh</button><span style="font-size:11px;color:var(--muted);margin-left:10px;" id="edt-last-ts"></span>
+      </div></div>
+    </div>
+
+    <!-- ISSUED BREAKDOWN PANEL -->
+    <div class="panel" id="panel-issued-breakdown">
+      <div class="page-label"><div class="op-chip br">📊 Issued Breakdown</div><div class="crumb">→ Team-based issue reports</div></div>
+      <div class="card"><div class="card-header br"><div class="card-icon br">📊</div><div><h2>Issued Breakdown</h2><p>Analyze POSs issued by team, ID and date range</p></div></div>
+      <div class="card-body">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end;">
+          <div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>From</span></div><input type="date" class="input" id="ib-date-from" style="padding:6px 10px;"></div>
+          <div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>To</span></div><input type="date" class="input" id="ib-date-to" style="padding:6px 10px;"></div>
+          <div class="fg" style="margin:0;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span>Team</span></div><select class="input" id="ib-team-filter" style="padding:6px 10px;"><option value="">All Teams</option><option value="CDL TEAM">CDL TEAM</option><option value="BD TEAM">BD TEAM</option><option value="KA/MM TEAM">KA/MM TEAM</option></select></div>
+          <button class="act-btn act-edit" onclick="issuedBreakdownLoad()" style="padding:8px 16px;font-size:12px;white-space:nowrap;">↺ Refresh</button>
+          <button class="act-btn act-approve" onclick="issuedBreakdownExportCSV()" style="padding:8px 16px;font-size:12px;white-space:nowrap;">⬇ Export CSV</button>
+          <span class="ed-count" id="ib-count" style="margin-left:auto;">0 records</span>
+        </div>
+        <div id="ib-content"><div class="ops-empty">Set date range and click Refresh to load issued breakdown.</div></div>
       </div></div>
     </div>
 
@@ -2424,7 +2444,13 @@ async function pushOp(payload) {
         stockCalls.push(patch(src, "sn=eq." + sn, { status: "Deployed" }));
         // Insert deployed_assigned row — DELETE already done in Phase 0 above
         stockCalls.push(post("deployed_assigned", { sn: sn, model: payload.modelMap ? payload.modelMap[sn] : null, operation: isAsgPOS ? "Deployed (Assigned POS)" : "Deployed", source: src, customer_id: payload.merchantId || null, officer: officer, branch_id: branchId }));
-        logCalls.push(logDaily("Issue", sn, payload.modelMap ? payload.modelMap[sn] : null, { reason: (isAsgPOS ? "[Assigned POS used for Issue] " : "") + (payload.merchantId ? APP_CONFIG.fieldCustomer + ": " + payload.merchantId : "") }));
+        var cdlReason = "";
+        if (payload.cdlName || payload.cdlPhone) {
+          cdlReason = "CDL Name: " + (payload.cdlName || "—") + " · CDL Phone: " + (payload.cdlPhone || "—");
+        }
+        var issueReason = (isAsgPOS ? "[Assigned POS used for Issue] " : "") + (payload.merchantId ? APP_CONFIG.fieldCustomer + ": " + payload.merchantId : "");
+        if (cdlReason) issueReason = issueReason ? issueReason + " · " + cdlReason : cdlReason;
+        logCalls.push(logDaily("Issue", sn, payload.modelMap ? payload.modelMap[sn] : null, { reason: issueReason || null, team: payload.team || null }));
       });
       break;
     case "Assigned":
@@ -2530,7 +2556,8 @@ async function pushOp(payload) {
         p_is_asgn:     _pSns.map(function(sn) { return !!(payload.assignedSns && payload.assignedSns.indexOf(sn) !== -1); }),
         p_merchant:    payload.merchantId || null,
         p_agent:       payload.agentCode  || null,
-        p_reason:      payload.reason     || null
+        p_reason:      payload.reason     || null,
+        p_team:        payload.team       || null
       };
     } else if (payload.type === "Swap") {
       _rpcParams = {
@@ -2621,7 +2648,7 @@ async function edtRefresh() {
   try {
     var today = new Date().toISOString().split("T")[0];
     var res = await sf(
-      "daily_operations?select=id,operation,sn,model,officer,reason,date,time" +
+      "daily_operations?select=id,operation,sn,model,officer,reason,date,time,team" +
       "&branch_id=eq." + SUPA_BRANCH.id +
       "&officer=eq." + encodeURIComponent(SUPA_OFFICER.full_name) +
       "&date=eq." + today +
@@ -2680,6 +2707,7 @@ async function edtRefresh() {
         officer: row.officer || SUPA_OFFICER.full_name,
         ts: row.date + " " + (row.time || "").substring(0, 8),
         reason: row.reason || "",
+        team: row.team || "",
         dbIds: [row.id],
         deleted: false,
         fromDB: true
@@ -2784,6 +2812,7 @@ function edtRender() {
       midCell = "<span style='font-size:11px;color:var(--text2);font-weight:600;'>" +
                 "MID: " + escHtml(op.merchantId) + "</span>";
       if (op.tid) midCell += "<span style='font-size:10px;color:var(--muted);'> · TID: " + escHtml(op.tid) + "</span>";
+      if (op.team) midCell += "<span style='font-size:10px;color:var(--green2);font-weight:600;'> · " + escHtml(op.team) + "</span>";
     } else if (op.agentCode) {
       midCell = "<span style='font-size:11px;color:var(--text2);font-weight:600;'>BD: " +
                 escHtml(op.agentCode) + "</span>";
@@ -2865,6 +2894,17 @@ function dRemoveBulkRow(idx) { if (idx >= 0 && idx < D_BULK_ROWS.length) { D_BUL
 function dRemoveAllInvalid() { D_BULK_ROWS = D_BULK_ROWS.filter(function(r) { return r.valid; }); dRenderBulkRows(); }
 function dClearBulkRows() { D_BULK_ROWS = []; document.getElementById("d-bulk-paste-area").value = ""; dRenderBulkRows(); }
 
+function dOnTeamChange(team) {
+  var cdlFields = document.getElementById("d-cdl-fields");
+  if (cdlFields) cdlFields.style.display = team === "CDL TEAM" ? "" : "none";
+  if (team !== "CDL TEAM") {
+    var dCdlName = document.getElementById("d-f-cdl-name");
+    var dCdlPhone = document.getElementById("d-f-cdl-phone");
+    if (dCdlName) dCdlName.value = "";
+    if (dCdlPhone) dCdlPhone.value = "";
+  }
+}
+
 async function dSubmit() {
   if (!lockSubmit("d-sub-btn")) return;
   try {
@@ -2872,6 +2912,14 @@ async function dSubmit() {
     var merchant = document.getElementById("d-f-cust").value.trim();
     if (!merchant) { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); alert("MERCHANT/AGG ID is required."); return; }
     var tid = (document.getElementById("d-f-tid") || {}).value ? document.getElementById("d-f-tid").value.trim() : "";
+    var team = document.getElementById("d-f-team").value;
+    if (!team) { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); alert("Please select a TEAM."); return; }
+    var cdlName = "";
+    var cdlPhone = "";
+    if (team === "CDL TEAM") {
+      cdlName = (document.getElementById("d-f-cdl-name") || {}).value ? document.getElementById("d-f-cdl-name").value.trim() : "";
+      cdlPhone = (document.getElementById("d-f-cdl-phone") || {}).value ? document.getElementById("d-f-cdl-phone").value.trim() : "";
+    }
     var rows = D.mode === "single" ? getSnRows("d") : D_BULK_ROWS.filter(function(r) { return r.valid; });
     if (!rows.length) { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); alert("No valid Available " + assets() + " selected."); return; }
     if (_EDIT_OP.d) { setConn("loading", "Reversing previous operation…"); await undoOpDB(_EDIT_OP.d); OP_LOG = OP_LOG.filter(function(o) { return o.id !== _EDIT_OP.d.id; }); delete _EDIT_OP.d; }
@@ -2883,10 +2931,12 @@ async function dSubmit() {
     if (!guard.ok) { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); setConn("err", "Stock conflict"); cacheInvalidate(SUPA_BRANCH.table_suffix || "hq"); return alert("⚠ Stock conflict detected — another officer may have just used these POSs:\n\n" + guard.msg + "\n\nPlease re-scan the SN(s) to get updated availability."); }
     setConn("ok", "Verified ✓");
     var assignedSnLabels = rows.filter(function(r) { return r.isAssigned; }).map(function(r) { return r.sn; });
-    pushOp({ type: "Issued", sns: sns, sourceMap: sourceMap, modelMap: modelMap, officer: off, merchantId: merchant, tid: tid, assignedSns: assignedSnLabels });
-    recordOp({ type: "Issued", typeKey: "dep", sns: sns, officer: off, merchantId: merchant, tid: tid });
+    pushOp({ type: "Issued", sns: sns, sourceMap: sourceMap, modelMap: modelMap, officer: off, merchantId: merchant, tid: tid, team: team, assignedSns: assignedSnLabels, cdlName: cdlName, cdlPhone: cdlPhone });
+    recordOp({ type: "Issued", typeKey: "dep", sns: sns, officer: off, merchantId: merchant, tid: tid, team: team, cdlName: cdlName, cdlPhone: cdlPhone });
     var assignedNote = assignedSnLabels.length ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(181,131,74,.1);border:1.5px solid rgba(181,131,74,.25);border-radius:8px;font-size:11px;color:var(--amber);font-weight:600;'>⚠ " + assignedSnLabels.length + " Assigned POS used for this Issue: " + assignedSnLabels.join(", ") + "</div>" : "";
-    document.getElementById("d-suc-summary").innerHTML = ssSummary(sns, off, APP_CONFIG.fieldCustomer + ": " + (merchant || "—") + (tid ? " · TID: " + escHtml(tid) : ""), assets() + " " + APP_CONFIG.opDeploy + "d") + assignedNote;
+    var teamNote = team ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(45,106,79,.08);border:1.5px solid rgba(45,106,79,.2);border-radius:8px;font-size:11px;color:var(--green2);font-weight:600;'>👥 Team: " + escHtml(team) + "</div>" : "";
+    var cdlNote = (team === "CDL TEAM" && (cdlName || cdlPhone)) ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(91,63,166,.08);border:1.5px solid rgba(91,63,166,.25);border-radius:8px;font-size:11px;color:var(--violet);font-weight:600;'>📞 CDL: " + escHtml(cdlName || "—") + " · " + escHtml(cdlPhone || "—") + "</div>" : "";
+    document.getElementById("d-suc-summary").innerHTML = ssSummary(sns, off, APP_CONFIG.fieldCustomer + ": " + (merchant || "—") + (tid ? " · TID: " + escHtml(tid) : "") + (team ? " · Team: " + escHtml(team) : ""), assets() + " " + APP_CONFIG.opDeploy + "d") + assignedNote + teamNote + cdlNote;
     document.getElementById("d-form").style.display = "none";
     document.getElementById("d-success").style.display = "block";
     startUndoTimer("d");
@@ -2894,8 +2944,8 @@ async function dSubmit() {
 }
 
 function dEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "dep") _EDIT_OP.d = last; } document.getElementById("d-form").style.display = ""; document.getElementById("d-success").style.display = "none"; }
-function dNew() { delete _EDIT_OP.d; document.getElementById("d-form").style.display = ""; document.getElementById("d-success").style.display = "none"; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
-function dClear() { document.getElementById("d-f-cust").value = ""; var dTid = document.getElementById("d-f-tid"); if (dTid) dTid.value = ""; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
+function dNew() { delete _EDIT_OP.d; document.getElementById("d-form").style.display = ""; document.getElementById("d-success").style.display = "none"; document.getElementById("d-f-cust").value = ""; var dTid = document.getElementById("d-f-tid"); if (dTid) dTid.value = ""; var dTeam = document.getElementById("d-f-team"); if (dTeam) dTeam.value = ""; var dCdlName = document.getElementById("d-f-cdl-name"); if (dCdlName) dCdlName.value = ""; var dCdlPhone = document.getElementById("d-f-cdl-phone"); if (dCdlPhone) dCdlPhone.value = ""; var dCdlFields = document.getElementById("d-cdl-fields"); if (dCdlFields) dCdlFields.style.display = "none"; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
+function dClear() { document.getElementById("d-f-cust").value = ""; var dTid = document.getElementById("d-f-tid"); if (dTid) dTid.value = ""; var dTeam = document.getElementById("d-f-team"); if (dTeam) dTeam.value = ""; var dCdlName = document.getElementById("d-f-cdl-name"); if (dCdlName) dCdlName.value = ""; var dCdlPhone = document.getElementById("d-f-cdl-phone"); if (dCdlPhone) dCdlPhone.value = ""; var dCdlFields = document.getElementById("d-cdl-fields"); if (dCdlFields) dCdlFields.style.display = "none"; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
 
 // ════════════════════════════════════════════════════════════
 //  assign.js - with DYNAMIC BULK ROWS (deletable boxes)
@@ -9804,6 +9854,219 @@ document.addEventListener('DOMContentLoaded', function() {
     broadcastStartRealtime(); // open WS — no further queries until DB changes
   }, 3000);
 });
+
+// ════════════════════════════════════════════════════════════
+//  issued-breakdown.js — Team-based issued POS reports
+// ════════════════════════════════════════════════════════════
+
+var IB_DATA = [];
+
+function issuedBreakdownLoad() {
+  var from = document.getElementById("ib-date-from");
+  var to = document.getElementById("ib-date-to");
+  if (from && !from.value) {
+    var d30 = new Date(); d30.setDate(d30.getDate() - 30);
+    from.value = d30.toISOString().split("T")[0];
+  }
+  if (to && !to.value) {
+    to.value = new Date().toISOString().split("T")[0];
+  }
+  issuedBreakdownFetch();
+}
+
+function _ibExtractMerchantId(reason) {
+  if (!reason) return "";
+  var m = reason.match(/MERCHANT\/AGG ID:\s*([^\s·|]+)/i) || reason.match(/MID:\s*([^\s·|]+)/i);
+  return m ? m[1] : "";
+}
+
+function _ibExtractCdlInfo(reason) {
+  if (!reason) return { name: "", phone: "" };
+  var nameMatch = reason.match(/CDL Name:\s*([^·|]+)/i);
+  var phoneMatch = reason.match(/CDL Phone:\s*([^·|]+)/i);
+  return {
+    name: nameMatch ? nameMatch[1].trim() : "",
+    phone: phoneMatch ? phoneMatch[1].trim() : ""
+  };
+}
+
+function _ibGroupTxns(rows) {
+  var txns = {};
+  rows.forEach(function(r) {
+    var mid = _ibExtractMerchantId(r.reason);
+    var cdl = _ibExtractCdlInfo(r.reason);
+    var key = (r.date || "") + "|" + (r.time || "").substring(0, 8) + "|" + (r.officer || "") + "|" + mid + "|" + (r.team || "—") + "|" + (cdl.name || "") + "|" + (cdl.phone || "");
+    if (!txns[key]) {
+      txns[key] = {
+        date: r.date,
+        time: (r.time || "").substring(0, 5),
+        team: r.team || "—",
+        merchantId: mid || "—",
+        cdlName: cdl.name || "",
+        cdlPhone: cdl.phone || "",
+        officer: r.officer || "",
+        sns: []
+      };
+    }
+    txns[key].sns.push(r.sn);
+  });
+  var list = Object.values(txns);
+  list.sort(function(a, b) {
+    var da = (a.date || "") + " " + (a.time || "");
+    var db = (b.date || "") + " " + (b.time || "");
+    return db.localeCompare(da);
+  });
+  return list;
+}
+
+async function issuedBreakdownFetch() {
+  var content = document.getElementById("ib-content");
+  var countEl = document.getElementById("ib-count");
+  if (!content) return;
+  content.innerHTML = "<div class='ops-empty'>Loading breakdown…</div>";
+  if (countEl) countEl.textContent = "Loading…";
+
+  var role = SUPA_OFFICER ? SUPA_OFFICER.role : "Officer";
+  var dateFrom = (document.getElementById("ib-date-from") || {}).value || "";
+  var dateTo   = (document.getElementById("ib-date-to")   || {}).value || "";
+  var teamFilter = (document.getElementById("ib-team-filter") || {}).value || "";
+
+  var filters = [];
+  if (dateFrom) filters.push("date=gte." + dateFrom);
+  if (dateTo)   filters.push("date=lte." + dateTo);
+  filters.push("operation=ilike.*Issue*");
+
+  if (role === "Officer") {
+    filters.push("officer=eq." + encodeURIComponent(SUPA_OFFICER.full_name));
+    filters.push("branch_id=eq." + SUPA_BRANCH.id);
+  } else {
+    filters.push("branch_id=eq." + SUPA_BRANCH.id);
+  }
+  if (teamFilter) filters.push("team=eq." + encodeURIComponent(teamFilter));
+
+  var filterStr = filters.length ? "&" + filters.join("&") : "";
+  var tblPath = "daily_operations?select=id,date,time,officer,reason,team,sn" + filterStr + "&order=date.desc,time.desc&limit=5000";
+
+  try {
+    var res = await sf(tblPath);
+    var rows = await res.json();
+    if (!Array.isArray(rows)) {
+      content.innerHTML = "<div class='ops-empty' style='color:var(--rose)'>Error loading data.</div>";
+      return;
+    }
+    IB_DATA = rows;
+    issuedBreakdownRender(rows);
+  } catch (e) {
+    content.innerHTML = "<div class='ops-empty' style='color:var(--rose)'>" + friendlyErr(e) + "</div>";
+  }
+}
+
+function issuedBreakdownRender(rows) {
+  var content = document.getElementById("ib-content");
+  var countEl = document.getElementById("ib-count");
+  if (!rows.length) {
+    content.innerHTML = "<div class='ops-empty'>No issued operations found for this date range.</div>";
+    if (countEl) countEl.textContent = "0 records";
+    return;
+  }
+  if (countEl) countEl.textContent = rows.length + " SN record" + (rows.length === 1 ? "" : "s");
+
+  var txnList = _ibGroupTxns(rows);
+
+  // ── Section A: Detailed Breakdown Table ──
+  var detailRows = txnList.map(function(t) {
+    return "<tr>" +
+      "<td style='font-size:11px;'>" + escHtml(t.date) + "</td>" +
+      "<td style='font-size:11px;color:var(--muted);'>" + escHtml(t.time) + "</td>" +
+      "<td style='font-size:11px;'>" + escHtml(t.team) + "</td>" +
+      "<td style='font-size:11px;font-weight:600;'>" + escHtml(t.merchantId) + "</td>" +
+      "<td style='font-size:11px;color:var(--violet);'>" + escHtml(t.cdlName) + "</td>" +
+      "<td style='font-size:11px;color:var(--violet);'>" + escHtml(t.cdlPhone) + "</td>" +
+      "<td style='font-size:11px;font-weight:700;color:var(--green2);text-align:center;'>" + t.sns.length + "</td>" +
+      "<td style='font-size:11px;color:var(--sky);'>" + escHtml(t.officer) + "</td>" +
+      "</tr>";
+  }).join("");
+
+  var detailTable = "<div style='font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;margin:14px 0 8px;'>📋 Detailed Breakdown</div>" +
+    "<div class='ops-wrap' style='max-height:320px;'><table class='ops-table'><thead><tr>" +
+    "<th>Date</th><th>Time</th><th>Team</th><th>ID</th><th>CDL Name</th><th>CDL Phone</th><th style='text-align:center;'>POSs Issued</th><th>Officer</th>" +
+    "</tr></thead><tbody>" + detailRows + "</tbody></table></div>";
+
+  // ── Section B: Summary by ID (per team) ──
+  var teamFilter = (document.getElementById("ib-team-filter") || {}).value || "";
+  var summaryHtml = "";
+
+  function buildIdSummary(teamName, teamRows) {
+    var idMap = {};
+    teamRows.forEach(function(r) {
+      var mid = _ibExtractMerchantId(r.reason) || "—";
+      if (!idMap[mid]) idMap[mid] = 0;
+      idMap[mid]++;
+    });
+    var idList = Object.keys(idMap).map(function(k) { return { id: k, count: idMap[k] }; });
+    idList.sort(function(a, b) { return b.count - a.count; });
+    if (!idList.length) return "";
+    var idRows = idList.map(function(item) {
+      return "<tr><td style='font-size:11px;font-weight:600;'>" + escHtml(item.id) + "</td>" +
+        "<td style='font-size:11px;font-weight:700;color:var(--green2);text-align:center;'>" + item.count + "</td></tr>";
+    }).join("");
+    var total = idList.reduce(function(s, i) { return s + i.count; }, 0);
+    return "<div style='font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;margin:14px 0 8px;'>📊 Summary by ID (" + escHtml(teamName) + ")</div>" +
+      "<div class='ops-wrap' style='max-height:200px;'><table class='ops-table'><thead><tr><th>ID</th><th style='text-align:center;'>Total POSs</th></tr></thead><tbody>" + idRows + "</tbody></table></div>" +
+      "<div style='font-size:11px;font-weight:700;color:var(--green);margin-top:6px;'>Total " + escHtml(teamName) + ": " + total + " POS" + (total === 1 ? "" : "s") + "</div>";
+  }
+
+  if (teamFilter) {
+    var teamRows = rows.filter(function(r) { return (r.team || "—") === teamFilter; });
+    summaryHtml += buildIdSummary(teamFilter, teamRows);
+  } else {
+    var teams = ["CDL TEAM", "BD TEAM", "KA/MM TEAM"];
+    teams.forEach(function(t) {
+      var teamRows = rows.filter(function(r) { return (r.team || "") === t; });
+      if (teamRows.length) {
+        summaryHtml += buildIdSummary(t, teamRows);
+      }
+    });
+  }
+
+  // ── Section C: Team Summary ──
+  var teamCounts = { "CDL TEAM": 0, "BD TEAM": 0, "KA/MM TEAM": 0, "Not specified": 0 };
+  rows.forEach(function(r) {
+    var t = r.team || "";
+    if (teamCounts[t] !== undefined) teamCounts[t]++;
+    else teamCounts["Not specified"]++;
+  });
+  var grandTotal = rows.length;
+
+  var teamSummaryRows = Object.keys(teamCounts).filter(function(k) { return teamCounts[k] > 0; }).map(function(k) {
+    return "<tr><td style='font-size:11px;font-weight:600;'>" + escHtml(k) + "</td>" +
+      "<td style='font-size:11px;font-weight:700;color:var(--green2);text-align:center;'>" + teamCounts[k] + "</td></tr>";
+  }).join("");
+
+  var teamSummary = "<div style='font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;margin:14px 0 8px;'>🏆 Team Summary</div>" +
+    "<div class='ops-wrap' style='max-height:200px;'><table class='ops-table'><thead><tr><th>Team</th><th style='text-align:center;'>Total POSs</th></tr></thead><tbody>" + teamSummaryRows + "</tbody></table></div>" +
+    "<div style='font-size:13px;font-weight:800;color:var(--amber);margin-top:10px;padding:8px 12px;background:rgba(181,131,74,.08);border:1.5px solid rgba(181,131,74,.2);border-radius:8px;'>🏆 GRAND TOTAL: " + grandTotal + " POS" + (grandTotal === 1 ? "" : "s") + "</div>";
+
+  content.innerHTML = detailTable + summaryHtml + teamSummary;
+}
+
+function issuedBreakdownExportCSV() {
+  if (!IB_DATA || !IB_DATA.length) { alert("No data to export. Please load the breakdown first."); return; }
+  var txnList = _ibGroupTxns(IB_DATA);
+  var csv = "Date,Time,Team,ID,CDL Name,CDL Phone,POSs Issued,Officer\n";
+  txnList.forEach(function(t) {
+    csv += '"' + (t.date || "") + '","' + (t.time || "") + '","' + (t.team || "—") + '","' + (t.merchantId || "—") + '","' + (t.cdlName || "") + '","' + (t.cdlPhone || "") + '","' + t.sns.length + '","' + (t.officer || "") + '"\n';
+  });
+  var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  var link = document.createElement("a");
+  var url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", "issued_breakdown_" + new Date().toISOString().split("T")[0] + ".csv");
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 </script>
 </body>
 </html>
