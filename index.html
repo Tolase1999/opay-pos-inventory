@@ -1827,6 +1827,7 @@ async function guardSNsAvailable(sns, suffix) {
       if (!found) blocked.push({ sn: sn, reason: "Not found in stock" });
       else if (found.status === "Deployed") blocked.push({ sn: sn, reason: "Already Issued to a merchant — Return it first" });
       else if (found.status === "Faulty") blocked.push({ sn: sn, reason: "In faulty stock — repair first" });
+      else if (found.status === "Assigned") blocked.push({ sn: sn, reason: "Already Assigned to an agent — Unassign first" });
     });
     if (blocked.length) {
       var msg = blocked.map(function(b) { return b.sn + " — " + b.reason; }).join("\n");
@@ -2059,9 +2060,10 @@ async function validateSnRow(prefix, idx, requiredStatus) {
   }
   var r = await validateSN(sn, requiredStatus || null);
   if (inp.value.trim().toUpperCase() !== sn) { st.className = "sn-status empty"; st.textContent = "—"; return; }
-  if (r.ok && r.warning) { st.className = "sn-status"; st.style.color = "var(--amber)"; st.textContent = r.msg; }
+  if (prefix === "a" && r.isAssigned) { st.className = "sn-status err"; st.style.color = ""; st.textContent = "✗ Already Assigned — Unassign first"; if (row) { row.dataset.source = ""; row.dataset.model = ""; row.dataset.isAssigned = ""; } }
+  else if (r.ok && r.warning) { st.className = "sn-status"; st.style.color = "var(--amber)"; st.textContent = r.msg; }
   else { st.className = "sn-status " + (r.ok ? "ok" : "err"); st.style.color = ""; st.textContent = r.ok ? "✓ " + r.msg : "✗ " + r.msg; }
-  if (row && r.ok) { row.dataset.source = r.source || ""; row.dataset.model = r.model || ""; row.dataset.isAssigned = r.isAssigned ? "1" : ""; inp.dataset.validatedSn = sn; }
+  if (row && r.ok && !(prefix === "a" && r.isAssigned)) { row.dataset.source = r.source || ""; row.dataset.model = r.model || ""; row.dataset.isAssigned = r.isAssigned ? "1" : ""; inp.dataset.validatedSn = sn; }
 }
 
 function removeSnRow(prefix, idx) { var row = document.getElementById(prefix + "-row-" + idx); if (row) row.remove(); }
@@ -2920,7 +2922,7 @@ async function aParseAndValidate() {
   var container = document.getElementById("a-bulk-rows-container");
   container.innerHTML = "<div style='padding:20px; text-align:center;'>Validating " + sns.length + " SNs...</div>";
   var results = await Promise.all(sns.map(function(sn) { return validateSN(sn, "Available"); }));
-  A_BULK_ROWS = results.map(function(r, i) { return { sn: sns[i], valid: r.ok, msg: r.msg, source: r.source || "", model: r.model || "", isAssigned: r.isAssigned || false }; });
+  A_BULK_ROWS = results.map(function(r, i) { if (r.isAssigned) { r = Object.assign({}, r, { ok: false, msg: "Already Assigned — Unassign first" }); } return { sn: sns[i], valid: r.ok, msg: r.msg, source: r.source || "", model: r.model || "", isAssigned: r.isAssigned || false }; });
   aRenderBulkRows();
 }
 
@@ -2936,7 +2938,7 @@ function aRenderBulkRows() {
   var subBtn = document.getElementById("a-sub-btn"); if (subBtn) { subBtn.disabled = validRows.length === 0; subBtn.textContent = validRows.length > 0 ? "📋 Assign " + validRows.length + " POS" + (validRows.length === 1 ? "" : "s") : "📋 Confirm Assignment"; }
 }
 
-function aUpdateSn(idx, newSn) { if (idx >= 0 && idx < A_BULK_ROWS.length) { var newSnUpper = newSn.trim().toUpperCase(); if (newSnUpper !== A_BULK_ROWS[idx].sn) { validateSN(newSnUpper, "Available").then(function(result) { A_BULK_ROWS[idx] = { sn: newSnUpper, valid: result.ok, msg: result.msg, source: result.source || "", model: result.model || "", isAssigned: result.isAssigned || false }; aRenderBulkRows(); }); } } }
+function aUpdateSn(idx, newSn) { if (idx >= 0 && idx < A_BULK_ROWS.length) { var newSnUpper = newSn.trim().toUpperCase(); if (newSnUpper !== A_BULK_ROWS[idx].sn) { validateSN(newSnUpper, "Available").then(function(result) { if (result.isAssigned) { result = Object.assign({}, result, { ok: false, msg: "Already Assigned — Unassign first" }); } A_BULK_ROWS[idx] = { sn: newSnUpper, valid: result.ok, msg: result.msg, source: result.source || "", model: result.model || "", isAssigned: result.isAssigned || false }; aRenderBulkRows(); }); } } }
 function aRemoveBulkRow(idx) { if (idx >= 0 && idx < A_BULK_ROWS.length) { A_BULK_ROWS.splice(idx, 1); aRenderBulkRows(); } }
 function aRemoveAllInvalid() { A_BULK_ROWS = A_BULK_ROWS.filter(function(r) { return r.valid; }); aRenderBulkRows(); }
 function aClearBulkRows() { A_BULK_ROWS = []; document.getElementById("a-bulk-paste-area").value = ""; aRenderBulkRows(); }
@@ -2949,6 +2951,8 @@ async function aSubmit() {
     if (!agentCode) { unlockSubmit("a-sub-btn", "📋 Confirm " + APP_CONFIG.opAssign); alert(APP_CONFIG.fieldAgent + " is required."); return; }
     var rows = A.mode === "single" ? getSnRows("a") : A_BULK_ROWS.filter(function(r) { return r.valid; });
     if (!rows.length) { unlockSubmit("a-sub-btn", "📋 Confirm " + APP_CONFIG.opAssign); alert("No valid Available " + assets() + " selected."); return; }
+    var alreadyAssigned = rows.filter(function(r) { return r.isAssigned; });
+    if (alreadyAssigned.length) { unlockSubmit("a-sub-btn", "📋 Confirm " + APP_CONFIG.opAssign); alert("⚠ The following SN(s) are already Assigned — Unassign them first before re-assigning:\n\n" + alreadyAssigned.map(function(r) { return r.sn; }).join("\n")); return; }
     if (_EDIT_OP.a) { setConn("loading", "Reversing previous operation…"); await undoOpDB(_EDIT_OP.a); OP_LOG = OP_LOG.filter(function(o) { return o.id !== _EDIT_OP.a.id; }); delete _EDIT_OP.a; }
     var sns = rows.map(function(r) { return r.sn; });
     var sourceMap = {}, modelMap = {};
@@ -2956,6 +2960,19 @@ async function aSubmit() {
     setConn("loading", "Verifying stock availability…");
     var guard = await guardSNsAvailable(sns, SUPA_BRANCH.table_suffix);
     if (!guard.ok) { unlockSubmit("a-sub-btn", "📋 Confirm " + APP_CONFIG.opAssign); setConn("err", "Stock conflict"); cacheInvalidate(SUPA_BRANCH.table_suffix || "hq"); return alert("⚠ Stock conflict detected — another officer may have just used these POSs:\n\n" + guard.msg + "\n\nPlease re-scan the SN(s) to get updated availability."); }
+    setConn("loading", "Checking assignment status…");
+    try {
+      var encSns = sns.map(function(s) { return encodeURIComponent(s); }).join(",");
+      var asgChkRes = await sf("deployed_assigned?select=sn,operation&branch_id=eq." + SUPA_BRANCH.id + "&sn=in.(" + encSns + ")");
+      var asgChkRows = await asgChkRes.json();
+      var alreadyInDb = Array.isArray(asgChkRows) ? asgChkRows.filter(function(r) { return (r.operation || "") === "Assigned"; }) : [];
+      if (alreadyInDb.length) {
+        unlockSubmit("a-sub-btn", "📋 Confirm " + APP_CONFIG.opAssign);
+        setConn("err", "Already Assigned");
+        cacheInvalidate(SUPA_BRANCH.table_suffix || "hq");
+        return alert("⚠ The following SN(s) are already Assigned — Unassign them first before re-assigning:\n\n" + alreadyInDb.map(function(r) { return r.sn; }).join("\n"));
+      }
+    } catch (_asgChkErr) {}
     setConn("ok", "Verified ✓");
     pushOp({ type: "Assigned", sns: sns, sourceMap: sourceMap, modelMap: modelMap, officer: off, agentCode: agentCode });
     recordOp({ type: "Assigned", typeKey: "asg", sns: sns, officer: off, agentCode: agentCode });
