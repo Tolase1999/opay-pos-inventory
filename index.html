@@ -67,6 +67,15 @@ select:focus{outline:none;border-color:var(--green2) !important;box-shadow:0 0 0
 .sidebar-logo span{color:var(--amber);}
 .sidebar-tagline{font-size:10px;color:var(--muted);margin-top:2px;}
 .nav-section-lbl{padding:14px 16px 4px;font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);}
+.nav-cat-header{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;border-radius:10px;margin:2px 8px;font-size:11px;font-weight:700;color:var(--text2);user-select:none;transition:background .15s;}
+.nav-cat-header:hover{background:var(--bg3);}
+.nav-cat-label{flex:1;font-size:11px;font-weight:700;letter-spacing:.3px;}
+.nav-cat-chevron{font-size:9px;color:var(--text3);transition:transform .22s;line-height:1;}
+.nav-cat.open>.nav-cat-header .nav-cat-chevron{transform:rotate(90deg);}
+.nav-cat-body{display:none;padding-bottom:2px;}
+.nav-cat.open>.nav-cat-body{display:block;}
+.nav-cat .nav-item{margin-left:8px;border-radius:8px;}
+.nav-cat-header .nav-cat-icon{font-size:14px;width:22px;text-align:center;flex-shrink:0;}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:2px 8px;border-radius:10px;cursor:pointer;transition:all .2s;}
 .nav-item:hover{background:rgba(45,106,79,.07);}
 .nav-item.active{background:var(--green4);border:1px solid rgba(45,106,79,.2);}
@@ -571,61 +580,147 @@ select.input{cursor:pointer;background:#fff;}
     <!-- OFFICER NAV -->
     <div id="nav-officer-section" style="display:none">
       <div class="nav-item" onclick="showPanel('home')" style="background:transparent;"><div class="nav-icon" style="background:rgba(45,106,79,.08);">🏠</div><div><div class="nav-title">Home</div><div class="nav-desc">Dashboard overview</div></div></div>
-      <div class="nav-section-lbl">Operations</div>
-      <div class="nav-item dep active" onclick="showPanel('dep')"><div class="nav-icon">🚀</div><div><div class="nav-title">Issue POS</div><div class="nav-desc">Send on field</div></div></div>
-      <div class="nav-item asg" onclick="showPanel('asg')"><div class="nav-icon">📋</div><div><div class="nav-title">Assign POS</div><div class="nav-desc">Link to MS/BD</div></div></div>
-      <div class="nav-item ret" onclick="showPanel('unassign')"><div class="nav-icon">↩</div><div><div class="nav-title">Unassign POS</div><div class="nav-desc">Return to stock</div></div></div>
-      <div class="nav-item swp" onclick="showPanel('swp')"><div class="nav-icon">🔄</div><div><div class="nav-title">Swap POS</div><div class="nav-desc">Faulty swap</div></div></div>
-      <div class="nav-item ret" onclick="showPanel('ret')"><div class="nav-icon">↩</div><div><div class="nav-title">Return POS</div><div class="nav-desc">Back to stock</div></div></div>
-      <div class="nav-item atfs" onclick="showPanel('atfs')"><div class="nav-icon">⚡</div><div><div class="nav-title">POS ATFS</div><div class="nav-desc">Fault at stock</div></div></div>
-      <div class="nav-item edt" onclick="showPanel('edt');edtRefresh()"><div class="nav-icon">✏️</div><div><div class="nav-title">Edit / Delete</div><div class="nav-desc" id="nav-edt-desc">Today's ops</div></div></div>
-      <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
-      <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">View branch stock</div></div></div>
-      <div class="nav-item edt" onclick="showPanel('past-ops');pastOpsLoad()"><div class="nav-icon">📜</div><div><div class="nav-title">Past Operations</div><div class="nav-desc">Full history</div></div></div>
-      <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
-      <div class="nav-section-lbl">Stock</div>
-      <div class="nav-item rcv" onclick="showPanel('off-add-stock');offAddStockBoot()"><div class="nav-icon">📦</div><div><div class="nav-title">Add New Stock</div><div class="nav-desc">Request stock addition</div></div></div>
-      <div class="nav-item edt" onclick="showPanel('off-my-requests');offMyRequestsLoad()"><div class="nav-icon">🕐</div><div><div class="nav-title">My Requests</div><div class="nav-desc" id="nav-off-req-desc">Add &amp; delete history</div></div></div>
-      <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">⏳</div><div><div class="nav-title">Old Stock</div><div class="nav-desc">30+ days in office</div></div></div>
+
+      <!-- 📦 POS Operations -->
+      <div class="nav-cat" id="navcat-off-ops" data-panels="dep,asg,unassign,swp,ret,atfs,edt">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-off-ops')">
+          <span class="nav-cat-icon">📦</span><span class="nav-cat-label">POS Operations</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item dep active" onclick="showPanel('dep')"><div class="nav-icon">🚀</div><div><div class="nav-title">Issue POS</div><div class="nav-desc">Send on field</div></div></div>
+          <div class="nav-item asg" onclick="showPanel('asg')"><div class="nav-icon">📋</div><div><div class="nav-title">Assign POS</div><div class="nav-desc">Link to MS/BD</div></div></div>
+          <div class="nav-item ret" onclick="showPanel('unassign')"><div class="nav-icon">↩</div><div><div class="nav-title">Unassign POS</div><div class="nav-desc">Return to stock</div></div></div>
+          <div class="nav-item swp" onclick="showPanel('swp')"><div class="nav-icon">🔄</div><div><div class="nav-title">Swap POS</div><div class="nav-desc">Faulty swap</div></div></div>
+          <div class="nav-item ret" onclick="showPanel('ret')"><div class="nav-icon">↩</div><div><div class="nav-title">Return POS</div><div class="nav-desc">Back to stock</div></div></div>
+          <div class="nav-item atfs" onclick="showPanel('atfs')"><div class="nav-icon">⚡</div><div><div class="nav-title">POS ATFS</div><div class="nav-desc">Fault at stock</div></div></div>
+          <div class="nav-item edt" onclick="showPanel('edt');edtRefresh()"><div class="nav-icon">✏️</div><div><div class="nav-title">Edit / Delete</div><div class="nav-desc" id="nav-edt-desc">Today's ops</div></div></div>
+        </div>
+      </div>
+
+      <!-- 📊 Reports -->
+      <div class="nav-cat" id="navcat-off-reports" data-panels="issued-breakdown,past-ops">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-off-reports')">
+          <span class="nav-cat-icon">📊</span><span class="nav-cat-label">Reports</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
+          <div class="nav-item edt" onclick="showPanel('past-ops');pastOpsLoad()"><div class="nav-icon">📜</div><div><div class="nav-title">Past Operations</div><div class="nav-desc">Full history</div></div></div>
+        </div>
+      </div>
+
+      <!-- 🏪 Stock Management -->
+      <div class="nav-cat" id="navcat-off-stock" data-panels="stock-inv,sync-assigned,off-add-stock,off-my-requests,old-stock">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-off-stock')">
+          <span class="nav-cat-icon">🏪</span><span class="nav-cat-label">Stock Management</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">View branch stock</div></div></div>
+          <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
+          <div class="nav-item rcv" onclick="showPanel('off-add-stock');offAddStockBoot()"><div class="nav-icon">📦</div><div><div class="nav-title">Add New Stock</div><div class="nav-desc">Request stock addition</div></div></div>
+          <div class="nav-item edt" onclick="showPanel('off-my-requests');offMyRequestsLoad()"><div class="nav-icon">🕐</div><div><div class="nav-title">My Requests</div><div class="nav-desc" id="nav-off-req-desc">Add &amp; delete history</div></div></div>
+          <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">⏳</div><div><div class="nav-title">Old Stock</div><div class="nav-desc">30+ days in office</div></div></div>
+        </div>
+      </div>
     </div>
 
     <!-- SUPERVISOR NAV -->
     <div id="nav-supervisor-section" style="display:none">
       <div class="nav-item" onclick="showPanel('home')" style="background:transparent;"><div class="nav-icon" style="background:rgba(45,106,79,.08);">🏠</div><div><div class="nav-title">Home</div><div class="nav-desc">Dashboard overview</div></div></div>
-      <div class="nav-section-lbl">Supervisor</div>
-      <div class="nav-item rcv" onclick="showPanel('rcv');rcvCheckRole()"><div class="nav-icon">📥</div><div><div class="nav-title">Receive Stock</div><div class="nav-desc">Log incoming POSs</div></div></div>
-      <div class="nav-item sup" onclick="showPanel('sup-approvals');supLoadApprovals();supLoadStockPending()"><div class="nav-icon">✅</div><div><div class="nav-title">Approvals</div><div class="nav-desc">Officer signups &amp; stock</div></div><span id="sup-pending-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
-      <div class="nav-item rcv" onclick="showPanel('sup-stock-pending');supLoadStockPending()"><div class="nav-icon">📦</div><div><div class="nav-title">Stock Approvals</div><div class="nav-desc" id="nav-sup-stock-desc">Officer stock requests</div></div><span id="sup-stock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
-      <div class="nav-item sup" onclick="showPanel('sup-ops');supLoadOps()"><div class="nav-icon">📊</div><div><div class="nav-title">Officer Operations</div><div class="nav-desc">View &amp; edit ops</div></div></div>
-      <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
-      <div class="nav-item sup" onclick="showPanel('sup-kpi');supLoadKpi()"><div class="nav-icon">📈</div><div><div class="nav-title">Officer KPIs</div><div class="nav-desc">Daily &amp; monthly</div></div></div>
-      <div class="nav-item sup" onclick="showPanel('sup-broadcast');broadcastLoad()"><div class="nav-icon">📢</div><div><div class="nav-title">Broadcast</div><div class="nav-desc">Send ticker messages</div></div></div>
-      <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">Browse &amp; manage SNs</div></div></div>
-      <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
-      <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">📦</div><div><div class="nav-title">Old Stock</div><div class="nav-desc" id="nav-old-stock-desc">30+ days in inventory</div></div><span id="old-stock-badge" style="display:none;background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
-      <div class="nav-item adm" onclick="showPanel('low-stock');loadLowStockAlerts()"><div class="nav-icon">⚠️</div><div><div class="nav-title">Low Stock Alerts</div><div class="nav-desc" id="nav-lowstock-desc">Branches below threshold</div></div><span id="lowstock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+
+      <!-- 👥 Team Management -->
+      <div class="nav-cat" id="navcat-sup-team" data-panels="sup-ops,issued-breakdown,sup-kpi">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-sup-team')">
+          <span class="nav-cat-icon">👥</span><span class="nav-cat-label">Team Management</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item sup" onclick="showPanel('sup-ops');supLoadOps()"><div class="nav-icon">📊</div><div><div class="nav-title">Officer Operations</div><div class="nav-desc">View &amp; edit ops</div></div></div>
+          <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
+          <div class="nav-item sup" onclick="showPanel('sup-kpi');supLoadKpi()"><div class="nav-icon">📈</div><div><div class="nav-title">Officer KPIs</div><div class="nav-desc">Daily &amp; monthly</div></div></div>
+        </div>
+      </div>
+
+      <!-- 📦 Stock & Approvals -->
+      <div class="nav-cat" id="navcat-sup-stock" data-panels="rcv,sup-approvals,sup-stock-pending,old-stock,low-stock,sup-broadcast">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-sup-stock')">
+          <span class="nav-cat-icon">📦</span><span class="nav-cat-label">Stock &amp; Approvals</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item rcv" onclick="showPanel('rcv');rcvCheckRole()"><div class="nav-icon">📥</div><div><div class="nav-title">Receive Stock</div><div class="nav-desc">Log incoming POSs</div></div></div>
+          <div class="nav-item sup" onclick="showPanel('sup-approvals');supLoadApprovals();supLoadStockPending()"><div class="nav-icon">✅</div><div><div class="nav-title">Approvals</div><div class="nav-desc">Officer signups &amp; stock</div></div><span id="sup-pending-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+          <div class="nav-item rcv" onclick="showPanel('sup-stock-pending');supLoadStockPending()"><div class="nav-icon">📦</div><div><div class="nav-title">Stock Approvals</div><div class="nav-desc" id="nav-sup-stock-desc">Officer stock requests</div></div><span id="sup-stock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+          <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">📦</div><div><div class="nav-title">Old Stock</div><div class="nav-desc" id="nav-old-stock-desc">30+ days in inventory</div></div><span id="old-stock-badge" style="display:none;background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+          <div class="nav-item adm" onclick="showPanel('low-stock');loadLowStockAlerts()"><div class="nav-icon">⚠️</div><div><div class="nav-title">Low Stock Alerts</div><div class="nav-desc" id="nav-lowstock-desc">Branches below threshold</div></div><span id="lowstock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+          <div class="nav-item sup" onclick="showPanel('sup-broadcast');broadcastLoad()"><div class="nav-icon">📢</div><div><div class="nav-title">Broadcast</div><div class="nav-desc">Send ticker messages</div></div></div>
+        </div>
+      </div>
+
+      <!-- 🔍 Inventory & Tools -->
+      <div class="nav-cat" id="navcat-sup-inv" data-panels="stock-inv,sync-assigned">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-sup-inv')">
+          <span class="nav-cat-icon">🔍</span><span class="nav-cat-label">Inventory &amp; Tools</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">Browse &amp; manage SNs</div></div></div>
+          <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
+        </div>
+      </div>
     </div>
 
     <!-- ADMIN NAV -->
     <div id="nav-admin-section" style="display:none">
       <div class="nav-item" onclick="showPanel('home')" style="background:transparent;"><div class="nav-icon" style="background:rgba(45,106,79,.08);">🏠</div><div><div class="nav-title">Home</div><div class="nav-desc">Dashboard overview</div></div></div>
-      <div class="nav-section-lbl">Admin</div>
-      <div class="nav-item rcv" onclick="showPanel('rcv');rcvCheckRole()"><div class="nav-icon">📥</div><div><div class="nav-title">Receive Stock</div><div class="nav-desc">Any branch</div></div></div>
-      <div class="nav-item adm" onclick="showPanel('adm-approvals');admLoadApprovals();admLoadStockPending()"><div class="nav-icon">✅</div><div><div class="nav-title">Approvals</div><div class="nav-desc">Supervisor signups &amp; stock</div></div><span id="adm-pending-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
-      <div class="nav-item rcv" onclick="showPanel('adm-stock-pending');admLoadStockPending()"><div class="nav-icon">📦</div><div><div class="nav-title">Stock Approvals</div><div class="nav-desc" id="nav-adm-stock-desc">Officer stock requests</div></div><span id="adm-stock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
-      <div class="nav-item adm" onclick="showPanel('adm-kpi');admLoadKpi()"><div class="nav-icon">📈</div><div><div class="nav-title">Regional Ops</div><div class="nav-desc">All ops by region</div></div></div>
-      <div class="nav-item adm" onclick="showPanel('adm-branches');admLoadBranchAssign()"><div class="nav-icon">🏢</div><div><div class="nav-title">Assign Branches</div><div class="nav-desc">Link supervisor to branches</div></div></div>
-      <div class="nav-item adm" onclick="showPanel('adm-staff');admLoadStaff()"><div class="nav-icon">👥</div><div><div class="nav-title">All Staff</div><div class="nav-desc">Manage roles &amp; promotions</div></div></div>
-      <div class="nav-item sup" onclick="showPanel('sup-kpi');supLoadKpi()"><div class="nav-icon">👤</div><div><div class="nav-title">Staff KPIs</div><div class="nav-desc">Per-officer performance</div></div></div>
-      <div class="nav-item sup" onclick="showPanel('sup-ops');supLoadOps()"><div class="nav-icon">📋</div><div><div class="nav-title">Staff Operations</div><div class="nav-desc">All officer activity</div></div></div>
-      <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
-      <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">Browse &amp; delete SNs</div></div></div>
-      <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
-      <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">📦</div><div><div class="nav-title">Old Stock</div><div class="nav-desc">30+ days in inventory</div></div></div>
-      <div class="nav-item br" onclick="showPanel('create-branch');createBranchBoot()"><div class="nav-icon">🏗️</div><div><div class="nav-title">Create Branch</div><div class="nav-desc">Add new branch</div></div></div>
-      <div class="nav-item adm" onclick="showPanel('low-stock');loadLowStockAlerts()"><div class="nav-icon">⚠️</div><div><div class="nav-title">Low Stock Alerts</div><div class="nav-desc" id="nav-adm-lowstock-desc">Branches below threshold</div></div><span id="adm-lowstock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
-      <div class="nav-item adm" onclick="showPanel('adm-analytics');admAnalyticsBoot()"><div class="nav-icon">📡</div><div><div class="nav-title">Analytics</div><div class="nav-desc">Grafana &amp; system usage</div></div></div>
-      <div class="nav-item adm" onclick="showPanel('adm-broadcast');broadcastLoad()"><div class="nav-icon">📢</div><div><div class="nav-title">Broadcast</div><div class="nav-desc">Send ticker messages</div></div></div>
+
+      <!-- 👥 Staff Management -->
+      <div class="nav-cat" id="navcat-adm-staff" data-panels="adm-staff,sup-kpi,sup-ops">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-adm-staff')">
+          <span class="nav-cat-icon">👥</span><span class="nav-cat-label">Staff Management</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item adm" onclick="showPanel('adm-staff');admLoadStaff()"><div class="nav-icon">👥</div><div><div class="nav-title">All Staff</div><div class="nav-desc">Manage roles &amp; promotions</div></div></div>
+          <div class="nav-item sup" onclick="showPanel('sup-kpi');supLoadKpi()"><div class="nav-icon">👤</div><div><div class="nav-title">Staff KPIs</div><div class="nav-desc">Per-officer performance</div></div></div>
+          <div class="nav-item sup" onclick="showPanel('sup-ops');supLoadOps()"><div class="nav-icon">📋</div><div><div class="nav-title">Staff Operations</div><div class="nav-desc">All officer activity</div></div></div>
+        </div>
+      </div>
+
+      <!-- 📊 Reports & Analytics -->
+      <div class="nav-cat" id="navcat-adm-reports" data-panels="adm-kpi,issued-breakdown,adm-analytics,adm-broadcast">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-adm-reports')">
+          <span class="nav-cat-icon">📊</span><span class="nav-cat-label">Reports &amp; Analytics</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item adm" onclick="showPanel('adm-kpi');admLoadKpi()"><div class="nav-icon">📈</div><div><div class="nav-title">Regional Ops</div><div class="nav-desc">All ops by region</div></div></div>
+          <div class="nav-item br" onclick="showPanel('issued-breakdown');issuedBreakdownLoad()"><div class="nav-icon">📊</div><div><div class="nav-title">Issued Breakdown</div><div class="nav-desc">Team-based issue reports</div></div></div>
+          <div class="nav-item adm" onclick="showPanel('adm-analytics');admAnalyticsBoot()"><div class="nav-icon">📡</div><div><div class="nav-title">Analytics</div><div class="nav-desc">Grafana &amp; system usage</div></div></div>
+          <div class="nav-item adm" onclick="showPanel('adm-broadcast');broadcastLoad()"><div class="nav-icon">📢</div><div><div class="nav-title">Broadcast</div><div class="nav-desc">Send ticker messages</div></div></div>
+        </div>
+      </div>
+
+      <!-- 📦 Stock & Branch Ops -->
+      <div class="nav-cat" id="navcat-adm-stock" data-panels="rcv,adm-approvals,adm-stock-pending,old-stock,low-stock,adm-branches,create-branch">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-adm-stock')">
+          <span class="nav-cat-icon">📦</span><span class="nav-cat-label">Stock &amp; Branch Ops</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item rcv" onclick="showPanel('rcv');rcvCheckRole()"><div class="nav-icon">📥</div><div><div class="nav-title">Receive Stock</div><div class="nav-desc">Any branch</div></div></div>
+          <div class="nav-item adm" onclick="showPanel('adm-approvals');admLoadApprovals();admLoadStockPending()"><div class="nav-icon">✅</div><div><div class="nav-title">Approvals</div><div class="nav-desc">Supervisor signups &amp; stock</div></div><span id="adm-pending-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+          <div class="nav-item rcv" onclick="showPanel('adm-stock-pending');admLoadStockPending()"><div class="nav-icon">📦</div><div><div class="nav-title">Stock Approvals</div><div class="nav-desc" id="nav-adm-stock-desc">Officer stock requests</div></div><span id="adm-stock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+          <div class="nav-item atfs" onclick="showPanel('old-stock');oldStockLoad()"><div class="nav-icon">📦</div><div><div class="nav-title">Old Stock</div><div class="nav-desc">30+ days in inventory</div></div></div>
+          <div class="nav-item adm" onclick="showPanel('low-stock');loadLowStockAlerts()"><div class="nav-icon">⚠️</div><div><div class="nav-title">Low Stock Alerts</div><div class="nav-desc" id="nav-adm-lowstock-desc">Branches below threshold</div></div><span id="adm-lowstock-badge" style="display:none;background:var(--rose);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:10px;margin-left:auto;">0</span></div>
+          <div class="nav-item adm" onclick="showPanel('adm-branches');admLoadBranchAssign()"><div class="nav-icon">🏢</div><div><div class="nav-title">Assign Branches</div><div class="nav-desc">Link supervisor to branches</div></div></div>
+          <div class="nav-item br" onclick="showPanel('create-branch');createBranchBoot()"><div class="nav-icon">🏗️</div><div><div class="nav-title">Create Branch</div><div class="nav-desc">Add new branch</div></div></div>
+        </div>
+      </div>
+
+      <!-- 🔍 Inventory & Tools -->
+      <div class="nav-cat" id="navcat-adm-inv" data-panels="stock-inv,sync-assigned">
+        <div class="nav-cat-header" onclick="toggleNavCat('navcat-adm-inv')">
+          <span class="nav-cat-icon">🔍</span><span class="nav-cat-label">Inventory &amp; Tools</span><span class="nav-cat-chevron">▶</span>
+        </div>
+        <div class="nav-cat-body">
+          <div class="nav-item inv" onclick="showPanel('stock-inv');stockInvBoot();stockInvLoadSummary()"><div class="nav-icon">🔍</div><div><div class="nav-title">Stock Inventory</div><div class="nav-desc">Browse &amp; delete SNs</div></div></div>
+          <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
+        </div>
+      </div>
     </div>
 
     <!-- STOCK WIDGET - REMOVED COMPLETELY -->
@@ -657,7 +752,7 @@ select.input{cursor:pointer;background:#fff;}
       <div class="card-body">
         <div id="d-form">
           <div class="clock-box" id="d-clock">—</div>
-          <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="d-f-cust" placeholder="e.g. AGG-001"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="d-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>TEAM <span style="color:var(--rose);font-weight:700;">*</span></span></div><select class="input" id="d-f-team" onchange="dOnTeamChange(this.value)"><option value="">Select team…</option><option value="CDL TEAM">CDL TEAM</option><option value="BD TEAM">BD TEAM</option><option value="KA/MM TEAM">KA/MM TEAM</option></select></div><div class="form-grid" id="d-cdl-fields" style="display:none;margin-bottom:12px;"><div class="fg"><div class="fl"><span>CDL Name</span></div><input class="input" id="d-f-cdl-name" placeholder="e.g. John Doe"></div><div class="fg"><div class="fl"><span>CDL Phone Number</span></div><input class="input" id="d-f-cdl-phone" placeholder="e.g. 08012345678"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>Logging As</span></div><div class="input" style="opacity:.6;cursor:not-allowed;" id="d-officer-display">—</div></div>
+          <div class="form-grid"><div class="fg"><div class="fl"><span>MERCHANT/AGG ID</span></div><input class="input" id="d-f-cust" placeholder="e.g. AGG-001"></div><div class="fg"><div class="fl"><span>TID <span class="optional">(optional)</span></span></div><input class="input" id="d-f-tid" placeholder="e.g. 1234567890" oninput="this.value=this.value.toUpperCase()"></div></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>TEAM <span style="color:var(--rose);font-weight:700;">*</span></span></div><select class="input" id="d-f-team"><option value="">Select team…</option><option value="CDL TEAM">CDL TEAM</option><option value="BD TEAM">BD TEAM</option><option value="KA/MM TEAM">KA/MM TEAM</option></select></div><div class="fg" style="margin-bottom:12px;"><div class="fl"><span>Logging As</span></div><div class="input" style="opacity:.6;cursor:not-allowed;" id="d-officer-display">—</div></div>
           <div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Entry Mode</span><div class="divider-line"></div></div>
           <div class="mode-toggle"><button class="mode-btn active" onclick="dSetMode('single')">Single Entry</button><button class="mode-btn" onclick="dSetMode('bulk')">Bulk Entry</button></div>
           <div id="d-single-mode"><div id="d-sn-rows"></div><button class="add-btn" onclick="dAddRow()"><div class="add-plus">+</div>Add Serial Number</button></div>
@@ -784,6 +879,8 @@ select.input{cursor:pointer;background:#fff;}
           <div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>From</span></div><input type="date" class="input" id="ib-date-from" style="padding:6px 10px;"></div>
           <div class="fg" style="margin:0;min-width:140px;"><div class="fl" style="margin-bottom:4px;"><span>To</span></div><input type="date" class="input" id="ib-date-to" style="padding:6px 10px;"></div>
           <div class="fg" style="margin:0;min-width:160px;"><div class="fl" style="margin-bottom:4px;"><span>Team</span></div><select class="input" id="ib-team-filter" style="padding:6px 10px;"><option value="">All Teams</option><option value="CDL TEAM">CDL TEAM</option><option value="BD TEAM">BD TEAM</option><option value="KA/MM TEAM">KA/MM TEAM</option></select></div>
+          <div class="fg" id="ib-officer-filter-wrap" style="margin:0;min-width:160px;display:none;"><div class="fl" style="margin-bottom:4px;"><span>Officer</span></div><select class="input" id="ib-officer-filter" style="padding:6px 10px;"><option value="">All Officers</option></select></div>
+          <div class="fg" id="ib-branch-filter-wrap" style="margin:0;min-width:160px;display:none;"><div class="fl" style="margin-bottom:4px;"><span>Branch</span></div><select class="input" id="ib-branch-filter" style="padding:6px 10px;"><option value="">All Branches</option></select></div>
           <button class="act-btn act-edit" onclick="issuedBreakdownLoad()" style="padding:8px 16px;font-size:12px;white-space:nowrap;">↺ Refresh</button>
           <button class="act-btn act-approve" onclick="issuedBreakdownExportCSV()" style="padding:8px 16px;font-size:12px;white-space:nowrap;">⬇ Export CSV</button>
           <span class="ed-count" id="ib-count" style="margin-left:auto;">0 records</span>
@@ -1668,11 +1765,34 @@ function unlockSubmit(btnId, label) {
   if (btn) { btn.disabled = false; btn.textContent = label || "Submit"; }
 }
 
+function toggleNavCat(id) {
+  var cat = document.getElementById(id);
+  if (!cat) return;
+  cat.classList.toggle("open");
+}
+
+function navAutoExpand(panelName) {
+  // Find the category whose data-panels list includes this panel, open it, close siblings
+  document.querySelectorAll(".nav-cat").forEach(function(cat) {
+    var panels = (cat.dataset.panels || "").split(",").map(function(s) { return s.trim(); });
+    if (panels.indexOf(panelName) !== -1) {
+      cat.classList.add("open");
+    } else {
+      // Only close if it's in the same role section (don't touch hidden role navs)
+      var section = cat.closest("[id^='nav-'][id$='-section']");
+      if (section && section.style.display !== "none") {
+        cat.classList.remove("open");
+      }
+    }
+  });
+}
+
 function showPanel(name) {
   document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("active"); });
   document.querySelectorAll(".nav-item").forEach(function(n) { n.classList.remove("active"); });
   var p = document.getElementById("panel-" + name);
   if (p) p.classList.add("active");
+  navAutoExpand(name);
 }
 
 function tickClock() {
@@ -2444,13 +2564,7 @@ async function pushOp(payload) {
         stockCalls.push(patch(src, "sn=eq." + sn, { status: "Deployed" }));
         // Insert deployed_assigned row — DELETE already done in Phase 0 above
         stockCalls.push(post("deployed_assigned", { sn: sn, model: payload.modelMap ? payload.modelMap[sn] : null, operation: isAsgPOS ? "Deployed (Assigned POS)" : "Deployed", source: src, customer_id: payload.merchantId || null, officer: officer, branch_id: branchId }));
-        var cdlReason = "";
-        if (payload.cdlName || payload.cdlPhone) {
-          cdlReason = "CDL Name: " + (payload.cdlName || "—") + " · CDL Phone: " + (payload.cdlPhone || "—");
-        }
-        var issueReason = (isAsgPOS ? "[Assigned POS used for Issue] " : "") + (payload.merchantId ? APP_CONFIG.fieldCustomer + ": " + payload.merchantId : "");
-        if (cdlReason) issueReason = issueReason ? issueReason + " · " + cdlReason : cdlReason;
-        logCalls.push(logDaily("Issue", sn, payload.modelMap ? payload.modelMap[sn] : null, { reason: issueReason || null, team: payload.team || null }));
+        logCalls.push(logDaily("Issue", sn, payload.modelMap ? payload.modelMap[sn] : null, { reason: (isAsgPOS ? "[Assigned POS used for Issue] " : "") + (payload.merchantId ? APP_CONFIG.fieldCustomer + ": " + payload.merchantId : ""), team: payload.team || null }));
       });
       break;
     case "Assigned":
@@ -2894,17 +3008,6 @@ function dRemoveBulkRow(idx) { if (idx >= 0 && idx < D_BULK_ROWS.length) { D_BUL
 function dRemoveAllInvalid() { D_BULK_ROWS = D_BULK_ROWS.filter(function(r) { return r.valid; }); dRenderBulkRows(); }
 function dClearBulkRows() { D_BULK_ROWS = []; document.getElementById("d-bulk-paste-area").value = ""; dRenderBulkRows(); }
 
-function dOnTeamChange(team) {
-  var cdlFields = document.getElementById("d-cdl-fields");
-  if (cdlFields) cdlFields.style.display = team === "CDL TEAM" ? "" : "none";
-  if (team !== "CDL TEAM") {
-    var dCdlName = document.getElementById("d-f-cdl-name");
-    var dCdlPhone = document.getElementById("d-f-cdl-phone");
-    if (dCdlName) dCdlName.value = "";
-    if (dCdlPhone) dCdlPhone.value = "";
-  }
-}
-
 async function dSubmit() {
   if (!lockSubmit("d-sub-btn")) return;
   try {
@@ -2914,12 +3017,6 @@ async function dSubmit() {
     var tid = (document.getElementById("d-f-tid") || {}).value ? document.getElementById("d-f-tid").value.trim() : "";
     var team = document.getElementById("d-f-team").value;
     if (!team) { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); alert("Please select a TEAM."); return; }
-    var cdlName = "";
-    var cdlPhone = "";
-    if (team === "CDL TEAM") {
-      cdlName = (document.getElementById("d-f-cdl-name") || {}).value ? document.getElementById("d-f-cdl-name").value.trim() : "";
-      cdlPhone = (document.getElementById("d-f-cdl-phone") || {}).value ? document.getElementById("d-f-cdl-phone").value.trim() : "";
-    }
     var rows = D.mode === "single" ? getSnRows("d") : D_BULK_ROWS.filter(function(r) { return r.valid; });
     if (!rows.length) { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); alert("No valid Available " + assets() + " selected."); return; }
     if (_EDIT_OP.d) { setConn("loading", "Reversing previous operation…"); await undoOpDB(_EDIT_OP.d); OP_LOG = OP_LOG.filter(function(o) { return o.id !== _EDIT_OP.d.id; }); delete _EDIT_OP.d; }
@@ -2931,12 +3028,11 @@ async function dSubmit() {
     if (!guard.ok) { unlockSubmit("d-sub-btn", "🚀 Confirm " + APP_CONFIG.opDeploy); setConn("err", "Stock conflict"); cacheInvalidate(SUPA_BRANCH.table_suffix || "hq"); return alert("⚠ Stock conflict detected — another officer may have just used these POSs:\n\n" + guard.msg + "\n\nPlease re-scan the SN(s) to get updated availability."); }
     setConn("ok", "Verified ✓");
     var assignedSnLabels = rows.filter(function(r) { return r.isAssigned; }).map(function(r) { return r.sn; });
-    pushOp({ type: "Issued", sns: sns, sourceMap: sourceMap, modelMap: modelMap, officer: off, merchantId: merchant, tid: tid, team: team, assignedSns: assignedSnLabels, cdlName: cdlName, cdlPhone: cdlPhone });
-    recordOp({ type: "Issued", typeKey: "dep", sns: sns, officer: off, merchantId: merchant, tid: tid, team: team, cdlName: cdlName, cdlPhone: cdlPhone });
+    pushOp({ type: "Issued", sns: sns, sourceMap: sourceMap, modelMap: modelMap, officer: off, merchantId: merchant, tid: tid, team: team, assignedSns: assignedSnLabels });
+    recordOp({ type: "Issued", typeKey: "dep", sns: sns, officer: off, merchantId: merchant, tid: tid, team: team });
     var assignedNote = assignedSnLabels.length ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(181,131,74,.1);border:1.5px solid rgba(181,131,74,.25);border-radius:8px;font-size:11px;color:var(--amber);font-weight:600;'>⚠ " + assignedSnLabels.length + " Assigned POS used for this Issue: " + assignedSnLabels.join(", ") + "</div>" : "";
     var teamNote = team ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(45,106,79,.08);border:1.5px solid rgba(45,106,79,.2);border-radius:8px;font-size:11px;color:var(--green2);font-weight:600;'>👥 Team: " + escHtml(team) + "</div>" : "";
-    var cdlNote = (team === "CDL TEAM" && (cdlName || cdlPhone)) ? "<div style='margin-top:8px;padding:7px 12px;background:rgba(91,63,166,.08);border:1.5px solid rgba(91,63,166,.25);border-radius:8px;font-size:11px;color:var(--violet);font-weight:600;'>📞 CDL: " + escHtml(cdlName || "—") + " · " + escHtml(cdlPhone || "—") + "</div>" : "";
-    document.getElementById("d-suc-summary").innerHTML = ssSummary(sns, off, APP_CONFIG.fieldCustomer + ": " + (merchant || "—") + (tid ? " · TID: " + escHtml(tid) : "") + (team ? " · Team: " + escHtml(team) : ""), assets() + " " + APP_CONFIG.opDeploy + "d") + assignedNote + teamNote + cdlNote;
+    document.getElementById("d-suc-summary").innerHTML = ssSummary(sns, off, APP_CONFIG.fieldCustomer + ": " + (merchant || "—") + (tid ? " · TID: " + escHtml(tid) : "") + (team ? " · Team: " + escHtml(team) : ""), assets() + " " + APP_CONFIG.opDeploy + "d") + assignedNote + teamNote;
     document.getElementById("d-form").style.display = "none";
     document.getElementById("d-success").style.display = "block";
     startUndoTimer("d");
@@ -2944,8 +3040,8 @@ async function dSubmit() {
 }
 
 function dEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "dep") _EDIT_OP.d = last; } document.getElementById("d-form").style.display = ""; document.getElementById("d-success").style.display = "none"; }
-function dNew() { delete _EDIT_OP.d; document.getElementById("d-form").style.display = ""; document.getElementById("d-success").style.display = "none"; document.getElementById("d-f-cust").value = ""; var dTid = document.getElementById("d-f-tid"); if (dTid) dTid.value = ""; var dTeam = document.getElementById("d-f-team"); if (dTeam) dTeam.value = ""; var dCdlName = document.getElementById("d-f-cdl-name"); if (dCdlName) dCdlName.value = ""; var dCdlPhone = document.getElementById("d-f-cdl-phone"); if (dCdlPhone) dCdlPhone.value = ""; var dCdlFields = document.getElementById("d-cdl-fields"); if (dCdlFields) dCdlFields.style.display = "none"; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
-function dClear() { document.getElementById("d-f-cust").value = ""; var dTid = document.getElementById("d-f-tid"); if (dTid) dTid.value = ""; var dTeam = document.getElementById("d-f-team"); if (dTeam) dTeam.value = ""; var dCdlName = document.getElementById("d-f-cdl-name"); if (dCdlName) dCdlName.value = ""; var dCdlPhone = document.getElementById("d-f-cdl-phone"); if (dCdlPhone) dCdlPhone.value = ""; var dCdlFields = document.getElementById("d-cdl-fields"); if (dCdlFields) dCdlFields.style.display = "none"; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
+function dNew() { delete _EDIT_OP.d; document.getElementById("d-form").style.display = ""; document.getElementById("d-success").style.display = "none"; document.getElementById("d-f-cust").value = ""; var dTid = document.getElementById("d-f-tid"); if (dTid) dTid.value = ""; var dTeam = document.getElementById("d-f-team"); if (dTeam) dTeam.value = ""; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
+function dClear() { document.getElementById("d-f-cust").value = ""; var dTid = document.getElementById("d-f-tid"); if (dTid) dTid.value = ""; var dTeam = document.getElementById("d-f-team"); if (dTeam) dTeam.value = ""; document.getElementById("d-sn-rows").innerHTML = ""; document.getElementById("d-bulk-paste-area").value = ""; D_BULK_ROWS = []; dRenderBulkRows(); D.snCount = 0; D.bulkGood = []; dAddRow(); }
 
 // ════════════════════════════════════════════════════════════
 //  assign.js - with DYNAMIC BULK ROWS (deletable boxes)
@@ -9871,6 +9967,12 @@ function issuedBreakdownLoad() {
   if (to && !to.value) {
     to.value = new Date().toISOString().split("T")[0];
   }
+  var role = SUPA_OFFICER ? SUPA_OFFICER.role : "Officer";
+  // Show officer filter for Supervisor and Admin; show branch filter for Admin only
+  var offWrap = document.getElementById("ib-officer-filter-wrap");
+  var brWrap  = document.getElementById("ib-branch-filter-wrap");
+  if (offWrap) offWrap.style.display = (role === "Supervisor" || role === "Admin") ? "" : "none";
+  if (brWrap)  brWrap.style.display  = (role === "Admin") ? "" : "none";
   issuedBreakdownFetch();
 }
 
@@ -9880,31 +9982,19 @@ function _ibExtractMerchantId(reason) {
   return m ? m[1] : "";
 }
 
-function _ibExtractCdlInfo(reason) {
-  if (!reason) return { name: "", phone: "" };
-  var nameMatch = reason.match(/CDL Name:\s*([^·|]+)/i);
-  var phoneMatch = reason.match(/CDL Phone:\s*([^·|]+)/i);
-  return {
-    name: nameMatch ? nameMatch[1].trim() : "",
-    phone: phoneMatch ? phoneMatch[1].trim() : ""
-  };
-}
-
 function _ibGroupTxns(rows) {
   var txns = {};
   rows.forEach(function(r) {
     var mid = _ibExtractMerchantId(r.reason);
-    var cdl = _ibExtractCdlInfo(r.reason);
-    var key = (r.date || "") + "|" + (r.time || "").substring(0, 8) + "|" + (r.officer || "") + "|" + mid + "|" + (r.team || "—") + "|" + (cdl.name || "") + "|" + (cdl.phone || "");
+    var key = (r.date || "") + "|" + (r.time || "").substring(0, 8) + "|" + (r.officer || "") + "|" + mid + "|" + (r.team || "—") + "|" + (r.branch_id || "");
     if (!txns[key]) {
       txns[key] = {
         date: r.date,
         time: (r.time || "").substring(0, 5),
         team: r.team || "—",
         merchantId: mid || "—",
-        cdlName: cdl.name || "",
-        cdlPhone: cdl.phone || "",
         officer: r.officer || "",
+        branchId: r.branch_id || "",
         sns: []
       };
     }
@@ -9926,26 +10016,117 @@ async function issuedBreakdownFetch() {
   content.innerHTML = "<div class='ops-empty'>Loading breakdown…</div>";
   if (countEl) countEl.textContent = "Loading…";
 
-  var role = SUPA_OFFICER ? SUPA_OFFICER.role : "Officer";
-  var dateFrom = (document.getElementById("ib-date-from") || {}).value || "";
-  var dateTo   = (document.getElementById("ib-date-to")   || {}).value || "";
-  var teamFilter = (document.getElementById("ib-team-filter") || {}).value || "";
+  var role       = SUPA_OFFICER ? SUPA_OFFICER.role : "Officer";
+  var dateFrom   = (document.getElementById("ib-date-from")     || {}).value || "";
+  var dateTo     = (document.getElementById("ib-date-to")       || {}).value || "";
+  var teamFilter = (document.getElementById("ib-team-filter")   || {}).value || "";
+  var offFilter  = (document.getElementById("ib-officer-filter") || {}).value || "";
+  var brFilter   = (document.getElementById("ib-branch-filter") || {}).value || "";
 
   var filters = [];
   if (dateFrom) filters.push("date=gte." + dateFrom);
   if (dateTo)   filters.push("date=lte." + dateTo);
   filters.push("operation=ilike.*Issue*");
+  if (teamFilter) filters.push("team=eq." + encodeURIComponent(teamFilter));
+  if (offFilter)  filters.push("officer=eq." + encodeURIComponent(offFilter));
 
+  // ── Scope by role ──────────────────────────────────────────
   if (role === "Officer") {
+    // Officer: own records in own branch only
     filters.push("officer=eq." + encodeURIComponent(SUPA_OFFICER.full_name));
     filters.push("branch_id=eq." + SUPA_BRANCH.id);
+
+  } else if (role === "Supervisor") {
+    // Supervisor: all officers in ALL their assigned branches
+    // Re-use the same supervisor_branches pattern used throughout the app
+    var supBranchIds = [SUPA_BRANCH.id];
+    try {
+      var sbRes = await sf("supervisor_branches?select=branch_id&supervisor_id=eq." + SUPA_OFFICER.id);
+      var sbRows = await sbRes.json();
+      if (Array.isArray(sbRows)) {
+        sbRows.forEach(function(r) {
+          if (r.branch_id && !supBranchIds.includes(r.branch_id)) {
+            supBranchIds.push(r.branch_id);
+          }
+        });
+      }
+    } catch (e) { /* fallback to own branch */ }
+
+    if (supBranchIds.length === 1) {
+      filters.push("branch_id=eq." + supBranchIds[0]);
+    } else {
+      filters.push("branch_id=in.(" + supBranchIds.join(",") + ")");
+    }
+
+    // Populate officer filter dropdown from those branches
+    try {
+      var offSel = document.getElementById("ib-officer-filter");
+      if (offSel) {
+        var offRes = await sf(
+          "officers?select=full_name,role&branch_id=in.(" + supBranchIds.join(",") + ")&role=eq.Officer&order=full_name"
+        );
+        var offRows = await offRes.json();
+        var currentVal = offSel.value;
+        offSel.innerHTML = "<option value=''>All Officers</option>";
+        if (Array.isArray(offRows)) {
+          offRows.forEach(function(o) {
+            var opt = document.createElement("option");
+            opt.value = o.full_name;
+            opt.textContent = o.full_name;
+            if (o.full_name === currentVal) opt.selected = true;
+            offSel.appendChild(opt);
+          });
+        }
+      }
+    } catch (e) { /* non-critical */ }
+
   } else {
-    filters.push("branch_id=eq." + SUPA_BRANCH.id);
+    // Admin: NO branch restriction — see every issued operation across all branches
+    if (brFilter) {
+      // Admin has chosen to filter by a specific branch
+      filters.push("branch_id=eq." + brFilter);
+    }
+
+    // Populate officer filter for admin (all officers across all branches)
+    try {
+      var offSelAdm = document.getElementById("ib-officer-filter");
+      if (offSelAdm && offSelAdm.options.length <= 1) { // only populate once
+        var offResAdm = await sf("officers?select=full_name&role=eq.Officer&order=full_name");
+        var offRowsAdm = await offResAdm.json();
+        if (Array.isArray(offRowsAdm)) {
+          offRowsAdm.forEach(function(o) {
+            var opt = document.createElement("option");
+            opt.value = o.full_name;
+            opt.textContent = o.full_name;
+            offSelAdm.appendChild(opt);
+          });
+        }
+      }
+    } catch (e) { /* non-critical */ }
+
+    // Populate branch filter for admin
+    try {
+      var brSel = document.getElementById("ib-branch-filter");
+      if (brSel && brSel.options.length <= 1) { // only populate once
+        var allBrs = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+        if (!allBrs.length) {
+          var bRes = await sf("branches?select=id,name,code&order=name");
+          allBrs = await bRes.json() || [];
+          ALL_BRANCHES = allBrs;
+        }
+        allBrs.forEach(function(b) {
+          var opt = document.createElement("option");
+          opt.value = b.id;
+          opt.textContent = b.name + (b.code ? " (" + b.code + ")" : "");
+          if (b.id === brFilter) opt.selected = true;
+          brSel.appendChild(opt);
+        });
+      }
+    } catch (e) { /* non-critical */ }
   }
-  if (teamFilter) filters.push("team=eq." + encodeURIComponent(teamFilter));
 
   var filterStr = filters.length ? "&" + filters.join("&") : "";
-  var tblPath = "daily_operations?select=id,date,time,officer,reason,team,sn" + filterStr + "&order=date.desc,time.desc&limit=5000";
+  var tblPath = "daily_operations?select=id,date,time,officer,reason,team,sn,branch_id" + filterStr + "&order=date.desc,time.desc&limit=5000";
 
   try {
     var res = await sf(tblPath);
@@ -9955,13 +10136,15 @@ async function issuedBreakdownFetch() {
       return;
     }
     IB_DATA = rows;
-    issuedBreakdownRender(rows);
+    issuedBreakdownRender(rows, role);
   } catch (e) {
     content.innerHTML = "<div class='ops-empty' style='color:var(--rose)'>" + friendlyErr(e) + "</div>";
   }
 }
 
-function issuedBreakdownRender(rows) {
+function issuedBreakdownRender(rows, role) {
+  role = role || (SUPA_OFFICER ? SUPA_OFFICER.role : "Officer");
+  var showBranchCol = (role === "Admin");
   var content = document.getElementById("ib-content");
   var countEl = document.getElementById("ib-count");
   if (!rows.length) {
@@ -9971,25 +10154,39 @@ function issuedBreakdownRender(rows) {
   }
   if (countEl) countEl.textContent = rows.length + " SN record" + (rows.length === 1 ? "" : "s");
 
+  // Build a branch_id → branch label map for Admin view
+  var branchLabelMap = {};
+  if (showBranchCol) {
+    var brSel = document.getElementById("ib-branch-filter");
+    if (brSel) {
+      Array.prototype.forEach.call(brSel.options, function(opt) {
+        if (opt.value) branchLabelMap[opt.value] = opt.textContent;
+      });
+    }
+  }
+
   var txnList = _ibGroupTxns(rows);
 
   // ── Section A: Detailed Breakdown Table ──
   var detailRows = txnList.map(function(t) {
+    var brCell = showBranchCol
+      ? "<td style='font-size:10px;color:var(--muted);'>" + escHtml(branchLabelMap[t.branchId] || t.branchId || "—") + "</td>"
+      : "";
     return "<tr>" +
       "<td style='font-size:11px;'>" + escHtml(t.date) + "</td>" +
       "<td style='font-size:11px;color:var(--muted);'>" + escHtml(t.time) + "</td>" +
       "<td style='font-size:11px;'>" + escHtml(t.team) + "</td>" +
       "<td style='font-size:11px;font-weight:600;'>" + escHtml(t.merchantId) + "</td>" +
-      "<td style='font-size:11px;color:var(--violet);'>" + escHtml(t.cdlName) + "</td>" +
-      "<td style='font-size:11px;color:var(--violet);'>" + escHtml(t.cdlPhone) + "</td>" +
       "<td style='font-size:11px;font-weight:700;color:var(--green2);text-align:center;'>" + t.sns.length + "</td>" +
       "<td style='font-size:11px;color:var(--sky);'>" + escHtml(t.officer) + "</td>" +
+      brCell +
       "</tr>";
   }).join("");
 
+  var branchHeader = showBranchCol ? "<th>Branch</th>" : "";
   var detailTable = "<div style='font-size:12px;font-weight:700;color:var(--text2);letter-spacing:.6px;text-transform:uppercase;margin:14px 0 8px;'>📋 Detailed Breakdown</div>" +
     "<div class='ops-wrap' style='max-height:320px;'><table class='ops-table'><thead><tr>" +
-    "<th>Date</th><th>Time</th><th>Team</th><th>ID</th><th>CDL Name</th><th>CDL Phone</th><th style='text-align:center;'>POSs Issued</th><th>Officer</th>" +
+    "<th>Date</th><th>Time</th><th>Team</th><th>ID</th><th style='text-align:center;'>POSs Issued</th><th>Officer</th>" + branchHeader +
     "</tr></thead><tbody>" + detailRows + "</tbody></table></div>";
 
   // ── Section B: Summary by ID (per team) ──
@@ -10053,9 +10250,9 @@ function issuedBreakdownRender(rows) {
 function issuedBreakdownExportCSV() {
   if (!IB_DATA || !IB_DATA.length) { alert("No data to export. Please load the breakdown first."); return; }
   var txnList = _ibGroupTxns(IB_DATA);
-  var csv = "Date,Time,Team,ID,CDL Name,CDL Phone,POSs Issued,Officer\n";
+  var csv = "Date,Time,Team,ID,POSs Issued,Officer\n";
   txnList.forEach(function(t) {
-    csv += '"' + (t.date || "") + '","' + (t.time || "") + '","' + (t.team || "—") + '","' + (t.merchantId || "—") + '","' + (t.cdlName || "") + '","' + (t.cdlPhone || "") + '","' + t.sns.length + '","' + (t.officer || "") + '"\n';
+    csv += '"' + (t.date || "") + '","' + (t.time || "") + '","' + (t.team || "—") + '","' + (t.merchantId || "—") + '","' + t.sns.length + '","' + (t.officer || "") + '"\n';
   });
   var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   var link = document.createElement("a");
