@@ -443,8 +443,2039 @@ select.input{cursor:pointer;background:#fff;}
 .scan-btn{width:28px;height:28px;border-radius:7px;border:1.5px solid rgba(45,106,79,.25);background:var(--green4);color:var(--green);font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
 .scan-btn:hover{background:var(--green2);color:#fff;border-color:var(--green2);}
 
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN DATA MACHINE PANEL — Styles
+   ═══════════════════════════════════════════════════════ */
+.dm-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;padding:6px;background:var(--bg3);border-radius:12px;border:1px solid var(--border);}
+.dm-tab{flex:1;min-width:100px;padding:8px 10px;border-radius:9px;border:none;background:transparent;color:var(--text2);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+.dm-tab:hover{background:rgba(45,106,79,.08);}
+.dm-tab.active{background:var(--surface);color:var(--green);box-shadow:0 1px 6px rgba(45,106,79,.12);border:1px solid rgba(45,106,79,.15);}
+.dm-tab.t-swap.active{color:var(--orange);}
+.dm-tab.t-issue.active{color:var(--green2);}
+.dm-tab.t-ops.active{color:var(--sky);}
+.dm-tab.t-sn.active{color:var(--violet);}
+.dm-tab.t-perf.active{color:var(--teal);}
+.dm-tab.t-anom.active{color:var(--rose);}
+.dm-tab.t-tools.active{color:var(--amber);}
+.dm-sub{display:none;}
+.dm-sub.active{display:block;}
+
+.dm-kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px;}
+.dm-kpi{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;}
+.dm-kpi-accent{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:12px 0 0 12px;}
+.dm-kpi-lbl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;}
+.dm-kpi-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--text);line-height:1;}
+.dm-kpi-sub{font-size:10px;color:var(--muted);margin-top:3px;}
+
+.dm-rank-table{width:100%;border-collapse:collapse;font-size:12px;}
+.dm-rank-table th{padding:10px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text2);background:var(--bg3);border-bottom:2px solid var(--border);position:sticky;top:0;z-index:1;}
+.dm-rank-table td{padding:9px 12px;border-bottom:1px solid var(--border2);vertical-align:middle;}
+.dm-rank-table tr:hover td{background:rgba(45,106,79,.03);}
+.dm-rank-badge{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:800;flex-shrink:0;}
+.dm-rank-1{background:#FFD700;color:#7A5A00;}
+.dm-rank-2{background:#C0C0C0;color:#555;}
+.dm-rank-3{background:#CD7F32;color:#fff;}
+.dm-rank-n{background:var(--bg3);color:var(--muted);}
+
+.dm-bar-wrap{display:flex;align-items:center;gap:8px;}
+.dm-bar-track{flex:1;height:6px;background:var(--border2);border-radius:3px;overflow:hidden;}
+.dm-bar-fill{height:100%;border-radius:3px;transition:width .4s ease;}
+.dm-bar-val{font-size:11px;font-weight:700;min-width:28px;text-align:right;}
+
+.dm-matrix{width:100%;border-collapse:collapse;font-size:11px;}
+.dm-matrix th{padding:8px 10px;text-align:center;font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text2);background:var(--bg3);border-bottom:2px solid var(--border);position:sticky;top:0;}
+.dm-matrix th:first-child{text-align:left;}
+.dm-matrix td{padding:8px 10px;border-bottom:1px solid var(--border2);text-align:center;font-weight:600;}
+.dm-matrix td:first-child{text-align:left;font-weight:700;color:var(--text);}
+.dm-matrix tr:hover td{background:rgba(45,106,79,.03);}
+.dm-heat-0{color:var(--muted);}
+.dm-heat-1{color:var(--text3);}
+.dm-heat-2{color:var(--sky);background:rgba(26,111,168,.05);}
+.dm-heat-3{color:var(--green2);background:rgba(64,145,108,.08);}
+.dm-heat-4{color:var(--orange);background:rgba(196,94,40,.08);}
+.dm-heat-5{color:var(--rose);background:rgba(192,57,43,.1);font-weight:800;}
+
+.sn-timeline{position:relative;padding-left:28px;}
+.sn-timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border);border-radius:2px;}
+.sn-tl-item{position:relative;margin-bottom:14px;}
+.sn-tl-item:last-child{margin-bottom:0;}
+.sn-tl-dot{position:absolute;left:-22px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 2px var(--border);background:var(--green2);}
+.sn-tl-dot.issue{background:var(--green2);}
+.sn-tl-dot.assign{background:var(--sky);}
+.sn-tl-dot.swap{background:var(--orange);}
+.sn-tl-dot.ret{background:var(--violet);}
+.sn-tl-dot.atfs{background:var(--rose);}
+.sn-tl-dot.receive{background:var(--teal);}
+.sn-tl-dot.delete{background:var(--muted);}
+.sn-tl-head{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.sn-tl-meta{font-size:10px;color:var(--muted);}
+
+.dm-search-box{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
+.dm-search-inp{flex:1;min-width:200px;height:36px;padding:0 12px;border-radius:9px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-size:13px;font-family:'DM Sans',sans-serif;}
+.dm-search-inp:focus{outline:none;border-color:var(--green2);box-shadow:0 0 0 3px rgba(64,145,108,.1);}
+.dm-btn{padding:8px 16px;border-radius:9px;border:none;cursor:pointer;font-weight:700;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap;}
+.dm-btn-primary{background:linear-gradient(135deg,var(--green2),var(--green));color:#fff;}
+.dm-btn-primary:hover{filter:brightness(1.08);}
+.dm-btn-secondary{background:var(--green4);color:var(--green);border:1.5px solid rgba(45,106,79,.2);}
+.dm-btn-secondary:hover{background:var(--green);color:#fff;}
+.dm-btn-amber{background:rgba(181,131,74,.12);color:var(--amber);border:1.5px solid rgba(181,131,74,.25);}
+.dm-btn-amber:hover{background:var(--amber);color:#fff;}
+.dm-btn-rose{background:var(--rose2);color:var(--rose);border:1.5px solid rgba(192,57,43,.2);}
+.dm-btn-rose:hover{background:var(--rose);color:#fff;}
+
+.dm-anom-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;}
+.dm-anom-item.crit{border-color:rgba(192,57,43,.3);background:var(--rose2);}
+.dm-anom-item.warn{border-color:rgba(181,131,74,.3);background:rgba(181,131,74,.05);}
+.dm-anom-icon{font-size:20px;flex-shrink:0;margin-top:1px;}
+.dm-anom-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.dm-anom-desc{font-size:11px;color:var(--muted);line-height:1.6;}
+
+.dm-perf-score{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;font-size:13px;font-weight:800;border:2px solid;}
+.dm-score-a{background:rgba(64,145,108,.1);color:var(--green2);border-color:rgba(64,145,108,.3);}
+.dm-score-b{background:rgba(26,111,168,.1);color:var(--sky);border-color:rgba(26,111,168,.3);}
+.dm-score-c{background:rgba(181,131,74,.1);color:var(--amber);border-color:rgba(181,131,74,.3);}
+.dm-score-d{background:rgba(192,57,43,.08);color:var(--rose);border-color:rgba(192,57,43,.2);}
+
+.dm-date-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:16px;}
+.dm-date-row .dm-field{display:flex;flex-direction:column;gap:4px;}
+.dm-date-row label{font-size:11px;font-weight:700;color:var(--text2);}
+.dm-date-inp{height:34px;padding:0 10px;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;}
+.dm-date-inp:focus{outline:none;border-color:var(--green2);}
+.dm-sel{height:34px;padding:0 10px;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;}
+
+.dm-empty{padding:40px;text-align:center;color:var(--muted);font-size:12px;}
+.dm-loading{padding:40px;text-align:center;color:var(--muted);font-size:12px;}
+.dm-loading::after{content:'';display:inline-block;width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--green2);border-radius:50%;animation:spin .7s linear infinite;margin-left:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.dm-wrap{border:1px solid var(--border);border-radius:12px;overflow-x:auto;overflow-y:auto;max-height:460px;margin-bottom:14px;background:var(--surface);}
+.dm-sn-result{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px;}
+.dm-sn-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.dm-sn-badge{font-family:monospace;font-size:15px;font-weight:800;padding:6px 14px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);}
+.dm-status-chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;}
+.dm-status-issued{background:rgba(64,145,108,.1);color:var(--green2);border:1px solid rgba(64,145,108,.2);}
+.dm-status-assigned{background:rgba(26,111,168,.1);color:var(--sky);border:1px solid rgba(26,111,168,.2);}
+.dm-status-stock{background:rgba(82,183,136,.1);color:var(--green2);border:1px solid rgba(82,183,136,.25);}
+.dm-status-faulty{background:var(--rose2);color:var(--rose);border:1px solid rgba(192,57,43,.2);}
+.dm-status-unknown{background:var(--bg3);color:var(--muted);border:1px solid var(--border);}
+
+.dm-tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:16px;}
+.dm-tool-card{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;}
+.dm-tool-card-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+.dm-tool-card-desc{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;}
+
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script>
+// ════════════════════════════════════════════════════════════
+//  ADMIN DATA MACHINE — Full JS
+// ════════════════════════════════════════════════════════════
+
+var _dmBooted = false;
+
+function dmBoot() {
+  if (_dmBooted) return;
+  _dmBooted = true;
+  // Default date range: current month
+  var now = new Date();
+  var y   = now.getFullYear();
+  var m   = String(now.getMonth() + 1).padStart(2, "0");
+  var d   = String(now.getDate()).padStart(2, "0");
+  var monthStart = y + "-" + m + "-01";
+  var today      = y + "-" + m + "-" + d;
+  ["dm-swap-from","dm-swap-to","dm-issue-from","dm-issue-to",
+   "dm-ops-from","dm-ops-to","dm-perf-from","dm-perf-to",
+   "dm-anom-from","dm-anom-to","dm-export-from","dm-export-to",
+   "dm-officer-from","dm-officer-to","dm-ratio-from","dm-ratio-to"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = id.endsWith("-to") ? today : monthStart;
+  });
+  dmPopulateBranchPickers();
+}
+
+async function dmPopulateBranchPickers() {
+  var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+  if (!branches.length) {
+    try {
+      var r = await sf("branches?select=id,name,code,table_suffix&order=name");
+      branches = await r.json() || [];
+    } catch(e) {}
+  }
+  ["dm-export-branch","dm-dead-branch"].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = "<option value=''>All Branches</option>" +
+      branches.map(function(b) {
+        return "<option value='" + b.id + "' data-suffix='" + b.table_suffix + "'>" +
+          escHtml(b.name) + " (" + escHtml(b.code || "") + ")</option>";
+      }).join("");
+  });
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────
+function dmTab(name, btn) {
+  document.querySelectorAll(".dm-sub").forEach(function(s) { s.classList.remove("active"); });
+  document.querySelectorAll(".dm-tab").forEach(function(b) { b.classList.remove("active"); });
+  var sub = document.getElementById("dm-sub-" + name);
+  if (sub) sub.classList.add("active");
+  if (btn) btn.classList.add("active");
+}
+
+// ── Shared date filter builder ────────────────────────────────────────────
+function dmDateFilter(fromId, toId) {
+  var from = (document.getElementById(fromId) || {}).value || "";
+  var to   = (document.getElementById(toId)   || {}).value || "";
+  var f    = "";
+  if (from) f += "&date=gte." + from;
+  if (to)   f += "&date=lte." + to;
+  return f;
+}
+
+// ── KPI card builder ──────────────────────────────────────────────────────
+function dmKpiCard(icon, label, value, sub, accentColor) {
+  return "<div class='dm-kpi'>" +
+    "<div class='dm-kpi-accent' style='background:" + accentColor + ";'></div>" +
+    "<div class='dm-kpi-lbl'>" + icon + "  " + escHtml(label) + "</div>" +
+    "<div class='dm-kpi-num' style='color:" + accentColor + ";'>" + escHtml(String(value)) + "</div>" +
+    (sub ? "<div class='dm-kpi-sub'>" + escHtml(String(sub)) + "</div>" : "") +
+    "</div>";
+}
+
+// ── Helper: rank badge ────────────────────────────────────────────────────
+function dmRankBadge(i) {
+  var cls = i === 0 ? "dm-rank-1" : i === 1 ? "dm-rank-2" : i === 2 ? "dm-rank-3" : "dm-rank-n";
+  var lbl = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : (i + 1);
+  return "<span class='dm-rank-badge " + cls + "'>" + lbl + "</span>";
+}
+
+// ── Helper: colour-coded bar ──────────────────────────────────────────────
+function dmBar(value, max, color) {
+  var pct = max > 0 ? Math.min(100, Math.round(value / max * 100)) : 0;
+  return "<div class='dm-bar-wrap'>" +
+    "<div class='dm-bar-track'><div class='dm-bar-fill' style='width:" + pct + "%;background:" + color + ";'></div></div>" +
+    "<div class='dm-bar-val' style='color:" + color + ";'>" + value + "</div>" +
+    "</div>";
+}
+
+// ── Helper: op categorisation ─────────────────────────────────────────────
+function dmCatOp(op) {
+  op = (op || "").toLowerCase();
+  if (op.includes("issue") || op.includes("deploy")) return "issue";
+  if (op.includes("assign") && !op.includes("unassign")) return "assign";
+  if (op.includes("unassign")) return "unassign";
+  if (op.includes("swap"))    return "swap";
+  if (op.includes("return"))  return "ret";
+  if (op.includes("atfs"))    return "atfs";
+  if (op.includes("receive")) return "receive";
+  return "other";
+}
+
+// ── Helper: fetch all ops with pagination ────────────────────────────────
+async function dmFetchAllOps(dateFilter, extraFilter) {
+  var batchSize = 1000, offset = 0, all = [], fetching = true;
+  while (fetching) {
+    var path = "daily_operations?select=id,date,time,operation,sn,model,officer,branch_id,reason" +
+               dateFilter + (extraFilter || "") +
+               "&order=date.asc,time.asc&limit=" + batchSize + "&offset=" + offset;
+    try {
+      var res   = await sf(path);
+      var batch = await res.json();
+      if (!Array.isArray(batch) || !batch.length) { fetching = false; break; }
+      all = all.concat(batch);
+      offset += batch.length;
+      if (batch.length < batchSize) fetching = false;
+    } catch(e) { fetching = false; }
+  }
+  return all;
+}
+
+// ── Helper: get branch name map ───────────────────────────────────────────
+async function dmBranchMap() {
+  var map = {};
+  try {
+    var r    = await sf("branches?select=id,name,code,city&order=name");
+    var rows = await r.json() || [];
+    rows.forEach(function(b) { map[b.id] = { name: b.name, code: b.code || "", city: b.city || "" }; });
+  } catch(e) {}
+  return map;
+}
+
+// ════════════════════════════════════════════════════════════
+//  TAB 1 — SWAP RANKING
+// ════════════════════════════════════════════════════════════
+var _dmSwapData = [];
+
+async function dmLoadSwapRanking() {
+  var wrap   = document.getElementById("dm-swap-wrap");
+  var kpiEl  = document.getElementById("dm-swap-kpis");
+  if (!wrap) return;
+  wrap.innerHTML = "<div class='dm-loading'>Loading swap data</div>";
+  if (kpiEl) kpiEl.innerHTML = "";
+
+  var df = dmDateFilter("dm-swap-from","dm-swap-to");
+  var typeFilter = (document.getElementById("dm-swap-type-filter") || {}).value || "";
+
+  try {
+    var brMap = await dmBranchMap();
+    var data  = await dmFetchAllOps(df, "&operation=ilike.*swap*");
+    _dmSwapData = data;
+
+    // Filter by swap type if selected
+    if (typeFilter) {
+      data = data.filter(function(r) {
+        return (r.reason || "").toLowerCase().includes(typeFilter.toLowerCase());
+      });
+    }
+
+    // Only count "swap (new out)" or plain "swap" rows (avoid double-counting pairs)
+    var swapRows = data.filter(function(r) {
+      var op = (r.operation || "").toLowerCase();
+      return op === "swap (new out)" || op === "swap" || (op.includes("swap") && !op.includes("faulty"));
+    });
+
+    // Aggregate by branch
+    var branchMap = {};
+    swapRows.forEach(function(r) {
+      var bid  = r.branch_id;
+      var br   = brMap[bid] || { name: bid || "Unknown", code: "", city: "" };
+      if (!branchMap[bid]) branchMap[bid] = { name: br.name, code: br.code, city: br.city, total: 0, exchange: 0, normal: 0, officers: {} };
+      branchMap[bid].total++;
+      var reason = (r.reason || "").toLowerCase();
+      if (reason.includes("exchange")) branchMap[bid].exchange++;
+      else branchMap[bid].normal++;
+      var off = r.officer || "Unknown";
+      branchMap[bid].officers[off] = (branchMap[bid].officers[off] || 0) + 1;
+    });
+
+    var rows = Object.values(branchMap).sort(function(a,b) { return b.total - a.total; });
+    var maxTotal = rows.length ? rows[0].total : 1;
+    var totalSwaps = rows.reduce(function(s,r) { return s + r.total; }, 0);
+    var totalExchange = rows.reduce(function(s,r) { return s + r.exchange; }, 0);
+    var topBranch = rows.length ? rows[0].name : "—";
+    var avgSwaps  = rows.length ? Math.round(totalSwaps / rows.length) : 0;
+
+    if (kpiEl) {
+      kpiEl.innerHTML =
+        dmKpiCard("🔄","Total Swaps", totalSwaps, "all branches", "var(--orange)") +
+        dmKpiCard("🔁","Exchanges",   totalExchange, totalSwaps ? Math.round(totalExchange/totalSwaps*100)+"% of swaps" : "0%", "var(--sky)") +
+        dmKpiCard("🏆","Top Branch",  topBranch, rows.length ? rows[0].total + " swaps" : "", "var(--amber)") +
+        dmKpiCard("📊","Avg per Branch", avgSwaps, rows.length + " branches active", "var(--violet)");
+    }
+
+    if (!rows.length) {
+      wrap.innerHTML = "<div class='dm-empty'>No swap operations found in this date range.</div>";
+      return;
+    }
+
+    wrap.innerHTML =
+      "<table class='dm-rank-table'>" +
+      "<thead><tr><th>#</th><th>Branch</th><th>City</th><th>Total Swaps</th><th>Exchange</th><th>Normal</th><th>Top Officer</th><th>Volume</th></tr></thead><tbody>" +
+      rows.map(function(r, i) {
+        var topOff = Object.entries(r.officers).sort(function(a,b) { return b[1]-a[1]; })[0] || ["—", 0];
+        return "<tr>" +
+          "<td>" + dmRankBadge(i) + "</td>" +
+          "<td style='font-weight:700;'>🏢 " + escHtml(r.name) + " <span style='font-size:10px;color:var(--muted);'>(" + escHtml(r.code) + ")</span></td>" +
+          "<td style='font-size:11px;color:var(--sky);'>🌆 " + escHtml(r.city) + "</td>" +
+          "<td style='font-size:16px;font-weight:800;font-family:Syne,sans-serif;color:var(--orange);'>" + r.total + "</td>" +
+          "<td style='color:var(--sky);font-weight:700;'>" + r.exchange + "</td>" +
+          "<td style='color:var(--green2);font-weight:700;'>" + r.normal + "</td>" +
+          "<td style='font-size:11px;'>👤 " + escHtml(topOff[0]) + " <span style='color:var(--muted);'>(" + topOff[1] + ")</span></td>" +
+          "<td style='min-width:120px;'>" + dmBar(r.total, maxTotal, "var(--orange)") + "</td>" +
+          "</tr>";
+      }).join("") +
+      "</tbody></table>";
+  } catch(e) {
+    wrap.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+function dmExportSwapRanking() {
+  if (!_dmSwapData.length) { alert("Load swap ranking first."); return; }
+  _downloadCsv("SwapRanking_" + new Date().toISOString().split("T")[0] + ".csv",
+    _dmSwapData.map(function(r) { return { Date:r.date, Operation:r.operation, SN:r.sn, Officer:r.officer, Branch:r.branch_id, Reason:(r.reason||"").substring(0,120) }; }));
+}
+
+// ════════════════════════════════════════════════════════════
+//  TAB 2 — ISSUED PER BRANCH
+// ════════════════════════════════════════════════════════════
+var _dmIssueData = [];
+
+async function dmLoadIssuedBranch() {
+  var wrap  = document.getElementById("dm-issue-wrap");
+  var kpiEl = document.getElementById("dm-issue-kpis");
+  if (!wrap) return;
+  wrap.innerHTML = "<div class='dm-loading'>Loading issuance data</div>";
+  if (kpiEl) kpiEl.innerHTML = "";
+
+  var df   = dmDateFilter("dm-issue-from","dm-issue-to");
+  var team = (document.getElementById("dm-issue-team") || {}).value || "";
+
+  try {
+    var brMap = await dmBranchMap();
+    var data  = await dmFetchAllOps(df, "&operation=ilike.*issue*");
+    _dmIssueData = data;
+
+    // Filter by team keyword in reason
+    if (team) {
+      data = data.filter(function(r) { return (r.reason || "").toUpperCase().includes(team.toUpperCase()); });
+    }
+
+    var branchMap = {};
+    data.forEach(function(r) {
+      var bid = r.branch_id;
+      var br  = brMap[bid] || { name: bid || "Unknown", code: "", city: "" };
+      if (!branchMap[bid]) branchMap[bid] = { name: br.name, code: br.code, city: br.city, total: 0, cdl: 0, bd: 0, kamm: 0, officers: {}, dates: {} };
+      branchMap[bid].total++;
+      var reason = (r.reason || "").toUpperCase();
+      if (reason.includes("CDL"))   branchMap[bid].cdl++;
+      else if (reason.includes("BD")) branchMap[bid].bd++;
+      else if (reason.includes("KA") || reason.includes("MM")) branchMap[bid].kamm++;
+      var off = r.officer || "Unknown";
+      branchMap[bid].officers[off] = (branchMap[bid].officers[off] || 0) + 1;
+      branchMap[bid].dates[r.date]  = (branchMap[bid].dates[r.date] || 0) + 1;
+    });
+
+    var rows = Object.values(branchMap).sort(function(a,b) { return b.total - a.total; });
+    var maxTotal = rows.length ? rows[0].total : 1;
+    var totalIssued = rows.reduce(function(s,r) { return s + r.total; }, 0);
+    var topBranch   = rows.length ? rows[0].name : "—";
+    var topOfficerMap = {};
+    data.forEach(function(r) { var o = r.officer||"?"; topOfficerMap[o] = (topOfficerMap[o]||0) + 1; });
+    var topOfficer  = Object.entries(topOfficerMap).sort(function(a,b) { return b[1]-a[1]; })[0] || ["—",0];
+    var uniqDays    = [...new Set(data.map(function(r) { return r.date; }))].length;
+
+    if (kpiEl) {
+      kpiEl.innerHTML =
+        dmKpiCard("🚀","Total Issued",  totalIssued, "across all branches", "var(--green2)") +
+        dmKpiCard("🏆","Top Branch",    topBranch, rows.length ? rows[0].total + " issued" : "", "var(--amber)") +
+        dmKpiCard("👤","Top Officer",   topOfficer[0], topOfficer[1] + " issues", "var(--sky)") +
+        dmKpiCard("📅","Active Days",   uniqDays, "days with issues", "var(--violet)");
+    }
+
+    if (!rows.length) { wrap.innerHTML = "<div class='dm-empty'>No issue operations found in this range.</div>"; return; }
+
+    wrap.innerHTML =
+      "<table class='dm-rank-table'>" +
+      "<thead><tr><th>#</th><th>Branch</th><th>City</th><th>Total Issued</th><th>CDL</th><th>BD</th><th>KA/MM</th><th>Top Officer</th><th>Volume</th></tr></thead><tbody>" +
+      rows.map(function(r, i) {
+        var topOff = Object.entries(r.officers).sort(function(a,b){return b[1]-a[1];})[0] || ["—",0];
+        var peakDay = Object.entries(r.dates).sort(function(a,b){return b[1]-a[1];})[0] || ["—",0];
+        return "<tr>" +
+          "<td>" + dmRankBadge(i) + "</td>" +
+          "<td style='font-weight:700;'>🏢 " + escHtml(r.name) + " <span style='font-size:10px;color:var(--muted);'>(" + escHtml(r.code) + ")</span><div style='font-size:9px;color:var(--muted);'>Peak: " + escHtml(peakDay[0]) + " (" + peakDay[1] + ")</div></td>" +
+          "<td style='font-size:11px;color:var(--sky);'>🌆 " + escHtml(r.city) + "</td>" +
+          "<td style='font-size:18px;font-weight:800;font-family:Syne,sans-serif;color:var(--green2);'>" + r.total + "</td>" +
+          "<td style='color:var(--sky);font-weight:700;'>" + r.cdl + "</td>" +
+          "<td style='color:var(--orange);font-weight:700;'>" + r.bd + "</td>" +
+          "<td style='color:var(--violet);font-weight:700;'>" + r.kamm + "</td>" +
+          "<td style='font-size:11px;'>👤 " + escHtml(topOff[0]) + " <span style='color:var(--muted);'>(" + topOff[1] + ")</span></td>" +
+          "<td style='min-width:120px;'>" + dmBar(r.total, maxTotal, "var(--green2)") + "</td>" +
+          "</tr>";
+      }).join("") +
+      "</tbody></table>";
+  } catch(e) {
+    wrap.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+function dmExportIssuedBranch() {
+  if (!_dmIssueData.length) { alert("Load issued data first."); return; }
+  _downloadCsv("IssuedPerBranch_" + new Date().toISOString().split("T")[0] + ".csv",
+    _dmIssueData.map(function(r) { return { Date:r.date, Operation:r.operation, SN:r.sn, Officer:r.officer, Branch:r.branch_id, Reason:(r.reason||"").substring(0,120) }; }));
+}
+
+// ════════════════════════════════════════════════════════════
+//  TAB 3 — OPS MATRIX
+// ════════════════════════════════════════════════════════════
+var _dmOpsMatrixData = [];
+
+async function dmLoadOpsMatrix() {
+  var wrap = document.getElementById("dm-ops-wrap");
+  if (!wrap) return;
+  wrap.innerHTML = "<div class='dm-loading'>Loading operations matrix</div>";
+
+  var df   = dmDateFilter("dm-ops-from","dm-ops-to");
+  var sortBy = (document.getElementById("dm-ops-sort") || {}).value || "total";
+
+  try {
+    var brMap = await dmBranchMap();
+    var data  = await dmFetchAllOps(df, "");
+    _dmOpsMatrixData = data;
+
+    var branchMap = {};
+    data.forEach(function(r) {
+      var bid = r.branch_id;
+      var br  = brMap[bid] || { name: bid || "Unknown", code: "", city: "" };
+      if (!branchMap[bid]) branchMap[bid] = { name: br.name, code: br.code, city: br.city, total: 0, issue: 0, assign: 0, unassign: 0, swap: 0, ret: 0, atfs: 0, receive: 0, other: 0 };
+      var cat = dmCatOp(r.operation);
+      branchMap[bid].total++;
+      branchMap[bid][cat] = (branchMap[bid][cat] || 0) + 1;
+    });
+
+    var rows = Object.values(branchMap).sort(function(a,b) { return (b[sortBy] || b.total) - (a[sortBy] || a.total); });
+
+    // Compute column maxes for heat mapping
+    var maxIssue = Math.max(1, ...rows.map(function(r){return r.issue;}));
+    var maxSwap  = Math.max(1, ...rows.map(function(r){return r.swap;}));
+    var maxRet   = Math.max(1, ...rows.map(function(r){return r.ret;}));
+    var maxAtfs  = Math.max(1, ...rows.map(function(r){return r.atfs;}));
+    var maxTotal = Math.max(1, ...rows.map(function(r){return r.total;}));
+
+    function heat(v, max) {
+      if (v === 0) return "dm-heat-0";
+      var pct = v / max;
+      if (pct < 0.2) return "dm-heat-1";
+      if (pct < 0.4) return "dm-heat-2";
+      if (pct < 0.65) return "dm-heat-3";
+      if (pct < 0.85) return "dm-heat-4";
+      return "dm-heat-5";
+    }
+
+    if (!rows.length) { wrap.innerHTML = "<div class='dm-empty'>No data found in this date range.</div>"; return; }
+
+    var totalOps = rows.reduce(function(s,r){return s+r.total;},0);
+
+    wrap.innerHTML =
+      "<div style='padding:10px 12px;font-size:11px;color:var(--muted);background:var(--bg3);border-bottom:1px solid var(--border);'>" +
+        "📊 <strong>" + totalOps.toLocaleString() + "</strong> total operations across <strong>" + rows.length + "</strong> branches" +
+      "</div>" +
+      "<table class='dm-matrix'>" +
+      "<thead><tr>" +
+        "<th style='text-align:left;min-width:160px;'>Branch</th>" +
+        "<th style='color:var(--green2);'>🚀 Issue</th>" +
+        "<th style='color:var(--sky);'>📋 Assign</th>" +
+        "<th style='color:var(--teal);'>↩ Unassign</th>" +
+        "<th style='color:var(--orange);'>🔄 Swap</th>" +
+        "<th style='color:var(--violet);'>↩ Return</th>" +
+        "<th style='color:var(--rose);'>⚡ ATFS</th>" +
+        "<th style='color:var(--amber);'>📥 Receive</th>" +
+        "<th>Total</th>" +
+      "</tr></thead><tbody>" +
+      rows.map(function(r) {
+        return "<tr>" +
+          "<td><div style='font-weight:700;font-size:12px;'>🏢 " + escHtml(r.name) + "</div><div style='font-size:9px;color:var(--muted);'>" + escHtml(r.city) + "</div></td>" +
+          "<td class='" + heat(r.issue,   maxIssue) + "'>"  + (r.issue   || "—") + "</td>" +
+          "<td class='" + heat(r.assign,  maxIssue) + "'>"  + (r.assign  || "—") + "</td>" +
+          "<td class='" + heat(r.unassign,maxIssue) + "'>"  + (r.unassign|| "—") + "</td>" +
+          "<td class='" + heat(r.swap,    maxSwap)  + "'>"  + (r.swap    || "—") + "</td>" +
+          "<td class='" + heat(r.ret,     maxRet)   + "'>"  + (r.ret     || "—") + "</td>" +
+          "<td class='" + heat(r.atfs,    maxAtfs)  + "'>"  + (r.atfs    || "—") + "</td>" +
+          "<td style='color:var(--amber);font-weight:600;'>" + (r.receive || "—") + "</td>" +
+          "<td style='font-family:Syne,sans-serif;font-size:15px;font-weight:800;color:var(--text);'>" + r.total + "</td>" +
+          "</tr>";
+      }).join("") +
+      "</tbody></table>";
+  } catch(e) {
+    wrap.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+function dmExportOpsMatrix() {
+  if (!_dmOpsMatrixData.length) { alert("Load ops matrix first."); return; }
+  _downloadCsv("OpsMatrix_" + new Date().toISOString().split("T")[0] + ".csv",
+    _dmOpsMatrixData.map(function(r) { return { Date:r.date, Operation:r.operation, SN:r.sn||"", Officer:r.officer||"", Branch:r.branch_id||"" }; }));
+}
+
+// ════════════════════════════════════════════════════════════
+//  TAB 4 — SN TRACKER
+// ════════════════════════════════════════════════════════════
+
+async function dmTrackSN() {
+  var inp    = document.getElementById("dm-sn-input");
+  var result = document.getElementById("dm-sn-result");
+  if (!inp || !result) return;
+  var sn = inp.value.trim().toUpperCase();
+  if (!sn) { alert("Enter a serial number."); return; }
+
+  result.innerHTML = "<div class='dm-loading'>Searching all records for " + escHtml(sn) + "</div>";
+
+  try {
+    var brMap = await dmBranchMap();
+
+    // 1. Fetch all ops for this SN (any branch)
+    var res  = await sf("daily_operations?select=id,date,time,operation,sn,model,officer,branch_id,reason&sn=eq." + encodeURIComponent(sn) + "&order=date.asc,time.asc&limit=500");
+    var ops  = await res.json() || [];
+
+    // 2. Check stock tables across all branches
+    var stockHits = [];
+    var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+    if (!branches.length) {
+      try {
+        var br = await sf("branches?select=id,name,code,table_suffix&order=name");
+        branches = await br.json() || [];
+      } catch(e2) {}
+    }
+    await Promise.all(branches.map(async function(b) {
+      if (!b.table_suffix) return;
+      var t = branchTables(b.table_suffix);
+      var tables = [
+        { tbl: t.bn,  cat: "Brand New Stock"   },
+        { tbl: t.rp,  cat: "Repaired Stock"     },
+        { tbl: t.rt,  cat: "Returned Stock"     },
+        { tbl: t.ft,  cat: "Faulty Stock"       },
+        { tbl: t.rbn, cat: "Received BN Stock"  }
+      ];
+      for (var ti = 0; ti < tables.length; ti++) {
+        try {
+          var r2 = await sf(tables[ti].tbl + "?select=sn,model,status&sn=eq." + encodeURIComponent(sn));
+          var rows2 = await r2.json();
+          if (Array.isArray(rows2) && rows2.length) {
+            stockHits.push({ branch: b.name, code: b.code, cat: tables[ti].cat, status: rows2[0].status || "In Stock", model: rows2[0].model || "" });
+          }
+        } catch(e3) {}
+      }
+    }));
+
+    // 3. Check deployed_assigned
+    var depHits = [];
+    try {
+      var dr  = await sf("deployed_assigned?select=sn,model,operation,customer_id,agent_id,officer,branch_id,created_at&sn=eq." + encodeURIComponent(sn) + "&order=created_at.desc");
+      depHits = await dr.json() || [];
+    } catch(e4) {}
+
+    // Build current status
+    var currentStatus = "Unknown";
+    var currentColor  = "dm-status-unknown";
+    if (depHits.length) {
+      var lastDep = depHits[0];
+      var depOp = (lastDep.operation || "").toLowerCase();
+      currentStatus = depOp.includes("deploy") || depOp.includes("issue") ? "Issued" : "Assigned";
+      currentColor  = depOp.includes("issue") ? "dm-status-issued" : "dm-status-assigned";
+    } else if (stockHits.length) {
+      var sh = stockHits[0];
+      currentStatus = sh.cat + " @ " + sh.branch;
+      currentColor  = "dm-status-stock";
+      if (sh.cat === "Faulty Stock") currentColor = "dm-status-faulty";
+    } else if (ops.length) {
+      var lastOp = ops[ops.length - 1];
+      currentStatus = "Last op: " + (lastOp.operation || "?");
+      currentColor  = "dm-status-unknown";
+    }
+
+    // Build timeline
+    function tlDotClass(op) {
+      var c = dmCatOp(op);
+      return c === "issue" ? "issue" : c === "assign" ? "assign" : c === "swap" ? "swap" : c === "ret" ? "ret" : c === "atfs" ? "atfs" : c === "receive" ? "receive" : "delete";
+    }
+
+    var timelineHtml = ops.length ? ops.map(function(op) {
+      var br = brMap[op.branch_id] ? (brMap[op.branch_id].name + " (" + brMap[op.branch_id].code + ")") : (op.branch_id || "Unknown");
+      var meta = opChip(op.operation, op.reason);
+      return "<div class='sn-tl-item'>" +
+        "<div class='sn-tl-dot " + tlDotClass(op.operation) + "'></div>" +
+        "<div class='sn-tl-head'>" +
+          "<span class='op-type-badge " + meta.cls + "'>" + escHtml(meta.label) + "</span>" +
+          "<span style='font-size:11px;color:var(--muted);'>" + escHtml(op.date || "—") + " " + ((op.time || "").substring(0,5)) + "</span>" +
+        "</div>" +
+        "<div class='sn-tl-meta'>" +
+          "🏢 " + escHtml(br) + " &nbsp;·&nbsp; 👤 " + escHtml(op.officer || "—") +
+          (op.reason ? " &nbsp;·&nbsp; <span title='" + escHtml(op.reason) + "'>" + escHtml((op.reason || "").substring(0, 80)) + (op.reason.length > 80 ? "…" : "") + "</span>" : "") +
+        "</div>" +
+        "</div>";
+    }).join("") : "<div style='color:var(--muted);font-size:12px;padding:8px 0;'>No operations recorded for this SN.</div>";
+
+    result.innerHTML =
+      "<div class='dm-sn-result'>" +
+        "<div class='dm-sn-header'>" +
+          "<div class='dm-sn-badge'>📟 " + escHtml(sn) + "</div>" +
+          "<span class='dm-status-chip " + currentColor + "'>" + escHtml(currentStatus) + "</span>" +
+          (ops.length ? "<span style='font-size:11px;color:var(--muted);'>" + ops.length + " operations found</span>" : "") +
+          (depHits.length && depHits[0].model ? "<span style='font-size:11px;color:var(--text2);font-weight:700;'>Model: " + escHtml(depHits[0].model) + "</span>" : "") +
+        "</div>" +
+        (stockHits.length ? "<div style='margin-bottom:14px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);font-size:12px;'>" +
+          "<div style='font-weight:700;color:var(--text);margin-bottom:6px;'>📦 Current Stock Location" + (stockHits.length > 1 ? "s" : "") + "</div>" +
+          stockHits.map(function(sh) {
+            return "<div style='margin-bottom:3px;'>• <strong>" + escHtml(sh.branch) + "</strong> (" + escHtml(sh.code) + ") → " + escHtml(sh.cat) + (sh.status ? " · <span style='color:var(--green2);'>" + escHtml(sh.status) + "</span>" : "") + "</div>";
+          }).join("") + "</div>" : "") +
+        (depHits.length ? "<div style='margin-bottom:14px;padding:10px 12px;background:rgba(64,145,108,.05);border-radius:8px;border:1px solid rgba(64,145,108,.15);font-size:12px;'>" +
+          "<div style='font-weight:700;color:var(--green2);margin-bottom:6px;'>📋 Field Deployment Record</div>" +
+          depHits.slice(0, 3).map(function(d) {
+            var br = brMap[d.branch_id] ? brMap[d.branch_id].name : (d.branch_id || "?");
+            return "<div style='margin-bottom:3px;'>• " + escHtml(d.operation || "?") + " · 🏢 " + escHtml(br) + (d.customer_id ? " · Customer: " + escHtml(d.customer_id) : "") + (d.agent_id ? " · Agent: " + escHtml(d.agent_id) : "") + " · 👤 " + escHtml(d.officer || "?") + "</div>";
+          }).join("") +
+          (depHits.length > 3 ? "<div style='color:var(--muted);font-size:10px;'>…and " + (depHits.length-3) + " more records</div>" : "") +
+        "</div>" : "") +
+        "<div style='font-size:11px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.6px;'>📅 Full Operation Timeline</div>" +
+        "<div class='sn-timeline'>" + timelineHtml + "</div>" +
+      "</div>";
+  } catch(e) {
+    result.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+function dmTrackSNClear() {
+  var inp = document.getElementById("dm-sn-input");
+  var res = document.getElementById("dm-sn-result");
+  var bul = document.getElementById("dm-sn-bulk-result");
+  if (inp) inp.value = "";
+  if (res) res.innerHTML = "";
+  if (bul) bul.innerHTML = "";
+  var area = document.getElementById("dm-sn-bulk-area");
+  if (area) area.value = "";
+  var cnt = document.getElementById("dm-bulk-sn-count");
+  if (cnt) cnt.textContent = "";
+}
+
+async function dmBulkSNAudit() {
+  var area   = document.getElementById("dm-sn-bulk-area");
+  var result = document.getElementById("dm-sn-bulk-result");
+  var cntEl  = document.getElementById("dm-bulk-sn-count");
+  if (!area || !result) return;
+  var sns = area.value.split(/[\n,]+/).map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean);
+  if (!sns.length) { alert("Paste at least one SN."); return; }
+  if (cntEl) cntEl.textContent = "Auditing " + sns.length + " SNs…";
+  result.innerHTML = "<div class='dm-loading'>Scanning " + sns.length + " SNs</div>";
+
+  try {
+    var brMap = await dmBranchMap();
+    var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+    if (!branches.length) {
+      try { var br = await sf("branches?select=id,name,code,table_suffix&order=name"); branches = await br.json() || []; } catch(e) {}
+    }
+
+    // Fetch last op for each SN
+    var snResults = {};
+    sns.forEach(function(sn) { snResults[sn] = { ops: 0, lastOp: null, lastDate: null, stock: null, officer: null }; });
+
+    // Batch: last operation per SN via daily_operations
+    await Promise.all(sns.map(async function(sn) {
+      try {
+        var r = await sf("daily_operations?select=operation,date,officer,branch_id&sn=eq." + encodeURIComponent(sn) + "&order=date.desc,time.desc&limit=1");
+        var rows = await r.json();
+        if (rows && rows.length) {
+          snResults[sn].lastOp   = rows[0].operation;
+          snResults[sn].lastDate = rows[0].date;
+          snResults[sn].officer  = rows[0].officer;
+          snResults[sn].branch   = brMap[rows[0].branch_id] ? brMap[rows[0].branch_id].name : rows[0].branch_id;
+        }
+      } catch(e) {}
+    }));
+
+    // Check deployed_assigned for current deployment
+    await Promise.all(sns.map(async function(sn) {
+      try {
+        var r = await sf("deployed_assigned?select=operation,branch_id&sn=eq." + encodeURIComponent(sn) + "&limit=1");
+        var rows = await r.json();
+        if (rows && rows.length) {
+          snResults[sn].currentStatus = (rows[0].operation || "").toLowerCase().includes("deploy") ? "🚀 Issued" : "📋 Assigned";
+          snResults[sn].currentBranch = brMap[rows[0].branch_id] ? brMap[rows[0].branch_id].name : rows[0].branch_id;
+        }
+      } catch(e) {}
+    }));
+
+    var found    = sns.filter(function(sn) { return snResults[sn].lastOp || snResults[sn].currentStatus; });
+    var notFound = sns.filter(function(sn) { return !snResults[sn].lastOp && !snResults[sn].currentStatus; });
+    if (cntEl) cntEl.textContent = "✓ Found " + found.length + " of " + sns.length;
+
+    result.innerHTML =
+      "<div style='margin-top:4px;overflow-x:auto;'>" +
+      "<table class='dm-rank-table'><thead><tr><th>SN</th><th>Current Status</th><th>Last Operation</th><th>Last Date</th><th>Officer</th><th>Branch</th></tr></thead><tbody>" +
+      sns.map(function(sn) {
+        var r = snResults[sn];
+        var statusHtml = r.currentStatus
+          ? "<span class='dm-status-chip " + (r.currentStatus.includes("Issued") ? "dm-status-issued" : "dm-status-assigned") + "'>" + r.currentStatus + "</span>"
+          : (r.lastOp ? "<span class='dm-status-chip dm-status-unknown'>Last: " + escHtml(r.lastOp) + "</span>" : "<span style='color:var(--muted);font-size:11px;'>Not found</span>");
+        return "<tr>" +
+          "<td><span class='sn-tag'>" + escHtml(sn) + "</span></td>" +
+          "<td>" + statusHtml + "</td>" +
+          "<td style='font-size:11px;'>" + escHtml(r.lastOp || "—") + "</td>" +
+          "<td style='font-size:11px;color:var(--muted);'>" + escHtml(r.lastDate || "—") + "</td>" +
+          "<td style='font-size:11px;'>👤 " + escHtml(r.officer || "—") + "</td>" +
+          "<td style='font-size:11px;'>🏢 " + escHtml(r.currentBranch || r.branch || "—") + "</td>" +
+          "</tr>";
+      }).join("") +
+      "</tbody></table></div>";
+  } catch(e) {
+    result.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  TAB 5 — PERFORMANCE SCORECARD
+// ════════════════════════════════════════════════════════════
+var _dmPerfData = [];
+
+async function dmLoadPerformance() {
+  var wrap  = document.getElementById("dm-perf-wrap");
+  var kpiEl = document.getElementById("dm-perf-kpis");
+  if (!wrap) return;
+  wrap.innerHTML = "<div class='dm-loading'>Calculating performance scores</div>";
+  if (kpiEl) kpiEl.innerHTML = "";
+
+  var df = dmDateFilter("dm-perf-from","dm-perf-to");
+  try {
+    var brMap = await dmBranchMap();
+    var data  = await dmFetchAllOps(df, "");
+    _dmPerfData = data;
+
+    var branchMap = {};
+    data.forEach(function(r) {
+      var bid = r.branch_id;
+      var br  = brMap[bid] || { name: bid || "Unknown", code: "", city: "" };
+      if (!branchMap[bid]) branchMap[bid] = { name: br.name, code: br.code, city: br.city, total: 0, issue: 0, swap: 0, ret: 0, atfs: 0, receive: 0, assign: 0 };
+      var cat = dmCatOp(r.operation);
+      branchMap[bid].total++;
+      branchMap[bid][cat] = (branchMap[bid][cat] || 0) + 1;
+    });
+
+    var rows = Object.values(branchMap);
+    var maxTotal  = Math.max(1, ...rows.map(function(r){return r.total;}));
+
+    // Score each branch (0–100)
+    rows.forEach(function(r) {
+      // Volume score (40%): how active relative to busiest branch
+      var volumeScore = (r.total / maxTotal) * 40;
+      // Swap ratio score (30%): lower swap/issue = better. penalty 30 * (1 - ratio)
+      var swapRatio  = r.issue > 0 ? r.swap / r.issue : (r.swap > 0 ? 1 : 0);
+      var swapScore  = Math.max(0, 30 * (1 - swapRatio));
+      // Stock movement score (30%): having both receive and issue is healthy
+      var stockScore = Math.min(30, (r.receive > 0 ? 15 : 0) + (r.issue > 5 ? 15 : r.issue * 3));
+
+      r.score = Math.round(volumeScore + swapScore + stockScore);
+      r.grade = r.score >= 90 ? "A" : r.score >= 70 ? "B" : r.score >= 50 ? "C" : "D";
+      r.swapRatioPct = r.issue > 0 ? Math.round(r.swap / r.issue * 100) : (r.swap > 0 ? 100 : 0);
+    });
+
+    rows.sort(function(a,b) { return b.score - a.score; });
+
+    var avgScore = rows.length ? Math.round(rows.reduce(function(s,r){return s+r.score;},0) / rows.length) : 0;
+    var gradeA   = rows.filter(function(r){return r.grade==="A";}).length;
+    var gradeD   = rows.filter(function(r){return r.grade==="D";}).length;
+
+    if (kpiEl) {
+      kpiEl.innerHTML =
+        dmKpiCard("📊","Avg Score",   avgScore + "/100", rows.length + " branches scored", "var(--sky)") +
+        dmKpiCard("🏆","Grade A",     gradeA, "top performers", "var(--green2)") +
+        dmKpiCard("⚠️","Grade D",    gradeD, "need attention", "var(--rose)") +
+        dmKpiCard("🔝","Top Branch",  rows.length ? rows[0].name : "—", rows.length ? "Score " + rows[0].score : "", "var(--amber)");
+    }
+
+    if (!rows.length) { wrap.innerHTML = "<div class='dm-empty'>No data found.</div>"; return; }
+
+    function gradeClass(g) { return g==="A" ? "dm-score-a" : g==="B" ? "dm-score-b" : g==="C" ? "dm-score-c" : "dm-score-d"; }
+
+    wrap.innerHTML =
+      "<table class='dm-rank-table'><thead><tr>" +
+        "<th>#</th><th>Branch</th><th>Score</th><th>Grade</th>" +
+        "<th>Total Ops</th><th>Issues</th><th>Swaps</th><th>Swap/Issue %</th><th>Returns</th><th>Receives</th>" +
+      "</tr></thead><tbody>" +
+      rows.map(function(r, i) {
+        var swapColor = r.swapRatioPct > 30 ? "var(--rose)" : r.swapRatioPct > 15 ? "var(--orange)" : "var(--green2)";
+        return "<tr>" +
+          "<td>" + dmRankBadge(i) + "</td>" +
+          "<td style='font-weight:700;'>🏢 " + escHtml(r.name) + "<div style='font-size:9px;color:var(--muted);'>🌆 " + escHtml(r.city) + "</div></td>" +
+          "<td><div style='display:flex;align-items:center;gap:6px;'>" +
+            "<div style='flex:1;height:5px;background:var(--border2);border-radius:3px;overflow:hidden;'><div style='width:" + r.score + "%;height:100%;background:var(--green2);border-radius:3px;'></div></div>" +
+            "<strong style='font-size:13px;color:var(--text);'>" + r.score + "</strong>" +
+          "</div></td>" +
+          "<td><span class='dm-perf-score " + gradeClass(r.grade) + "'>" + r.grade + "</span></td>" +
+          "<td style='font-weight:700;font-family:Syne,sans-serif;'>" + r.total + "</td>" +
+          "<td style='color:var(--green2);font-weight:700;'>" + r.issue + "</td>" +
+          "<td style='color:var(--orange);font-weight:700;'>" + r.swap + "</td>" +
+          "<td style='color:" + swapColor + ";font-weight:700;'>" + r.swapRatioPct + "%</td>" +
+          "<td style='color:var(--violet);font-weight:700;'>" + r.ret + "</td>" +
+          "<td style='color:var(--amber);font-weight:700;'>" + r.receive + "</td>" +
+          "</tr>";
+      }).join("") +
+      "</tbody></table>";
+  } catch(e) {
+    wrap.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+function dmExportPerformance() {
+  if (!_dmPerfData.length) { alert("Load performance data first."); return; }
+  _downloadCsv("PerformanceScorecard_" + new Date().toISOString().split("T")[0] + ".csv",
+    _dmPerfData.map(function(r) { return { Date:r.date, Operation:r.operation, SN:r.sn||"", Officer:r.officer||"", Branch:r.branch_id||"" }; }));
+}
+
+// ════════════════════════════════════════════════════════════
+//  TAB 6 — ANOMALY DETECTOR
+// ════════════════════════════════════════════════════════════
+
+async function dmRunAnomalies() {
+  var result = document.getElementById("dm-anom-result");
+  var kpiEl  = document.getElementById("dm-anom-kpis");
+  if (!result) return;
+  result.innerHTML = "<div class='dm-loading'>Scanning for anomalies</div>";
+  if (kpiEl) kpiEl.innerHTML = "";
+
+  var df = dmDateFilter("dm-anom-from","dm-anom-to");
+
+  try {
+    var brMap = await dmBranchMap();
+    var data  = await dmFetchAllOps(df, "");
+
+    var anomalies = [];
+
+    // ── 1. SN issued more than once ───────────────────────────────────────
+    var issueSns = {};
+    data.forEach(function(r) {
+      var cat = dmCatOp(r.operation);
+      if (cat === "issue") {
+        if (!issueSns[r.sn]) issueSns[r.sn] = [];
+        issueSns[r.sn].push(r);
+      }
+    });
+    var dupeIssue = Object.entries(issueSns).filter(function(e) { return e[1].length > 1; });
+    if (dupeIssue.length) {
+      anomalies.push({
+        sev: "crit",
+        icon: "🔴",
+        title: dupeIssue.length + " SN(s) issued more than once",
+        desc: "Same serial number appears as 'Issue' multiple times. This may indicate data entry errors or a device issued to multiple merchants.\n" +
+              dupeIssue.slice(0, 5).map(function(e) { return "• " + e[0] + " — " + e[1].length + "× issued"; }).join("\n") +
+              (dupeIssue.length > 5 ? "\n…and " + (dupeIssue.length - 5) + " more" : "")
+      });
+    }
+
+    // ── 2. Swap without a prior issue ────────────────────────────────────
+    var issuedSet = new Set(Object.keys(issueSns));
+    var swapRows  = data.filter(function(r) { var c = dmCatOp(r.operation); return c === "swap"; });
+    var swapNoIssue = swapRows.filter(function(r) { return r.sn && !issuedSet.has(r.sn); });
+    if (swapNoIssue.length > 0) {
+      anomalies.push({
+        sev: "warn",
+        icon: "🟠",
+        title: swapNoIssue.length + " swap(s) on SNs with no issue record",
+        desc: "These SNs were swapped but never appear as issued in this date range (may be outside range).\n" +
+              swapNoIssue.slice(0, 5).map(function(r) { return "• " + r.sn + " — " + escHtml(r.date || "?") + " by " + escHtml(r.officer || "?"); }).join("\n")
+      });
+    }
+
+    // ── 3. Operations with blank SN ───────────────────────────────────────
+    var blankSn = data.filter(function(r) { var c = dmCatOp(r.operation); return !r.sn && (c === "issue" || c === "swap" || c === "assign"); });
+    if (blankSn.length > 0) {
+      anomalies.push({
+        sev: "warn",
+        icon: "🟡",
+        title: blankSn.length + " operation(s) recorded with no serial number",
+        desc: "Issue, Swap, or Assign operations that have a blank SN — may be incomplete records.\n" +
+              blankSn.slice(0, 5).map(function(r) { return "• " + escHtml(r.operation||"?") + " on " + escHtml(r.date||"?") + " by " + escHtml(r.officer||"?"); }).join("\n")
+      });
+    }
+
+    // ── 4. Same SN in ops from two different branches on same day ────────
+    var snBranchDate = {};
+    data.forEach(function(r) {
+      if (!r.sn || !r.branch_id) return;
+      var key = r.sn + "|" + r.date;
+      if (!snBranchDate[key]) snBranchDate[key] = new Set();
+      snBranchDate[key].add(r.branch_id);
+    });
+    var multiBranchSns = Object.entries(snBranchDate).filter(function(e) { return e[1].size > 1; });
+    if (multiBranchSns.length > 0) {
+      anomalies.push({
+        sev: "crit",
+        icon: "🔴",
+        title: multiBranchSns.length + " SN(s) appear in multiple branches on same day",
+        desc: "A physical device cannot be in two places at once. These records need investigation.\n" +
+              multiBranchSns.slice(0, 5).map(function(e) {
+                var parts = e[0].split("|");
+                var brNames = [...e[1]].map(function(bid) { return brMap[bid] ? brMap[bid].name : bid; }).join(" & ");
+                return "• SN " + parts[0] + " on " + parts[1] + " @ " + brNames;
+              }).join("\n")
+      });
+    }
+
+    // ── 5. ATFS with no prior issue record ────────────────────────────────
+    var atfsRows = data.filter(function(r) { return dmCatOp(r.operation) === "atfs"; });
+    var atfsNoIssue = atfsRows.filter(function(r) { return r.sn && !issuedSet.has(r.sn); });
+    if (atfsNoIssue.length > 5) {
+      anomalies.push({
+        sev: "warn",
+        icon: "🟡",
+        title: atfsNoIssue.length + " ATFS operation(s) with no issue record for that SN",
+        desc: "ATFS (At Fault at Stock) recorded on SNs that were not issued in this period — may be pre-period issues or mislabelled operations."
+      });
+    }
+
+    // ── 6. High-frequency single officer ─────────────────────────────────
+    var officerOps = {};
+    data.forEach(function(r) { var o = r.officer || "?"; officerOps[o] = (officerOps[o] || 0) + 1; });
+    var avgOpPerOfficer = Object.values(officerOps).reduce(function(s,v){return s+v;},0) / Math.max(1, Object.keys(officerOps).length);
+    var highFreq = Object.entries(officerOps).filter(function(e) { return e[1] > avgOpPerOfficer * 4 && e[1] > 50; });
+    if (highFreq.length) {
+      anomalies.push({
+        sev: "warn",
+        icon: "🟡",
+        title: "Unusually high operation count for " + highFreq.length + " officer(s)",
+        desc: "These officers recorded far above average operations (4× avg). Could indicate bulk imports or automation.\n" +
+              highFreq.slice(0, 5).map(function(e) { return "• " + e[0] + " — " + e[1] + " ops"; }).join("\n")
+      });
+    }
+
+    // Build KPI summary
+    var critCount = anomalies.filter(function(a){return a.sev==="crit";}).length;
+    var warnCount = anomalies.filter(function(a){return a.sev==="warn";}).length;
+    if (kpiEl) {
+      kpiEl.innerHTML =
+        dmKpiCard("🔍","Ops Scanned", data.length.toLocaleString(), "in date range", "var(--sky)") +
+        dmKpiCard("🔴","Critical",    critCount, "need immediate review", "var(--rose)") +
+        dmKpiCard("🟡","Warnings",    warnCount, "worth investigating", "var(--amber)") +
+        dmKpiCard("✅","Clean",       anomalies.length === 0 ? "All Clear" : anomalies.length + " flags", "anomaly flags", anomalies.length === 0 ? "var(--green2)" : "var(--orange)");
+    }
+
+    if (!anomalies.length) {
+      result.innerHTML = "<div style='padding:40px;text-align:center;'>" +
+        "<div style='font-size:48px;margin-bottom:12px;'>✅</div>" +
+        "<div style='font-weight:700;color:var(--green2);font-size:15px;margin-bottom:6px;'>No anomalies detected!</div>" +
+        "<div style='font-size:12px;color:var(--muted);'>All " + data.length.toLocaleString() + " operations in this period look clean.</div></div>";
+      return;
+    }
+
+    result.innerHTML = anomalies.map(function(a) {
+      return "<div class='dm-anom-item " + a.sev + "'>" +
+        "<div class='dm-anom-icon'>" + a.icon + "</div>" +
+        "<div><div class='dm-anom-title'>" + escHtml(a.title) + "</div>" +
+        "<div class='dm-anom-desc' style='white-space:pre-line;'>" + escHtml(a.desc) + "</div></div>" +
+        "</div>";
+    }).join("");
+  } catch(e) {
+    result.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  TAB 7 — DATA TOOLS
+// ════════════════════════════════════════════════════════════
+
+async function dmExportBranchFull() {
+  var sel  = document.getElementById("dm-export-branch");
+  var from = (document.getElementById("dm-export-from") || {}).value || "";
+  var to   = (document.getElementById("dm-export-to")   || {}).value || "";
+  var branchId = sel ? sel.value : "";
+  var df   = "";
+  if (from) df += "&date=gte." + from;
+  if (to)   df += "&date=lte." + to;
+  var branchFlt = branchId ? "&branch_id=eq." + branchId : "";
+
+  try {
+    var brMap = await dmBranchMap();
+    var data  = await dmFetchAllOps(df, branchFlt);
+    if (!data.length) { alert("No records found for the selected filters."); return; }
+    _downloadCsv("BranchExport_" + new Date().toISOString().split("T")[0] + ".csv",
+      data.map(function(r) {
+        var br = brMap[r.branch_id] ? brMap[r.branch_id].name : r.branch_id;
+        return { Date:r.date, Time:(r.time||"").substring(0,5), Operation:r.operation||"", SN:r.sn||"", Model:r.model||"", Officer:r.officer||"", Branch:br||"", Reason:(r.reason||"").substring(0,200) };
+      }));
+  } catch(e) { alert("Export failed: " + (e.message || String(e))); }
+}
+
+async function dmFindDeadStock() {
+  var sel    = document.getElementById("dm-dead-branch");
+  var daysEl = document.getElementById("dm-dead-days");
+  var result = document.getElementById("dm-dead-result");
+  var branchId = sel ? sel.value : "";
+  var minDays  = parseInt((daysEl || {}).value || "30", 10);
+  if (!result) return;
+  result.innerHTML = "<div class='dm-loading'>Scanning for idle stock</div>";
+
+  var cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - minDays);
+  var cutoffStr = cutoff.toISOString().split("T")[0];
+
+  try {
+    var brMap    = await dmBranchMap();
+    var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+    if (!branches.length) { try { var br = await sf("branches?select=id,name,code,table_suffix&order=name"); branches = await br.json()||[]; } catch(e){} }
+    if (branchId) branches = branches.filter(function(b) { return b.id === branchId; });
+
+    var deadItems = [];
+    await Promise.all(branches.filter(function(b) { return b.table_suffix; }).map(async function(b) {
+      var t = branchTables(b.table_suffix);
+      var tables = [{ tbl: t.bn, cat: "Brand New" }, { tbl: t.rp, cat: "Repaired" }, { tbl: t.rt, cat: "Returned" }];
+      for (var ti = 0; ti < tables.length; ti++) {
+        try {
+          var r = await sf(tables[ti].tbl + "?select=sn,model,status,updated_at&status=eq.Available&updated_at=lte." + cutoffStr + "T00:00:00&limit=100");
+          var rows = await r.json() || [];
+          rows.forEach(function(row) {
+            var lastSeen = row.updated_at ? row.updated_at.split("T")[0] : "unknown";
+            var daysIdle = row.updated_at ? Math.floor((new Date() - new Date(row.updated_at)) / 86400000) : minDays;
+            deadItems.push({ sn: row.sn, model: row.model||"—", branch: b.name, code: b.code, cat: tables[ti].cat, lastSeen: lastSeen, daysIdle: daysIdle });
+          });
+        } catch(e) {}
+      }
+    }));
+
+    deadItems.sort(function(a,b) { return b.daysIdle - a.daysIdle; });
+
+    if (!deadItems.length) {
+      result.innerHTML = "<div style='color:var(--green2);font-size:12px;font-weight:700;padding:10px;'>✅ No dead stock found (idle " + minDays + "+ days).</div>";
+      return;
+    }
+
+    result.innerHTML =
+      "<div style='font-size:11px;color:var(--amber);font-weight:700;margin-bottom:8px;'>⚠️ " + deadItems.length + " idle SN(s) found (not moved in " + minDays + "+ days)</div>" +
+      "<div style='overflow-x:auto;border:1px solid var(--border);border-radius:8px;max-height:300px;overflow-y:auto;'>" +
+      "<table class='dm-rank-table'><thead><tr><th>SN</th><th>Model</th><th>Branch</th><th>Category</th><th>Days Idle</th><th>Last Seen</th></tr></thead><tbody>" +
+      deadItems.map(function(d) {
+        var idleColor = d.daysIdle > 90 ? "var(--rose)" : d.daysIdle > 60 ? "var(--orange)" : "var(--amber)";
+        return "<tr>" +
+          "<td><span class='sn-tag'>" + escHtml(d.sn) + "</span></td>" +
+          "<td style='font-size:11px;'>" + escHtml(d.model) + "</td>" +
+          "<td style='font-size:11px;'>🏢 " + escHtml(d.branch) + "</td>" +
+          "<td style='font-size:11px;color:var(--muted);'>" + escHtml(d.cat) + "</td>" +
+          "<td style='font-weight:800;color:" + idleColor + ";font-family:Syne,sans-serif;'>" + d.daysIdle + "d</td>" +
+          "<td style='font-size:11px;color:var(--muted);'>" + escHtml(d.lastSeen) + "</td>" +
+          "</tr>";
+      }).join("") +
+      "</tbody></table></div>";
+  } catch(e) {
+    result.innerHTML = "<div style='color:var(--rose);font-size:11px;'>Error: " + escHtml(e.message || String(e)) + "</div>";
+  }
+}
+
+async function dmOfficerActivity() {
+  var result = document.getElementById("dm-officer-result");
+  if (!result) return;
+  var df     = dmDateFilter("dm-officer-from","dm-officer-to");
+  var name   = ((document.getElementById("dm-officer-name")||{}).value||"").trim();
+  var extra  = name ? "&officer=ilike.*" + encodeURIComponent(name) + "*" : "";
+  result.innerHTML = "<div class='dm-loading'>Loading officer activity</div>";
+  try {
+    var data = await dmFetchAllOps(df, extra);
+    var officerMap = {};
+    data.forEach(function(r) {
+      var o = r.officer || "Unknown";
+      if (!officerMap[o]) officerMap[o] = { name: o, total: 0, issue: 0, assign: 0, swap: 0, ret: 0, atfs: 0, receive: 0, unassign: 0 };
+      var cat = dmCatOp(r.operation);
+      officerMap[o].total++;
+      officerMap[o][cat] = (officerMap[o][cat] || 0) + 1;
+    });
+    var rows = Object.values(officerMap).sort(function(a,b){return b.total-a.total;});
+    if (!rows.length) { result.innerHTML = "<div class='dm-empty'>No operations found.</div>"; return; }
+    result.innerHTML =
+      "<div style='margin-top:8px;overflow-x:auto;border:1px solid var(--border);border-radius:10px;'>" +
+      "<table class='dm-rank-table'><thead><tr><th>#</th><th>Officer</th><th>Total</th><th>Issues</th><th>Assigns</th><th>Swaps</th><th>Returns</th><th>ATFS</th><th>Receives</th></tr></thead><tbody>" +
+      rows.map(function(r, i) {
+        return "<tr>" +
+          "<td>" + dmRankBadge(i) + "</td>" +
+          "<td style='font-weight:700;'>👤 " + escHtml(r.name) + "</td>" +
+          "<td style='font-family:Syne,sans-serif;font-weight:800;font-size:15px;'>" + r.total + "</td>" +
+          "<td style='color:var(--green2);font-weight:700;'>"  + (r.issue||"—")    + "</td>" +
+          "<td style='color:var(--sky);font-weight:700;'>"    + (r.assign||"—")   + "</td>" +
+          "<td style='color:var(--orange);font-weight:700;'>" + (r.swap||"—")     + "</td>" +
+          "<td style='color:var(--violet);font-weight:700;'>" + (r.ret||"—")      + "</td>" +
+          "<td style='color:var(--rose);font-weight:700;'>"   + (r.atfs||"—")     + "</td>" +
+          "<td style='color:var(--amber);font-weight:700;'>"  + (r.receive||"—")  + "</td>" +
+          "</tr>";
+      }).join("") + "</tbody></table></div>";
+  } catch(e) { result.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message||String(e)) + "</div>"; }
+}
+
+async function dmLoadSwapRatio() {
+  var result = document.getElementById("dm-ratio-result");
+  if (!result) return;
+  var df     = dmDateFilter("dm-ratio-from","dm-ratio-to");
+  var thresh = parseInt((document.getElementById("dm-ratio-thresh")||{}).value||"20",10);
+  result.innerHTML = "<div class='dm-loading'>Calculating swap-to-issue ratios</div>";
+  try {
+    var brMap = await dmBranchMap();
+    var data  = await dmFetchAllOps(df, "");
+    var branchMap = {};
+    data.forEach(function(r) {
+      var bid = r.branch_id;
+      var br  = brMap[bid] || { name: bid||"Unknown", code:"" };
+      if (!branchMap[bid]) branchMap[bid] = { name: br.name, code: br.code, issue: 0, swap: 0 };
+      var cat = dmCatOp(r.operation);
+      if (cat === "issue") branchMap[bid].issue++;
+      if (cat === "swap")  branchMap[bid].swap++;
+    });
+    var rows = Object.values(branchMap)
+      .filter(function(r) { return r.issue > 0; })
+      .map(function(r) {
+        r.ratioPct = Math.round(r.swap / r.issue * 100);
+        r.flagged  = r.ratioPct >= thresh;
+        return r;
+      })
+      .sort(function(a,b) { return b.ratioPct - a.ratioPct; });
+
+    if (!rows.length) { result.innerHTML = "<div class='dm-empty'>No data found.</div>"; return; }
+    var flagged = rows.filter(function(r){return r.flagged;}).length;
+    result.innerHTML =
+      "<div style='margin-bottom:10px;font-size:12px;font-weight:700;color:" + (flagged ? "var(--rose)" : "var(--green2)") + ";'>" +
+        (flagged ? "⚠️ " + flagged + " branch(es) exceeding " + thresh + "% swap/issue ratio" : "✅ All branches within acceptable swap/issue ratio") +
+      "</div>" +
+      "<div style='overflow-x:auto;border:1px solid var(--border);border-radius:10px;margin-top:6px;'>" +
+      "<table class='dm-rank-table'><thead><tr><th>Branch</th><th>Issued</th><th>Swapped</th><th>Ratio %</th><th>Status</th></tr></thead><tbody>" +
+      rows.map(function(r) {
+        var ratioColor = r.ratioPct >= thresh ? "var(--rose)" : r.ratioPct >= thresh*0.6 ? "var(--orange)" : "var(--green2)";
+        return "<tr style='" + (r.flagged ? "border-left:3px solid var(--rose);" : "") + "'>" +
+          "<td style='font-weight:700;'>🏢 " + escHtml(r.name) + "</td>" +
+          "<td style='color:var(--green2);font-weight:700;'>" + r.issue + "</td>" +
+          "<td style='color:var(--orange);font-weight:700;'>" + r.swap + "</td>" +
+          "<td><span style='font-size:16px;font-weight:800;font-family:Syne,sans-serif;color:" + ratioColor + ";'>" + r.ratioPct + "%</span></td>" +
+          "<td>" + (r.flagged ? "<span class='dm-status-chip dm-status-faulty'>⚠ Flagged</span>" : "<span class='dm-status-chip dm-status-stock'>✓ OK</span>") + "</td>" +
+          "</tr>";
+      }).join("") + "</tbody></table></div>";
+  } catch(e) { result.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: " + escHtml(e.message||String(e)) + "</div>"; }
+}
+
+
+// ════════════════════════════════════════════════════════════════════════
+//  ADMIN DATA MACHINE — Full Analytics Engine
+// ════════════════════════════════════════════════════════════════════════
+
+var _dmBooted = false;
+var _dmSwapData = [];
+var _dmIssueData = [];
+var _dmOpsData = [];
+var _dmPerfData = [];
+
+// ── Boot: populate branch selectors ─────────────────────────────────────
+async function dmBoot() {
+  if (_dmBooted) return;
+  _dmBooted = true;
+  // Set sensible date defaults (current month)
+  var now = new Date();
+  var y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0');
+  var firstDay = y+'-'+m+'-01';
+  var lastDay  = new Date(y,now.getMonth()+1,0).toISOString().split('T')[0];
+  ['dm-swap','dm-issue','dm-ops','dm-perf','dm-anom','dm-ratio','dm-officer'].forEach(function(pfx){
+    var f=document.getElementById(pfx+'-from'), t=document.getElementById(pfx+'-to');
+    if(f && !f.value) f.value=firstDay;
+    if(t && !t.value) t.value=lastDay;
+  });
+  // populate branch selects
+  await dmPopulateBranchSelects();
+}
+
+async function dmPopulateBranchSelects() {
+  var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+  if (!branches.length) {
+    try {
+      var r = await sf('branches?select=id,name,code,table_suffix&order=name');
+      branches = await r.json() || [];
+    } catch(e) {}
+  }
+  var allOpt = '<option value="">🌐 All Branches</option>';
+  var opts = allOpt + branches.map(function(b){
+    return '<option value="'+b.id+'" data-suffix="'+escHtml(b.table_suffix||'hq')+'" data-name="'+escHtml(b.name)+'">'+escHtml(b.name)+' ('+escHtml(b.code||'')+')</option>';
+  }).join('');
+  ['dm-export-branch','dm-dead-branch'].forEach(function(id){
+    var s = document.getElementById(id);
+    if(s) s.innerHTML = opts;
+  });
+}
+
+// ── Tab switcher ─────────────────────────────────────────────────────────
+function dmTab(name, btn) {
+  document.querySelectorAll('.dm-sub').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.dm-tab').forEach(function(b){ b.classList.remove('active'); });
+  var sub = document.getElementById('dm-sub-'+name);
+  if(sub) sub.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ── Helper: build date filter from two input ids ──────────────────────────
+function dmDateFilter(fromId, toId) {
+  var f = (document.getElementById(fromId)||{}).value||'';
+  var t = (document.getElementById(toId)||{}).value||'';
+  var q = '';
+  if(f) q += '&date=gte.'+f;
+  if(t) q += '&date=lte.'+t;
+  return q;
+}
+
+// ── Helper: fetch paginated ops ───────────────────────────────────────────
+async function dmFetchAllOps(extraFilter) {
+  var batchSize = 1000, offset = 0, all = [];
+  while(true) {
+    var res = await sf('daily_operations?select=id,date,time,operation,sn,model,officer,branch_id,reason'+(extraFilter||'')+'&order=date.desc,time.desc&limit='+batchSize+'&offset='+offset);
+    var batch = await res.json();
+    if(!Array.isArray(batch)||!batch.length) break;
+    all = all.concat(batch);
+    offset += batch.length;
+    if(batch.length < batchSize) break;
+  }
+  return all;
+}
+
+// ── Helper: branch name map ───────────────────────────────────────────────
+async function dmBranchMap() {
+  var map = {};
+  var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+  if(!branches.length){
+    try{ var r=await sf('branches?select=id,name,code,city&order=name'); branches=await r.json()||[]; }catch(e){}
+  }
+  branches.forEach(function(b){ map[b.id]={name:b.name||b.id, code:b.code||'', city:b.city||''}; });
+  return map;
+}
+
+// ── Helper: cat op ────────────────────────────────────────────────────────
+function dmCatOp(op){
+  op=(op||'').toLowerCase();
+  if(op.includes('issue')||op.includes('deploy')) return 'issue';
+  if(op.includes('assign')&&!op.includes('unassign')) return 'assign';
+  if(op.includes('unassign')) return 'unassign';
+  if(op.includes('swap')) return 'swap';
+  if(op.includes('return')) return 'ret';
+  if(op.includes('atfs')) return 'atfs';
+  if(op.includes('receive')) return 'receive';
+  if(op.includes('delete')) return 'delete';
+  return 'other';
+}
+
+// ── Helper: CSV download ──────────────────────────────────────────────────
+function dmDownloadCsv(filename, rows) {
+  if(!rows.length) return;
+  var keys = Object.keys(rows[0]);
+  var csv = keys.join(',') + '\n' + rows.map(function(r){
+    return keys.map(function(k){ var v=String(r[k]||'').replace(/"/g,'""'); return '"'+v+'"'; }).join(',');
+  }).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = filename;
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TAB 1 — SWAP RANKING
+// ══════════════════════════════════════════════════════════════════════════
+async function dmLoadSwapRanking() {
+  var wrap = document.getElementById('dm-swap-wrap');
+  var kpis = document.getElementById('dm-swap-kpis');
+  if(wrap) wrap.innerHTML = '<div class="dm-loading">Fetching swap operations</div>';
+  if(kpis) kpis.innerHTML = '';
+
+  var df = dmDateFilter('dm-swap-from','dm-swap-to');
+  var typeFilter = (document.getElementById('dm-swap-type-filter')||{}).value||'';
+  try {
+    var data = await dmFetchAllOps(df+'&operation=in.(Swap,Swap (new out),Swap (faulty in))');
+    var brMap = await dmBranchMap();
+    _dmSwapData = data;
+
+    // Group by branch
+    var branchSwaps = {};
+    data.forEach(function(op){
+      var bid = op.branch_id;
+      if(!branchSwaps[bid]) branchSwaps[bid]={id:bid,name:(brMap[bid]||{name:bid}).name,code:(brMap[bid]||{code:''}).code,total:0,exchange:0,normal:0,faulty_in:0,new_out:0,officers:new Set()};
+      var b = branchSwaps[bid];
+      var opL=(op.operation||'').toLowerCase();
+      var reason=(op.reason||'');
+      b.total++;
+      if(opL.includes('faulty in')) b.faulty_in++;
+      else if(opL.includes('new out')) b.new_out++;
+      else if(opL==='swap'){
+        var st=_extractSwapType(reason)||'';
+        if(st.toLowerCase().includes('exchange')) b.exchange++; else b.normal++;
+      }
+      if(op.officer) b.officers.add(op.officer);
+      // Apply type filter client-side
+    });
+
+    var rows = Object.values(branchSwaps).map(function(b){
+      return Object.assign({},b,{officers:b.officers.size});
+    });
+
+    // Apply type filter
+    if(typeFilter) {
+      rows = rows.filter(function(r){
+        if(typeFilter==='Normal Exchange') return r.exchange>0;
+        if(typeFilter==='Normal Swap') return r.normal>0;
+        return true;
+      });
+    }
+
+    rows.sort(function(a,b){ return b.total-a.total; });
+
+    var totalSwaps = rows.reduce(function(s,r){return s+r.total;},0);
+    var maxSwap    = rows.length ? rows[0].total : 1;
+    var topBranch  = rows.length ? rows[0].name : '—';
+    var branchesWithSwaps = rows.filter(function(r){return r.total>0;}).length;
+
+    // KPI cards
+    if(kpis) kpis.innerHTML = [
+      {label:'Total Swaps',val:totalSwaps,sub:'All branch combined',color:'var(--orange)',accent:'var(--orange)'},
+      {label:'Branches with Swaps',val:branchesWithSwaps,sub:'Out of '+Object.keys(brMap).length+' branches',color:'var(--sky)',accent:'var(--sky)'},
+      {label:'Top Branch',val:topBranch,sub:rows.length?rows[0].total+' swaps':'—',color:'var(--rose)',accent:'var(--rose)',big:false},
+      {label:'Avg Swaps/Branch',val:branchesWithSwaps?Math.round(totalSwaps/branchesWithSwaps):0,sub:'Among active branches',color:'var(--violet)',accent:'var(--violet)'},
+    ].map(function(k){
+      return '<div class="dm-kpi"><div class="dm-kpi-accent" style="background:'+k.accent+';"></div>'+
+        '<div class="dm-kpi-lbl">'+k.label+'</div>'+
+        '<div class="dm-kpi-num" style="color:'+k.color+';'+(k.big===false?'font-size:15px;font-weight:800;':'')+'">'+escHtml(String(k.val))+'</div>'+
+        '<div class="dm-kpi-sub">'+k.sub+'</div></div>';
+    }).join('');
+
+    if(!rows.length){
+      if(wrap) wrap.innerHTML='<div class="dm-empty">No swap operations found for this date range.</div>';
+      return;
+    }
+
+    var html = '<table class="dm-rank-table"><thead><tr>'+
+      '<th>#</th><th>Branch</th><th>Total Swaps</th><th>Normal</th><th>Exchange</th>'+
+      '<th>Volume</th><th>Officers</th></tr></thead><tbody>'+
+      rows.map(function(r,i){
+        var pct = maxSwap>0?Math.round((r.total/maxSwap)*100):0;
+        var rankCls = i===0?'dm-rank-1':i===1?'dm-rank-2':i===2?'dm-rank-3':'dm-rank-n';
+        var color = i===0?'var(--rose)':i<3?'var(--orange)':'var(--sky)';
+        return '<tr>'+
+          '<td><span class="dm-rank-badge '+rankCls+'">'+(i+1)+'</span></td>'+
+          '<td style="font-weight:700;color:var(--text);">🏢 '+escHtml(r.name)+'<span style="color:var(--muted);font-size:10px;margin-left:4px;">('+escHtml(r.code)+')</span></td>'+
+          '<td><span style="font-family:"Syne",sans-serif;font-size:18px;font-weight:800;color:'+color+';">'+r.total+'</span></td>'+
+          '<td style="color:var(--green2);font-weight:700;">'+r.normal+'</td>'+
+          '<td style="color:var(--sky);font-weight:700;">'+r.exchange+'</td>'+
+          '<td style="min-width:120px;"><div class="dm-bar-wrap"><div class="dm-bar-track"><div class="dm-bar-fill" style="width:'+pct+'%;background:'+color+';"></div></div><span class="dm-bar-val" style="color:'+color+';">'+r.total+'</span></div></td>'+
+          '<td style="color:var(--muted);font-size:11px;">'+r.officers+' officer'+(r.officers!==1?'s':'')+'</td>'+
+          '</tr>';
+      }).join('')+'</tbody></table>';
+    if(wrap) wrap.innerHTML = html;
+  } catch(e){ if(wrap) wrap.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+function dmExportSwapRanking() {
+  if(!_dmSwapData.length){ alert('Load the ranking first.'); return; }
+  dmDownloadCsv('OPayPOS_SwapRanking_'+new Date().toISOString().split('T')[0]+'.csv',
+    _dmSwapData.map(function(r){ return {Date:r.date,Operation:r.operation,SN:r.sn,Officer:r.officer,Branch:r.branch_id,Reason:r.reason||''}; }));
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TAB 2 — ISSUED PER BRANCH
+// ══════════════════════════════════════════════════════════════════════════
+async function dmLoadIssuedBranch() {
+  var wrap = document.getElementById('dm-issue-wrap');
+  var kpis = document.getElementById('dm-issue-kpis');
+  if(wrap) wrap.innerHTML='<div class="dm-loading">Fetching issue operations</div>';
+  if(kpis) kpis.innerHTML='';
+  var df   = dmDateFilter('dm-issue-from','dm-issue-to');
+  var team = (document.getElementById('dm-issue-team')||{}).value||'';
+  try {
+    var data = await dmFetchAllOps(df+'&operation=in.(Issue,Issued,Deploy,Deployed)');
+    var brMap = await dmBranchMap();
+    _dmIssueData = data;
+
+    // Group by branch
+    var bMap = {};
+    data.forEach(function(op){
+      var bid=op.branch_id;
+      if(!bMap[bid]) bMap[bid]={id:bid,name:(brMap[bid]||{name:bid}).name,code:(brMap[bid]||{code:''}).code,total:0,officers:{}};
+      bMap[bid].total++;
+      var off=op.officer||'Unknown';
+      bMap[bid].officers[off]=(bMap[bid].officers[off]||0)+1;
+    });
+
+    var rows=Object.values(bMap).sort(function(a,b){return b.total-a.total;});
+    var totalIssued=rows.reduce(function(s,r){return s+r.total;},0);
+    var maxIssued=rows.length?rows[0].total:1;
+
+    if(kpis) kpis.innerHTML=[
+      {label:'Total Issued',val:totalIssued,sub:'All branches combined',color:'var(--green2)',accent:'var(--green2)'},
+      {label:'Top Branch',val:rows.length?rows[0].name:'—',sub:rows.length?rows[0].total+' issued':'—',color:'var(--sky)',accent:'var(--sky)',big:false},
+      {label:'Branches Active',val:rows.filter(function(r){return r.total>0;}).length,sub:'Branches that issued at least 1 POS',color:'var(--violet)',accent:'var(--violet)'},
+      {label:'Avg per Branch',val:rows.length?Math.round(totalIssued/rows.length):0,sub:'Mean issues across all branches',color:'var(--amber)',accent:'var(--amber)'},
+    ].map(function(k){
+      return '<div class="dm-kpi"><div class="dm-kpi-accent" style="background:'+k.accent+';"></div>'+
+        '<div class="dm-kpi-lbl">'+k.label+'</div>'+
+        '<div class="dm-kpi-num" style="color:'+k.color+';'+(k.big===false?'font-size:15px;font-weight:800;':'')+'">'+escHtml(String(k.val))+'</div>'+
+        '<div class="dm-kpi-sub">'+k.sub+'</div></div>';
+    }).join('');
+
+    if(!rows.length){if(wrap) wrap.innerHTML='<div class="dm-empty">No issue operations found.</div>';return;}
+
+    var html='<table class="dm-rank-table"><thead><tr>'+
+      '<th>#</th><th>Branch</th><th>Total Issued</th><th>Top Officer</th><th>Volume</th></tr></thead><tbody>'+
+      rows.map(function(r,i){
+        var pct=maxIssued>0?Math.round((r.total/maxIssued)*100):0;
+        var rankCls=i===0?'dm-rank-1':i===1?'dm-rank-2':i===2?'dm-rank-3':'dm-rank-n';
+        var color=i===0?'var(--green2)':i<5?'var(--sky)':'var(--text2)';
+        var topOff=Object.entries(r.officers).sort(function(a,b){return b[1]-a[1];})[0];
+        return '<tr>'+
+          '<td><span class="dm-rank-badge '+rankCls+'">'+(i+1)+'</span></td>'+
+          '<td style="font-weight:700;">🏢 '+escHtml(r.name)+'<span style="color:var(--muted);font-size:10px;margin-left:4px;">('+escHtml(r.code)+')</span></td>'+
+          '<td><span style="font-family:"Syne",sans-serif;font-size:18px;font-weight:800;color:'+color+';">'+r.total+'</span></td>'+
+          '<td style="font-size:11px;color:var(--muted);">'+escHtml(topOff?topOff[0]+' ('+topOff[1]+'x)':'—')+'</td>'+
+          '<td style="min-width:120px;"><div class="dm-bar-wrap"><div class="dm-bar-track"><div class="dm-bar-fill" style="width:'+pct+'%;background:'+color+';"></div></div><span class="dm-bar-val" style="color:'+color+';">'+r.total+'</span></div></td>'+
+          '</tr>';
+      }).join('')+'</tbody></table>';
+    if(wrap) wrap.innerHTML=html;
+  } catch(e){ if(wrap) wrap.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+function dmExportIssuedBranch() {
+  if(!_dmIssueData.length){ alert('Load the data first.'); return; }
+  dmDownloadCsv('OPayPOS_IssuedPerBranch_'+new Date().toISOString().split('T')[0]+'.csv',
+    _dmIssueData.map(function(r){ return {Date:r.date,Time:(r.time||'').substring(0,5),SN:r.sn,Model:r.model||'',Officer:r.officer,Branch:r.branch_id,Reason:r.reason||''}; }));
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TAB 3 — OPS MATRIX
+// ══════════════════════════════════════════════════════════════════════════
+async function dmLoadOpsMatrix() {
+  var wrap = document.getElementById('dm-ops-wrap');
+  if(wrap) wrap.innerHTML='<div class="dm-loading">Building operations matrix</div>';
+  var df   = dmDateFilter('dm-ops-from','dm-ops-to');
+  var sort = (document.getElementById('dm-ops-sort')||{}).value||'total';
+  try {
+    var data = await dmFetchAllOps(df);
+    var brMap = await dmBranchMap();
+    _dmOpsData = data;
+
+    var bMap = {};
+    data.forEach(function(op){
+      var bid=op.branch_id;
+      if(!bMap[bid]) bMap[bid]={id:bid,name:(brMap[bid]||{name:bid}).name,code:(brMap[bid]||{code:''}).code,total:0,issue:0,assign:0,unassign:0,swap:0,ret:0,atfs:0,receive:0,other:0};
+      var cat=dmCatOp(op.operation);
+      bMap[bid][cat]=(bMap[bid][cat]||0)+1;
+      bMap[bid].total++;
+    });
+
+    var rows=Object.values(bMap);
+    rows.sort(function(a,b){ return b[sort]-a[sort]; });
+
+    if(!rows.length){if(wrap) wrap.innerHTML='<div class="dm-empty">No operations found.</div>';return;}
+
+    var maxV={issue:0,assign:0,unassign:0,swap:0,ret:0,atfs:0,receive:0,total:0};
+    rows.forEach(function(r){Object.keys(maxV).forEach(function(k){if(r[k]>maxV[k])maxV[k]=r[k];});});
+
+    function heatClass(val,max){
+      if(!val||!max) return 'dm-heat-0';
+      var pct=val/max;
+      if(pct<0.1) return 'dm-heat-1';
+      if(pct<0.35) return 'dm-heat-2';
+      if(pct<0.65) return 'dm-heat-3';
+      if(pct<0.85) return 'dm-heat-4';
+      return 'dm-heat-5';
+    }
+
+    var html='<table class="dm-matrix"><thead><tr>'+
+      '<th>Branch</th><th>Total</th><th>Issue</th><th>Assign</th><th>Unassign</th><th>Swap</th><th>Return</th><th>ATFS</th><th>Receive</th></tr></thead><tbody>'+
+      rows.map(function(r){
+        return '<tr>'+
+          '<td>🏢 '+escHtml(r.name)+'<span style="color:var(--muted);font-size:10px;margin-left:4px;">('+escHtml(r.code)+')</span></td>'+
+          '<td class="'+heatClass(r.total,maxV.total)+'">'+r.total+'</td>'+
+          '<td class="'+heatClass(r.issue,maxV.issue)+'">'+r.issue+'</td>'+
+          '<td class="'+heatClass(r.assign,maxV.assign)+'">'+r.assign+'</td>'+
+          '<td class="'+heatClass(r.unassign,maxV.unassign)+'">'+r.unassign+'</td>'+
+          '<td class="'+heatClass(r.swap,maxV.swap)+'">'+r.swap+'</td>'+
+          '<td class="'+heatClass(r.ret,maxV.ret)+'">'+r.ret+'</td>'+
+          '<td class="'+heatClass(r.atfs,maxV.atfs)+'">'+r.atfs+'</td>'+
+          '<td class="'+heatClass(r.receive,maxV.receive)+'">'+r.receive+'</td>'+
+          '</tr>';
+      }).join('')+'</tbody></table>';
+    if(wrap) wrap.innerHTML=html;
+  } catch(e){ if(wrap) wrap.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+function dmExportOpsMatrix() {
+  if(!_dmOpsData.length){ alert('Load the matrix first.'); return; }
+  dmDownloadCsv('OPayPOS_OpsMatrix_'+new Date().toISOString().split('T')[0]+'.csv',
+    _dmOpsData.map(function(r){ return {Date:r.date,Operation:r.operation,SN:r.sn,Officer:r.officer,Branch:r.branch_id}; }));
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TAB 4 — SN TRACKER
+// ══════════════════════════════════════════════════════════════════════════
+async function dmTrackSN() {
+  var inp = document.getElementById('dm-sn-input');
+  var result = document.getElementById('dm-sn-result');
+  if(!inp||!result) return;
+  var sn = inp.value.trim().toUpperCase();
+  if(!sn){ result.innerHTML='<div class="dm-empty">Enter a serial number to track.</div>'; return; }
+  result.innerHTML='<div class="dm-loading">Fetching lifecycle for '+escHtml(sn)+'</div>';
+
+  try {
+    var brMap = await dmBranchMap();
+    // Fetch all ops for this SN
+    var res = await sf('daily_operations?select=id,date,time,operation,sn,model,officer,branch_id,reason&or=(sn.eq.'+encodeURIComponent(sn)+',reason.ilike.*'+encodeURIComponent(sn)+'*)&order=date.asc,time.asc&limit=500');
+    var ops = await res.json()||[];
+
+    // Also check stock tables for current location
+    var currentStock = null;
+    var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+    if(!branches.length){
+      try{ var br=await sf('branches?select=id,name,code,table_suffix&order=name'); branches=await br.json()||[]; }catch(e){}
+    }
+    for(var bi=0;bi<branches.length;bi++){
+      var b=branches[bi];
+      var s=b.table_suffix||'hq';
+      var tbls=['stock_bn_'+s,'stock_rbn_'+s,'stock_rp_'+s,'stock_rt_'+s,'stock_ft_'+s];
+      for(var ti=0;ti<tbls.length;ti++){
+        try{
+          var sr=await sf(tbls[ti]+'?sn=eq.'+encodeURIComponent(sn)+'&limit=1');
+          var srows=await sr.json()||[];
+          if(srows.length){ currentStock={branch:b.name,table:tbls[ti],status:srows[0].status||'In Stock'}; break; }
+        }catch(e){}
+      }
+      if(currentStock) break;
+    }
+
+    // Check deployed_assigned
+    var daRes = await sf('deployed_assigned?select=sn,model,operation,officer,branch_id,created_at&sn=eq.'+encodeURIComponent(sn)+'&limit=5');
+    var daRows = await daRes.json()||[];
+
+    // Current status
+    var lastOp = ops.length ? ops[ops.length-1] : null;
+    var lastCat = lastOp ? dmCatOp(lastOp.operation) : 'unknown';
+    var statusLabel='Unknown', statusCls='dm-status-unknown';
+    if(daRows.length){ statusLabel='Issued/Assigned'; statusCls='dm-status-issued'; }
+    else if(currentStock){ statusLabel=currentStock.status+' @ '+currentStock.branch; statusCls='dm-status-stock'; }
+    else if(lastCat==='ret'){ statusLabel='Returned'; statusCls='dm-status-stock'; }
+    else if(lastCat==='atfs'){ statusLabel='ATFS (Faulty at Stock)'; statusCls='dm-status-faulty'; }
+    else if(lastCat==='issue'){ statusLabel='Issued'; statusCls='dm-status-issued'; }
+
+    var html='<div class="dm-sn-result">'+
+      '<div class="dm-sn-header">'+
+        '<div class="dm-sn-badge">'+escHtml(sn)+'</div>'+
+        '<span class="dm-status-chip '+statusCls+'">'+escHtml(statusLabel)+'</span>'+
+        (lastOp?'<span style="font-size:11px;color:var(--muted);">Last activity: '+escHtml(lastOp.date)+'</span>':'<span style="font-size:11px;color:var(--muted);">No operations recorded</span>')+
+      '</div>';
+
+    if(daRows.length){
+      html+='<div style="background:rgba(64,145,108,.06);border:1px solid rgba(64,145,108,.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;">'+
+        '📍 <strong>Currently in field</strong> at '+escHtml((brMap[daRows[0].branch_id]||{name:daRows[0].branch_id}).name)+
+        ' · '+escHtml(daRows[0].operation||'')+(daRows[0].officer?' · By: '+escHtml(daRows[0].officer):'')+
+        '</div>';
+    } else if(currentStock){
+      html+='<div style="background:rgba(26,111,168,.06);border:1px solid rgba(26,111,168,.15);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:11px;">'+
+        '📦 <strong>Currently in stock</strong> at '+escHtml(currentStock.branch)+' · Table: '+escHtml(currentStock.table)+' · Status: '+escHtml(currentStock.status)+
+        '</div>';
+    }
+
+    html+='<div style="font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:12px;">Operation History ('+ops.length+' records)</div>';
+
+    if(!ops.length){
+      html+='<div style="color:var(--muted);font-size:12px;padding:16px 0;">No operation history found for this SN.</div>';
+    } else {
+      var dotMap={issue:'issue',assign:'assign',swap:'swap',ret:'ret',atfs:'atfs',receive:'receive',delete:'delete'};
+      html+='<div class="sn-timeline">'+ops.map(function(op){
+        var cat=dmCatOp(op.operation);
+        var chip=opChipHtml(op.operation,op.reason);
+        var brName=(brMap[op.branch_id]||{name:op.branch_id||'Unknown'}).name;
+        return '<div class="sn-tl-item">'+
+          '<div class="sn-tl-dot '+(dotMap[cat]||'')+'"></div>'+
+          '<div class="sn-tl-head">'+chip+'<span style="font-size:11px;color:var(--muted);font-weight:400;">'+escHtml(op.date)+(op.time?' '+op.time.substring(0,5):'')+'</span></div>'+
+          '<div class="sn-tl-meta">👤 '+escHtml(op.officer||'—')+' &nbsp;·&nbsp; 🏢 '+escHtml(brName)+(op.reason?'<div style="margin-top:2px;color:var(--text3);font-size:10px;">'+escHtml(op.reason.substring(0,120))+'</div>':'')+'</div>'+
+        '</div>';
+      }).join('')+'</div>';
+    }
+
+    html+='</div>';
+    if(result) result.innerHTML=html;
+  } catch(e){ if(result) result.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+function dmTrackSNClear() {
+  var inp=document.getElementById('dm-sn-input'); if(inp) inp.value='';
+  var r=document.getElementById('dm-sn-result'); if(r) r.innerHTML='';
+  var b=document.getElementById('dm-sn-bulk-result'); if(b) b.innerHTML='';
+  var ba=document.getElementById('dm-sn-bulk-area'); if(ba) ba.value='';
+  var bc=document.getElementById('dm-bulk-sn-count'); if(bc) bc.textContent='';
+}
+
+async function dmBulkSNAudit() {
+  var area=document.getElementById('dm-sn-bulk-area');
+  var result=document.getElementById('dm-sn-bulk-result');
+  var cnt=document.getElementById('dm-bulk-sn-count');
+  if(!area||!result) return;
+  var raw=area.value||'';
+  var sns=[...new Set(raw.split(/[\n,]+/).map(function(s){return s.trim().toUpperCase();}).filter(Boolean))];
+  if(!sns.length){ result.innerHTML='<div class="dm-empty">Paste some SNs first.</div>'; return; }
+  if(cnt) cnt.textContent='Checking '+sns.length+' SNs…';
+  result.innerHTML='<div class="dm-loading">Auditing '+sns.length+' serial numbers</div>';
+
+  try {
+    var brMap = await dmBranchMap();
+    var branches = ALL_BRANCHES.length ? ALL_BRANCHES : [];
+    if(!branches.length){
+      try{ var br=await sf('branches?select=id,name,code,table_suffix&order=name'); branches=await br.json()||[]; }catch(e){}
+    }
+
+    // Get last op for each SN from daily_operations
+    var found={};
+    // Batch fetch by looping SNs in chunks of 50
+    var chunk=50;
+    for(var i=0;i<sns.length;i+=chunk){
+      var snSlice=sns.slice(i,i+chunk);
+      var filter='sn=in.('+snSlice.map(function(s){return encodeURIComponent(s);}).join(',')+')'+'&order=date.desc,time.desc';
+      try{
+        var res=await sf('daily_operations?select=sn,date,operation,officer,branch_id&'+filter+'&limit=500');
+        var rows=await res.json()||[];
+        rows.forEach(function(r){
+          if(!found[r.sn]) found[r.sn]={sn:r.sn,lastDate:r.date,lastOp:r.operation,lastOfficer:r.officer,branch:(brMap[r.branch_id]||{name:r.branch_id}).name};
+        });
+      }catch(e){}
+    }
+
+    if(cnt) cnt.textContent=Object.keys(found).length+' of '+sns.length+' SNs have history';
+
+    var html='<div class="dm-wrap"><table class="dm-rank-table"><thead><tr>'+
+      '<th>SN</th><th>Last Operation</th><th>Last Date</th><th>Last Officer</th><th>Branch</th><th>Status</th></tr></thead><tbody>'+
+      sns.map(function(sn){
+        var h=found[sn];
+        if(!h) return '<tr style="opacity:.6;">'+
+          '<td><span class="sn-tag" style="color:var(--muted);">'+escHtml(sn)+'</span></td>'+
+          '<td colspan="4" style="color:var(--muted);font-size:11px;">No history found</td>'+
+          '<td><span class="dm-status-chip dm-status-unknown">Unknown</span></td></tr>';
+        var cat=dmCatOp(h.lastOp);
+        var statCls=cat==='issue'?'dm-status-issued':cat==='atfs'?'dm-status-faulty':'dm-status-stock';
+        return '<tr>'+
+          '<td><span class="sn-tag" style="color:var(--sky);">'+escHtml(sn)+'</span></td>'+
+          '<td>'+opChipHtml(h.lastOp,'')+'</td>'+
+          '<td style="font-size:11px;color:var(--muted);">'+escHtml(h.lastDate||'—')+'</td>'+
+          '<td style="font-size:11px;">'+escHtml(h.lastOfficer||'—')+'</td>'+
+          '<td style="font-size:11px;">'+escHtml(h.branch||'—')+'</td>'+
+          '<td><span class="dm-status-chip '+statCls+'">'+escHtml(h.lastOp||'Unknown')+'</span></td>'+
+          '</tr>';
+      }).join('')+'</tbody></table></div>';
+    if(result) result.innerHTML=html;
+  } catch(e){ if(result) result.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TAB 5 — PERFORMANCE SCORECARD
+// ══════════════════════════════════════════════════════════════════════════
+async function dmLoadPerformance() {
+  var wrap=document.getElementById('dm-perf-wrap');
+  var kpis=document.getElementById('dm-perf-kpis');
+  if(wrap) wrap.innerHTML='<div class="dm-loading">Calculating performance scores</div>';
+  if(kpis) kpis.innerHTML='';
+  var df=dmDateFilter('dm-perf-from','dm-perf-to');
+  try {
+    var data=await dmFetchAllOps(df);
+    var brMap=await dmBranchMap();
+    _dmPerfData=data;
+
+    var bMap={};
+    data.forEach(function(op){
+      var bid=op.branch_id;
+      if(!bMap[bid]) bMap[bid]={id:bid,name:(brMap[bid]||{name:bid}).name,code:(brMap[bid]||{code:''}).code,total:0,issue:0,swap:0,ret:0,atfs:0,receive:0,assign:0};
+      var cat=dmCatOp(op.operation);
+      bMap[bid][cat]=(bMap[bid][cat]||0)+1;
+      bMap[bid].total++;
+    });
+
+    var rows=Object.values(bMap);
+    var maxTotal=Math.max.apply(null,rows.map(function(r){return r.total;})||[1]);
+
+    rows=rows.map(function(r){
+      // Volume score (0-40): how active compared to most active branch
+      var volScore=maxTotal>0?Math.round((r.total/maxTotal)*40):0;
+      // Swap ratio score (0-30): lower swap-to-issue = better
+      var swapRatio=r.issue>0?r.swap/r.issue:0;
+      var swapScore=Math.round(Math.max(0,1-swapRatio)*30);
+      // Stock movement score (0-30): receives + returns = good turnover
+      var movScore=Math.min(30,Math.round(((r.receive+r.ret)/Math.max(1,r.total))*60));
+      var total=volScore+swapScore+movScore;
+      var grade=total>=90?'A':total>=70?'B':total>=50?'C':'D';
+      var gradeCls=total>=90?'dm-score-a':total>=70?'dm-score-b':total>=50?'dm-score-c':'dm-score-d';
+      return Object.assign({},r,{volScore:volScore,swapScore:swapScore,movScore:movScore,score:total,grade:grade,gradeCls:gradeCls,swapRatio:Math.round(swapRatio*100)});
+    }).sort(function(a,b){return b.score-a.score;});
+
+    var grades={A:0,B:0,C:0,D:0};
+    rows.forEach(function(r){grades[r.grade]++;});
+
+    if(kpis) kpis.innerHTML=[
+      {label:'Grade A Branches',val:grades.A,sub:'Score 90-100',color:'var(--green2)',accent:'var(--green2)'},
+      {label:'Grade B Branches',val:grades.B,sub:'Score 70-89',color:'var(--sky)',accent:'var(--sky)'},
+      {label:'Grade C Branches',val:grades.C,sub:'Score 50-69',color:'var(--amber)',accent:'var(--amber)'},
+      {label:'Grade D Branches',val:grades.D,sub:'Score below 50',color:'var(--rose)',accent:'var(--rose)'},
+    ].map(function(k){
+      return '<div class="dm-kpi"><div class="dm-kpi-accent" style="background:'+k.accent+';"></div>'+
+        '<div class="dm-kpi-lbl">'+k.label+'</div>'+
+        '<div class="dm-kpi-num" style="color:'+k.color+';">'+k.val+'</div>'+
+        '<div class="dm-kpi-sub">'+k.sub+'</div></div>';
+    }).join('');
+
+    if(!rows.length){if(wrap) wrap.innerHTML='<div class="dm-empty">No data found.</div>';return;}
+
+    var html='<table class="dm-rank-table"><thead><tr>'+
+      '<th>#</th><th>Branch</th><th>Grade</th><th>Score</th><th>Vol (40)</th><th>Swap Rate (30)</th><th>Stock Mvt (30)</th><th>Swap/Issue %</th><th>Total Ops</th></tr></thead><tbody>'+
+      rows.map(function(r,i){
+        var rankCls=i===0?'dm-rank-1':i===1?'dm-rank-2':i===2?'dm-rank-3':'dm-rank-n';
+        return '<tr>'+
+          '<td><span class="dm-rank-badge '+rankCls+'">'+(i+1)+'</span></td>'+
+          '<td style="font-weight:700;">🏢 '+escHtml(r.name)+'<span style="color:var(--muted);font-size:10px;margin-left:4px;">('+escHtml(r.code)+')</span></td>'+
+          '<td><span class="dm-perf-score '+r.gradeCls+'">'+escHtml(r.grade)+'</span></td>'+
+          '<td><span style="font-family:"Syne",sans-serif;font-size:17px;font-weight:800;">'+r.score+'</span></td>'+
+          '<td style="color:var(--sky);">'+r.volScore+'</td>'+
+          '<td style="color:var(--green2);">'+r.swapScore+'</td>'+
+          '<td style="color:var(--violet);">'+r.movScore+'</td>'+
+          '<td style="color:'+(r.swapRatio>30?'var(--rose)':r.swapRatio>15?'var(--amber)':'var(--green2)')+';">'+r.swapRatio+'%</td>'+
+          '<td style="color:var(--muted);">'+r.total+'</td>'+
+          '</tr>';
+      }).join('')+'</tbody></table>';
+    if(wrap) wrap.innerHTML=html;
+  } catch(e){ if(wrap) wrap.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+function dmExportPerformance() {
+  if(!_dmPerfData.length){ alert('Load performance data first.'); return; }
+  dmDownloadCsv('OPayPOS_Performance_'+new Date().toISOString().split('T')[0]+'.csv',
+    _dmPerfData.map(function(r){return {Date:r.date,Operation:r.operation,SN:r.sn,Officer:r.officer,Branch:r.branch_id};}));
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TAB 6 — ANOMALY DETECTOR
+// ══════════════════════════════════════════════════════════════════════════
+async function dmRunAnomalies() {
+  var result=document.getElementById('dm-anom-result');
+  var kpis=document.getElementById('dm-anom-kpis');
+  if(result) result.innerHTML='<div class="dm-loading">Scanning for anomalies</div>';
+  if(kpis) kpis.innerHTML='';
+  var df=dmDateFilter('dm-anom-from','dm-anom-to');
+  try {
+    var data=await dmFetchAllOps(df);
+    var brMap=await dmBranchMap();
+
+    var anomalies=[];
+
+    // ── Check 1: SN issued more than once ────────────────────────────────
+    var snIssueCounts={};
+    data.forEach(function(op){
+      var cat=dmCatOp(op.operation);
+      if(cat==='issue'){
+        snIssueCounts[op.sn]=(snIssueCounts[op.sn]||[]);
+        snIssueCounts[op.sn].push({date:op.date,officer:op.officer,branch:(brMap[op.branch_id]||{name:op.branch_id}).name});
+      }
+    });
+    var dupIssued=Object.entries(snIssueCounts).filter(function(e){return e[1].length>1;});
+    dupIssued.forEach(function(e){
+      anomalies.push({type:'crit',icon:'🔴',title:'SN Issued Multiple Times',desc:'SN '+e[0]+' was issued '+e[1].length+'× — branches: '+e[1].map(function(x){return x.branch+'('+x.date+')';}).join(', ')});
+    });
+
+    // ── Check 2: Swap without prior issue ────────────────────────────────
+    var snFirstOp={};
+    data.slice().sort(function(a,b){return (a.date+a.time)<(b.date+b.time)?-1:1;}).forEach(function(op){
+      if(!snFirstOp[op.sn]) snFirstOp[op.sn]=op.operation;
+    });
+    var swapNoIssue=data.filter(function(op){
+      return dmCatOp(op.operation)==='swap' && op.sn && snFirstOp[op.sn] && dmCatOp(snFirstOp[op.sn])==='swap';
+    });
+    if(swapNoIssue.length){
+      anomalies.push({type:'warn',icon:'⚠️',title:'Swaps Without Prior Issue',desc:swapNoIssue.length+' SN(s) have a Swap as their first recorded operation (no Issue found before it). May indicate missing records.'});
+    }
+
+    // ── Check 3: Officer with zero issues but many swaps ─────────────────
+    var officerIssues={}, officerSwaps={};
+    data.forEach(function(op){
+      var off=op.officer||'Unknown';
+      var cat=dmCatOp(op.operation);
+      if(cat==='issue') officerIssues[off]=(officerIssues[off]||0)+1;
+      if(cat==='swap')  officerSwaps[off]=(officerSwaps[off]||0)+1;
+    });
+    Object.keys(officerSwaps).forEach(function(off){
+      var sw=officerSwaps[off], is=officerIssues[off]||0;
+      if(sw>=5 && is===0) anomalies.push({type:'warn',icon:'🟡',title:'Officer Only Swapping (No Issues)',desc:escHtml(off)+' performed '+sw+' swaps but 0 issues in this period. Possible data entry pattern.'});
+      if(is>0 && sw/is>0.5 && sw>3) anomalies.push({type:'warn',icon:'🟠',title:'High Swap Rate for Officer',desc:escHtml(off)+' has a swap-to-issue ratio of '+Math.round(sw/is*100)+'% ('+sw+' swaps / '+is+' issues).'});
+    });
+
+    // ── Check 4: Missing SNs (blank SN in operations) ────────────────────
+    var blankSn=data.filter(function(op){return !op.sn||op.sn.trim()==='';});
+    if(blankSn.length){
+      anomalies.push({type:'warn',icon:'❓',title:'Operations With No SN',desc:blankSn.length+' operation record(s) have a blank or missing serial number. These may be incomplete entries.'});
+    }
+
+    // ── Check 5: Same SN in multiple branches same day ───────────────────
+    var snDayBranch={};
+    data.forEach(function(op){
+      if(!op.sn) return;
+      var key=op.sn+'|'+op.date;
+      if(!snDayBranch[key]) snDayBranch[key]=new Set();
+      if(op.branch_id) snDayBranch[key].add(op.branch_id);
+    });
+    var crossBranch=Object.entries(snDayBranch).filter(function(e){return e[1].size>1;});
+    crossBranch.forEach(function(e){
+      var parts=e[0].split('|');
+      anomalies.push({type:'crit',icon:'🔴',title:'SN Appears in Multiple Branches Same Day',desc:'SN '+parts[0]+' recorded in '+e[1].size+' different branches on '+parts[1]+'. Possible duplicate or data error.'});
+    });
+
+    var critCount=anomalies.filter(function(a){return a.type==='crit';}).length;
+    var warnCount=anomalies.filter(function(a){return a.type==='warn';}).length;
+
+    if(kpis) kpis.innerHTML=[
+      {label:'Critical Issues',val:critCount,sub:'Require immediate attention',color:'var(--rose)',accent:'var(--rose)'},
+      {label:'Warnings',val:warnCount,sub:'Worth investigating',color:'var(--amber)',accent:'var(--amber)'},
+      {label:'Total Records Scanned',val:data.length.toLocaleString(),sub:'Operations in period',color:'var(--sky)',accent:'var(--sky)'},
+      {label:'Unique SNs Tracked',val:Object.keys(snIssueCounts).length.toLocaleString()+'+',sub:'SNs with issue records',color:'var(--violet)',accent:'var(--violet)'},
+    ].map(function(k){
+      return '<div class="dm-kpi"><div class="dm-kpi-accent" style="background:'+k.accent+';"></div>'+
+        '<div class="dm-kpi-lbl">'+k.label+'</div>'+
+        '<div class="dm-kpi-num" style="color:'+k.color+';">'+k.val+'</div>'+
+        '<div class="dm-kpi-sub">'+k.sub+'</div></div>';
+    }).join('');
+
+    if(!anomalies.length){
+      if(result) result.innerHTML='<div style="text-align:center;padding:40px;"><div style="font-size:48px;margin-bottom:12px;">✅</div><div style="font-weight:700;color:var(--green2);font-size:14px;">No anomalies detected!</div><div style="font-size:11px;color:var(--muted);margin-top:6px;">'+data.length.toLocaleString()+' operations scanned — all clean.</div></div>';
+      return;
+    }
+
+    var html=anomalies.map(function(a){
+      return '<div class="dm-anom-item '+a.type+'">'+
+        '<div class="dm-anom-icon">'+a.icon+'</div>'+
+        '<div><div class="dm-anom-title">'+escHtml(a.title)+'</div>'+
+        '<div class="dm-anom-desc">'+escHtml(a.desc)+'</div></div>'+
+        '</div>';
+    }).join('');
+    if(result) result.innerHTML=html;
+  } catch(e){ if(result) result.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+//  TAB 7 — DATA TOOLS
+// ══════════════════════════════════════════════════════════════════════════
+
+// Full branch export
+async function dmExportBranchFull() {
+  var sel=document.getElementById('dm-export-branch');
+  var branchId=sel?sel.value:'';
+  var from=(document.getElementById('dm-export-from')||{}).value||'';
+  var to=(document.getElementById('dm-export-to')||{}).value||'';
+  var filter='';
+  if(branchId) filter+='&branch_id=eq.'+branchId;
+  if(from) filter+='&date=gte.'+from;
+  if(to)   filter+='&date=lte.'+to;
+  try {
+    var data=await dmFetchAllOps(filter);
+    if(!data.length){ alert('No records found for this filter.'); return; }
+    var brMap=await dmBranchMap();
+    dmDownloadCsv('OPayPOS_BranchExport_'+new Date().toISOString().split('T')[0]+'.csv',
+      data.map(function(r){return {Date:r.date,Time:(r.time||'').substring(0,5),Operation:r.operation,SN:r.sn||'',Model:r.model||'',Officer:r.officer||'',Branch:(brMap[r.branch_id]||{name:r.branch_id}).name,Reason:r.reason||''};}));
+  } catch(e){ alert('Export failed: '+friendlyErr(e)); }
+}
+
+// Dead stock finder
+async function dmFindDeadStock() {
+  var result=document.getElementById('dm-dead-result');
+  var sel=document.getElementById('dm-dead-branch');
+  var days=parseInt((document.getElementById('dm-dead-days')||{}).value||'30',10);
+  var branchId=sel?sel.value:'';
+  if(result) result.innerHTML='<div class="dm-loading">Scanning for idle SNs</div>';
+  var cutoff=new Date(); cutoff.setDate(cutoff.getDate()-days);
+  var cutoffStr=cutoff.toISOString().split('T')[0];
+  try {
+    var brMap=await dmBranchMap();
+    var branches=ALL_BRANCHES.length?ALL_BRANCHES:[];
+    if(!branches.length){try{var br=await sf('branches?select=id,name,code,table_suffix&order=name');branches=await br.json()||[];}catch(e){}}
+    var targetBranches=branchId?branches.filter(function(b){return b.id===branchId;}):branches;
+    var deadSNs=[];
+    for(var bi=0;bi<targetBranches.length;bi++){
+      var b=targetBranches[bi]; var s=b.table_suffix||'hq';
+      try{
+        var res=await sf('stock_bn_'+s+'?select=sn,model,status&status=eq.Available&limit=1000');
+        var rows=await res.json()||[];
+        for(var ri=0;ri<rows.length;ri++){
+          var row=rows[ri];
+          // Check last op for this SN
+          var opRes=await sf('daily_operations?select=date&sn=eq.'+encodeURIComponent(row.sn)+'&order=date.desc&limit=1');
+          var opRows=await opRes.json()||[];
+          var lastDate=opRows.length?opRows[0].date:null;
+          if(!lastDate||lastDate<cutoffStr){
+            deadSNs.push({sn:row.sn,model:row.model||'',branch:b.name,lastOp:lastDate||'Never',idleDays:lastDate?Math.round((new Date()-new Date(lastDate))/(1000*60*60*24)):999});
+          }
+        }
+      }catch(e){}
+    }
+    deadSNs.sort(function(a,b){return b.idleDays-a.idleDays;});
+    if(!deadSNs.length){
+      if(result) result.innerHTML='<div style="color:var(--green2);font-size:12px;padding:10px 0;">✅ No idle SNs found (all have activity within '+days+' days).</div>';
+      return;
+    }
+    var html='<div style="color:var(--amber);font-size:12px;font-weight:700;margin-bottom:8px;">⏳ '+deadSNs.length+' idle SN'+( deadSNs.length!==1?'s':'')+' found ('+days+'+ days idle)</div>'+
+      '<div class="dm-wrap"><table class="dm-rank-table"><thead><tr><th>SN</th><th>Model</th><th>Branch</th><th>Last Activity</th><th>Idle Days</th></tr></thead><tbody>'+
+      deadSNs.slice(0,50).map(function(r){
+        return '<tr><td><span class="sn-tag" style="color:var(--amber);">'+escHtml(r.sn)+'</span></td>'+
+          '<td style="font-size:11px;">'+escHtml(r.model)+'</td>'+
+          '<td style="font-size:11px;">'+escHtml(r.branch)+'</td>'+
+          '<td style="font-size:11px;color:var(--muted);">'+escHtml(r.lastOp)+'</td>'+
+          '<td><span style="font-weight:800;color:'+(r.idleDays>90?'var(--rose)':'var(--amber)')+';">'+r.idleDays+'d</span></td>'+
+          '</tr>';
+      }).join('')+'</tbody></table></div>'+
+      (deadSNs.length>50?'<div style="font-size:11px;color:var(--muted);">Showing first 50 of '+deadSNs.length+' results. Export for full list.</div>':'');
+    if(result) result.innerHTML=html;
+  } catch(e){ if(result) result.innerHTML='<div style="color:var(--rose);font-size:12px;">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+// Officer activity
+async function dmOfficerActivity() {
+  var result=document.getElementById('dm-officer-result');
+  if(result) result.innerHTML='<div class="dm-loading">Loading officer activity</div>';
+  var from=(document.getElementById('dm-officer-from')||{}).value||'';
+  var to=(document.getElementById('dm-officer-to')||{}).value||'';
+  var name=((document.getElementById('dm-officer-name')||{}).value||'').trim();
+  var filter='';
+  if(from) filter+='&date=gte.'+from;
+  if(to)   filter+='&date=lte.'+to;
+  if(name) filter+='&officer=ilike.*'+encodeURIComponent(name)+'*';
+  try {
+    var data=await dmFetchAllOps(filter);
+    var offMap={};
+    data.forEach(function(op){
+      var off=op.officer||'Unknown';
+      if(!offMap[off]) offMap[off]={name:off,total:0,issue:0,assign:0,swap:0,ret:0,atfs:0,receive:0};
+      var cat=dmCatOp(op.operation);
+      offMap[off][cat]=(offMap[off][cat]||0)+1;
+      offMap[off].total++;
+    });
+    var rows=Object.values(offMap).sort(function(a,b){return b.total-a.total;});
+    if(!rows.length){if(result) result.innerHTML='<div class="dm-empty">No activity found.</div>';return;}
+    var html='<div class="dm-wrap"><table class="dm-rank-table"><thead><tr>'+
+      '<th>#</th><th>Officer</th><th>Total</th><th>Issue</th><th>Assign</th><th>Swap</th><th>Return</th><th>ATFS</th><th>Receive</th></tr></thead><tbody>'+
+      rows.map(function(r,i){
+        var rankCls=i===0?'dm-rank-1':i===1?'dm-rank-2':i===2?'dm-rank-3':'dm-rank-n';
+        return '<tr>'+
+          '<td><span class="dm-rank-badge '+rankCls+'">'+(i+1)+'</span></td>'+
+          '<td style="font-weight:700;">👤 '+escHtml(r.name)+'</td>'+
+          '<td style="font-weight:800;color:var(--sky);">'+r.total+'</td>'+
+          '<td style="color:var(--green2);">'+r.issue+'</td>'+
+          '<td style="color:var(--sky);">'+r.assign+'</td>'+
+          '<td style="color:var(--orange);">'+r.swap+'</td>'+
+          '<td style="color:var(--violet);">'+r.ret+'</td>'+
+          '<td style="color:var(--rose);">'+r.atfs+'</td>'+
+          '<td style="color:var(--teal);">'+r.receive+'</td>'+
+          '</tr>';
+      }).join('')+'</tbody></table></div>';
+    if(result) result.innerHTML=html;
+  } catch(e){ if(result) result.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+// Swap-to-issue ratio
+async function dmLoadSwapRatio() {
+  var result=document.getElementById('dm-ratio-result');
+  if(result) result.innerHTML='<div class="dm-loading">Analysing swap-to-issue ratios</div>';
+  var from=(document.getElementById('dm-ratio-from')||{}).value||'';
+  var to=(document.getElementById('dm-ratio-to')||{}).value||'';
+  var thresh=parseInt((document.getElementById('dm-ratio-thresh')||{}).value||'20',10);
+  var filter='';
+  if(from) filter+='&date=gte.'+from;
+  if(to)   filter+='&date=lte.'+to;
+  try {
+    var data=await dmFetchAllOps(filter);
+    var brMap=await dmBranchMap();
+    var bMap={};
+    data.forEach(function(op){
+      var bid=op.branch_id;
+      if(!bMap[bid]) bMap[bid]={id:bid,name:(brMap[bid]||{name:bid}).name,code:(brMap[bid]||{code:''}).code,issue:0,swap:0};
+      var cat=dmCatOp(op.operation);
+      if(cat==='issue') bMap[bid].issue++;
+      if(cat==='swap')  bMap[bid].swap++;
+    });
+    var rows=Object.values(bMap).filter(function(r){return r.issue>0||r.swap>0;}).map(function(r){
+      var ratio=r.issue>0?Math.round((r.swap/r.issue)*100):r.swap>0?999:0;
+      return Object.assign({},r,{ratio:ratio,flagged:ratio>=thresh});
+    }).sort(function(a,b){return b.ratio-a.ratio;});
+    if(!rows.length){if(result) result.innerHTML='<div class="dm-empty">No data found.</div>';return;}
+    var flagged=rows.filter(function(r){return r.flagged;}).length;
+    var html='<div style="color:'+(flagged?'var(--rose)':'var(--green2)')+';font-size:12px;font-weight:700;margin-bottom:10px;">'+
+      (flagged?'⚠️ '+flagged+' branch'+( flagged!==1?'es':'')+' exceed '+thresh+'% swap-to-issue threshold':'✅ All branches within threshold')+'</div>'+
+      '<div class="dm-wrap"><table class="dm-rank-table"><thead><tr>'+
+      '<th>Branch</th><th>Issues</th><th>Swaps</th><th>Swap/Issue Ratio</th><th>Status</th></tr></thead><tbody>'+
+      rows.map(function(r){
+        var color=r.ratio>=50?'var(--rose)':r.ratio>=thresh?'var(--amber)':'var(--green2)';
+        return '<tr style="'+(r.flagged?'border-left:3px solid var(--rose);':'')+'">'+
+          '<td style="font-weight:700;">🏢 '+escHtml(r.name)+'<span style="color:var(--muted);font-size:10px;margin-left:4px;">('+escHtml(r.code)+')</span></td>'+
+          '<td style="color:var(--green2);font-weight:700;">'+r.issue+'</td>'+
+          '<td style="color:var(--orange);font-weight:700;">'+r.swap+'</td>'+
+          '<td><span style="font-family:"Syne",sans-serif;font-size:16px;font-weight:800;color:'+color+';">'+r.ratio+'%</span></td>'+
+          '<td>'+(r.flagged?'<span class="dm-status-chip dm-status-faulty">🚨 Above Threshold</span>':'<span class="dm-status-chip dm-status-stock">✓ OK</span>')+'</td>'+
+          '</tr>';
+      }).join('')+'</tbody></table></div>';
+    if(result) result.innerHTML=html;
+  } catch(e){ if(result) result.innerHTML='<div class="dm-empty" style="color:var(--rose);">Error: '+escHtml(friendlyErr(e))+'</div>'; }
+}
+
+</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -694,6 +2725,14 @@ select.input{cursor:pointer;background:#fff;}
           <div class="nav-item asg" onclick="showPanel('sync-assigned');syncAssignedBoot()"><div class="nav-icon">🔄</div><div><div class="nav-title">Sync Assigned</div><div class="nav-desc">Compare &amp; reconcile</div></div></div>
         </div>
       </div>
+
+      <div class="nav-group" id="ng-adm-datamachine">
+        <div class="nav-group-hdr" onclick="navToggle('ng-adm-datamachine')"><span class="nav-group-hdr-icon">📊</span><span class="nav-group-hdr-title">Data Machine</span><span class="nav-group-chev">›</span></div>
+        <div class="nav-group-body">
+          <div class="nav-item adm" onclick="showPanel('adm-datamachine');dmBoot()"><div class="nav-icon" style="background:rgba(181,131,74,.1);color:var(--amber);">🔬</div><div><div class="nav-title">Data Machine</div><div class="nav-desc">Advanced analytics &amp; SN tracker</div></div></div>
+        </div>
+      </div>
+
     </div>
 
     <!-- STOCK WIDGET - REMOVED COMPLETELY -->
@@ -1300,7 +3339,222 @@ ALTER PUBLICATION supabase_realtime ADD TABLE broadcast_messages;</pre>
     </div>
   </div>
 
-  </div>
+  <!-- ═══════════════════ ADMIN DATA MACHINE PANEL ═══════════════════ -->
+    <div class="panel" id="panel-adm-datamachine">
+      <div class="page-label"><div class="op-chip adm">🔬 Data Machine</div><div class="crumb">→ Advanced analytics, SN lifecycle tracker &amp; branch intelligence</div></div>
+
+      <!-- TAB BAR -->
+      <div class="dm-tabs">
+        <button type="button" class="dm-tab t-swap active" onclick="dmTab('swap',this)">🔄 Swap Ranking</button>
+        <button type="button" class="dm-tab t-issue"  onclick="dmTab('issue',this)">🚀 Issued / Branch</button>
+        <button type="button" class="dm-tab t-ops"    onclick="dmTab('ops',this)">⚙️ Ops Matrix</button>
+        <button type="button" class="dm-tab t-sn"     onclick="dmTab('sn',this)">🔍 SN Tracker</button>
+        <button type="button" class="dm-tab t-perf"   onclick="dmTab('perf',this)">📈 Performance</button>
+        <button type="button" class="dm-tab t-anom"   onclick="dmTab('anom',this)">⚠️ Anomalies</button>
+        <button type="button" class="dm-tab t-tools"  onclick="dmTab('tools',this)">🛠 Data Tools</button>
+      </div>
+
+      <!-- ── TAB 1: SWAP RANKING ──────────────────────────────────────── -->
+      <div class="dm-sub active" id="dm-sub-swap">
+        <div class="card">
+          <div class="card-header swp"><div class="card-icon swp">🔄</div><div><h2>Swap Ranking per Branch</h2><p>Which branches have the highest POS swap activity</p></div></div>
+          <div class="card-body">
+            <div class="dm-date-row">
+              <div class="dm-field"><label>From</label><input type="date" class="dm-date-inp" id="dm-swap-from"></div>
+              <div class="dm-field"><label>To</label><input type="date" class="dm-date-inp" id="dm-swap-to"></div>
+              <div class="dm-field"><label>Swap Type</label>
+                <select class="dm-sel" id="dm-swap-type-filter">
+                  <option value="">All Types</option>
+                  <option value="Normal Swap">Normal Swap</option>
+                  <option value="Normal Exchange">Exchange</option>
+                </select>
+              </div>
+              <button class="dm-btn dm-btn-primary" onclick="dmLoadSwapRanking()">Load Ranking</button>
+              <button class="dm-btn dm-btn-secondary" onclick="dmExportSwapRanking()">CSV Export</button>
+            </div>
+            <div class="dm-kpi-row" id="dm-swap-kpis"></div>
+            <div class="dm-wrap" id="dm-swap-wrap"><div class="dm-empty">Set date range and click Load Ranking.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 2: ISSUED PER BRANCH ─────────────────────────────────── -->
+      <div class="dm-sub" id="dm-sub-issue">
+        <div class="card">
+          <div class="card-header"><div class="card-icon">🚀</div><div><h2>Issued per Branch</h2><p>POS issuance breakdown across all branches by team and date</p></div></div>
+          <div class="card-body">
+            <div class="dm-date-row">
+              <div class="dm-field"><label>From</label><input type="date" class="dm-date-inp" id="dm-issue-from"></div>
+              <div class="dm-field"><label>To</label><input type="date" class="dm-date-inp" id="dm-issue-to"></div>
+              <div class="dm-field"><label>Team</label>
+                <select class="dm-sel" id="dm-issue-team">
+                  <option value="">All Teams</option>
+                  <option value="CDL TEAM">CDL TEAM</option>
+                  <option value="BD TEAM">BD TEAM</option>
+                  <option value="KA/MM TEAM">KA/MM TEAM</option>
+                </select>
+              </div>
+              <button class="dm-btn dm-btn-primary" onclick="dmLoadIssuedBranch()">Load</button>
+              <button class="dm-btn dm-btn-secondary" onclick="dmExportIssuedBranch()">CSV Export</button>
+            </div>
+            <div class="dm-kpi-row" id="dm-issue-kpis"></div>
+            <div class="dm-wrap" id="dm-issue-wrap"><div class="dm-empty">Set date range and click Load.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 3: OPS MATRIX ─────────────────────────────────────────── -->
+      <div class="dm-sub" id="dm-sub-ops">
+        <div class="card">
+          <div class="card-header asg"><div class="card-icon asg">⚙️</div><div><h2>Operations Matrix per Branch</h2><p>Full cross-branch operations heat map</p></div></div>
+          <div class="card-body">
+            <div class="dm-date-row">
+              <div class="dm-field"><label>From</label><input type="date" class="dm-date-inp" id="dm-ops-from"></div>
+              <div class="dm-field"><label>To</label><input type="date" class="dm-date-inp" id="dm-ops-to"></div>
+              <div class="dm-field"><label>Sort by</label>
+                <select class="dm-sel" id="dm-ops-sort">
+                  <option value="total">Total Ops</option>
+                  <option value="issue">Issues</option>
+                  <option value="swap">Swaps</option>
+                  <option value="ret">Returns</option>
+                  <option value="atfs">ATFS</option>
+                </select>
+              </div>
+              <button class="dm-btn dm-btn-primary" onclick="dmLoadOpsMatrix()">Load Matrix</button>
+              <button class="dm-btn dm-btn-secondary" onclick="dmExportOpsMatrix()">CSV Export</button>
+            </div>
+            <div style="font-size:10px;color:var(--muted);margin-bottom:10px;">Heat intensity: 0 → low → medium → high → very high</div>
+            <div class="dm-wrap" id="dm-ops-wrap"><div class="dm-empty">Set date range and click Load Matrix.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 4: SN TRACKER ─────────────────────────────────────────── -->
+      <div class="dm-sub" id="dm-sub-sn">
+        <div class="card">
+          <div class="card-header inv"><div class="card-icon inv">🔍</div><div><h2>Serial Number Tracker</h2><p>Full lifecycle history for any POS serial number</p></div></div>
+          <div class="card-body">
+            <div class="dm-search-box">
+              <input class="dm-search-inp" id="dm-sn-input" placeholder="Type or paste a Serial Number…" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')dmTrackSN()">
+              <button class="dm-btn dm-btn-primary" onclick="dmTrackSN()">Track SN</button>
+              <button class="dm-btn dm-btn-secondary" onclick="dmTrackSNClear()">Clear</button>
+            </div>
+            <div style="margin-bottom:12px;">
+              <div style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:6px;">Bulk SN Audit</div>
+              <textarea class="bulk-area" id="dm-sn-bulk-area" placeholder="Paste multiple SNs (one per line) for bulk status check…" rows="3" style="font-size:12px;"></textarea>
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button class="dm-btn dm-btn-secondary" onclick="dmBulkSNAudit()">Bulk Audit</button>
+                <span id="dm-bulk-sn-count" style="font-size:11px;color:var(--muted);align-self:center;"></span>
+              </div>
+            </div>
+            <div id="dm-sn-result"></div>
+            <div id="dm-sn-bulk-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 5: PERFORMANCE ─────────────────────────────────────────── -->
+      <div class="dm-sub" id="dm-sub-perf">
+        <div class="card">
+          <div class="card-header rcv"><div class="card-icon rcv">📈</div><div><h2>Branch Performance Scorecard</h2><p>Composite performance grade per branch</p></div></div>
+          <div class="card-body">
+            <div class="dm-date-row">
+              <div class="dm-field"><label>From</label><input type="date" class="dm-date-inp" id="dm-perf-from"></div>
+              <div class="dm-field"><label>To</label><input type="date" class="dm-date-inp" id="dm-perf-to"></div>
+              <button class="dm-btn dm-btn-primary" onclick="dmLoadPerformance()">Calculate Scores</button>
+              <button class="dm-btn dm-btn-secondary" onclick="dmExportPerformance()">CSV Export</button>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:14px;">Score: A=90-100, B=70-89, C=50-69, D=below 50. Based on: ops volume (40%), swap-to-issue ratio (30%), stock movement (30%).</div>
+            <div class="dm-kpi-row" id="dm-perf-kpis"></div>
+            <div class="dm-wrap" id="dm-perf-wrap"><div class="dm-empty">Set date range and click Calculate Scores.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 6: ANOMALIES ───────────────────────────────────────────── -->
+      <div class="dm-sub" id="dm-sub-anom">
+        <div class="card">
+          <div class="card-header atfs"><div class="card-icon atfs">⚠️</div><div><h2>Anomaly Detector</h2><p>Flags data integrity issues: duplicate SNs, impossible operations, orphaned records</p></div></div>
+          <div class="card-body">
+            <div class="dm-date-row">
+              <div class="dm-field"><label>From</label><input type="date" class="dm-date-inp" id="dm-anom-from"></div>
+              <div class="dm-field"><label>To</label><input type="date" class="dm-date-inp" id="dm-anom-to"></div>
+              <button class="dm-btn dm-btn-rose" onclick="dmRunAnomalies()">Scan for Anomalies</button>
+            </div>
+            <div id="dm-anom-kpis" class="dm-kpi-row"></div>
+            <div id="dm-anom-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 7: DATA TOOLS ──────────────────────────────────────────── -->
+      <div class="dm-sub" id="dm-sub-tools">
+        <div class="card">
+          <div class="card-header adm"><div class="card-icon adm">🛠</div><div><h2>Admin Data Tools</h2><p>Export, audit trail, dead stock finder and branch data management</p></div></div>
+          <div class="card-body">
+            <div class="dm-tools-grid">
+              <div class="dm-tool-card">
+                <div class="dm-tool-card-title">📦 Full Branch Export</div>
+                <div class="dm-tool-card-desc">Export all operations for any branch as CSV.</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <select class="dm-sel" id="dm-export-branch" style="width:100%;height:34px;"></select>
+                  <div style="display:flex;gap:6px;">
+                    <input type="date" class="dm-date-inp" id="dm-export-from" style="flex:1;">
+                    <input type="date" class="dm-date-inp" id="dm-export-to" style="flex:1;">
+                  </div>
+                  <button class="dm-btn dm-btn-amber" onclick="dmExportBranchFull()">Export CSV</button>
+                </div>
+              </div>
+              <div class="dm-tool-card">
+                <div class="dm-tool-card-title">⏳ Dead Stock Finder</div>
+                <div class="dm-tool-card-desc">Find SNs sitting idle in stock with no operations for N+ days.</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <select class="dm-sel" id="dm-dead-branch" style="width:100%;height:34px;"></select>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <label style="font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;">Min idle days:</label>
+                    <input type="number" value="30" min="1" max="365" class="dm-date-inp" id="dm-dead-days" style="width:70px;">
+                  </div>
+                  <button class="dm-btn dm-btn-amber" onclick="dmFindDeadStock()">Scan Dead Stock</button>
+                </div>
+                <div id="dm-dead-result" style="margin-top:10px;"></div>
+              </div>
+              <div class="dm-tool-card">
+                <div class="dm-tool-card-title">👤 Officer Activity Summary</div>
+                <div class="dm-tool-card-desc">See which officer performed what ops in a date range.</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div style="display:flex;gap:6px;">
+                    <input type="date" class="dm-date-inp" id="dm-officer-from" style="flex:1;">
+                    <input type="date" class="dm-date-inp" id="dm-officer-to" style="flex:1;">
+                  </div>
+                  <input class="dm-search-inp" id="dm-officer-name" placeholder="Officer name (optional)" style="height:34px;font-size:12px;">
+                  <button class="dm-btn dm-btn-secondary" onclick="dmOfficerActivity()">Load Activity</button>
+                </div>
+              </div>
+              <div class="dm-tool-card">
+                <div class="dm-tool-card-title">⚡ Swap-to-Issue Ratio</div>
+                <div class="dm-tool-card-desc">Flags branches with abnormally high fault/swap rates vs issued.</div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <div style="display:flex;gap:6px;">
+                    <input type="date" class="dm-date-inp" id="dm-ratio-from" style="flex:1;">
+                    <input type="date" class="dm-date-inp" id="dm-ratio-to" style="flex:1;">
+                  </div>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <label style="font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap;">Flag threshold %:</label>
+                    <input type="number" value="20" min="1" max="100" class="dm-date-inp" id="dm-ratio-thresh" style="width:60px;">
+                  </div>
+                  <button class="dm-btn dm-btn-rose" onclick="dmLoadSwapRatio()">Analyse Ratios</button>
+                </div>
+              </div>
+            </div>
+            <div id="dm-officer-result" style="margin-top:4px;"></div>
+            <div id="dm-ratio-result" style="margin-top:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panel-adm-datamachine -->
+
+</div>
 </div>
 
 <div id="modal-root"></div>
@@ -1760,7 +4014,7 @@ var NAV_GROUP_MAP = {
   "adm-staff":"ng-adm-staff","sup-ops":"ng-adm-staff",
   "adm-kpi":"ng-adm-rep","adm-analytics":"ng-adm-rep","adm-broadcast":"ng-adm-rep",
   "adm-approvals":"ng-adm-stk","adm-stock-pending":"ng-adm-stk",
-  "adm-branches":"ng-adm-stk","create-branch":"ng-adm-stk"
+  "adm-branches":"ng-adm-stk","create-branch":"ng-adm-stk","adm-datamachine":"ng-adm-datamachine"
 };
 
 function clearAllForms() {
@@ -10222,5 +12476,8 @@ function issuedBreakdownExportCSV() {
   document.body.removeChild(link);
 }
 </script>
+
+    
+
 </body>
 </html>
