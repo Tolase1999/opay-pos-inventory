@@ -5049,12 +5049,13 @@ async function edtRefresh() {
     var opTypeMap = {
       "Issue": "Issued", "Issued": "Issued",
       "Assign": "Assigned", "Assigned": "Assigned",
+      "Unassign": "Unassign",
       "Swap (new out)": "Swap", "Swap (faulty in)": "Swap",
       "Swap": "Swap",
       "Return": "Return",
       "ATFS": "ATFS", "POS ATFS": "ATFS"
     };
-    var typeKeyMap = { "Issued": "dep", "Assigned": "asg", "Swap": "swp", "Return": "ret", "ATFS": "atfs" };
+    var typeKeyMap = { "Issued": "dep", "Assigned": "asg", "Unassign": "asg", "Swap": "swp", "Return": "ret", "ATFS": "atfs" };
     // ── First pass: build entries into a temp array ─────────────────────
     var newEntries = [];
     dbRows.forEach(function(row) {
@@ -5066,6 +5067,7 @@ async function edtRefresh() {
       var opType = opTypeMap[rawOp] || null;
       if (!opType) {
         if (rawOp.toLowerCase().includes("issue") || rawOp.toLowerCase().includes("deploy")) opType = "Issued";
+        else if (rawOp.toLowerCase().includes("unassign")) opType = "Unassign";
         else if (rawOp.toLowerCase().includes("assign")) opType = "Assigned";
         else if (rawOp.toLowerCase().includes("swap")) opType = "Swap";
         else if (rawOp.toLowerCase().includes("return")) opType = "Return";
@@ -10967,15 +10969,16 @@ async function uaSubmit() {
 
         // 2. Add to current officer's branch inventory (regardless of original branch)
         var srcTbl = uaMapSourceToBranchTbl(item.source, t);
-        try {
-          // Try PATCH first (if SN already exists in current branch stock)
+        // Check if SN already exists in current branch stock, then PATCH; otherwise POST
+        var existsRes = await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc + "&limit=1", { headers: H });
+        var existsRows = await existsRes.json();
+        if (existsRows && existsRows.length > 0) {
           await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, {
             method:  "PATCH",
             headers: HJ,
             body:    JSON.stringify({ status: "Available" })
           });
-        } catch (patchErr) {
-          // If PATCH fails, try POST to insert the SN into current branch stock
+        } else {
           await fetch(SUPA_URL + "/rest/v1/" + srcTbl, {
             method:  "POST",
             headers: HJ,
