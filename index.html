@@ -10788,9 +10788,9 @@ async function uaValidateSN(idx) {
   st.className = "sn-status"; st.textContent = "…";
   try {
     // Look up in deployed_assigned — must be Assigned (not Deployed/Issued)
-    var res  = await sf("deployed_assigned?select=sn,source,model,operation,agent_id" +
-                        "&sn=eq." + encodeURIComponent(sn) +
-                        "&branch_id=eq." + SUPA_BRANCH.id);
+    // Note: no branch_id filter so we can detect cross-branch assignments
+    var res  = await sf("deployed_assigned?select=sn,source,model,operation,agent_id,branch_id" +
+                        "&sn=eq." + encodeURIComponent(sn));
     var rows = await res.json();
     if (!Array.isArray(rows) || !rows.length) {
       st.className = "sn-status err";
@@ -10804,11 +10804,20 @@ async function uaValidateSN(idx) {
       st.textContent = "✗ Issued (not Assigned) — use Return instead";
       return;
     }
+    // Resolve originating branch name
+    var origBranchId   = r.branch_id || "";
+    var origBranchName = "";
+    if (origBranchId && ALL_BRANCHES && ALL_BRANCHES.length) {
+      var brHit = ALL_BRANCHES.find(function(b) { return b.id === origBranchId; });
+      if (brHit) origBranchName = brHit.name;
+    }
     st.className = "sn-status ok";
-    st.textContent = "✓ Assigned" + (r.agent_id ? " · " + r.agent_id : "") + (r.model ? " · " + r.model : "");
-    row.dataset.source  = r.source  || "";
-    row.dataset.model   = r.model   || "";
-    row.dataset.agentId = r.agent_id || "";
+    st.textContent = "✓ Assigned" + (r.agent_id ? " · " + r.agent_id : "") + (r.model ? " · " + r.model : "") + (origBranchName ? " · 📍 " + origBranchName : "");
+    row.dataset.source         = r.source         || "";
+    row.dataset.model          = r.model          || "";
+    row.dataset.agentId        = r.agent_id       || "";
+    row.dataset.origBranchId   = origBranchId;
+    row.dataset.origBranchName = origBranchName;
     inp.dataset.validatedSn = sn;
   } catch (e) {
     st.className = "sn-status err";
@@ -10835,11 +10844,11 @@ async function uaValidateBulk() {
   res.innerHTML = "<div class='bres-loading'>Checking " + sns.length + " SNs…</div>";
   UA.bulkGood = [];
 
-  // Fetch all assigned SNs for this branch in one call
+  // Fetch all assigned SNs across ALL branches (for cross-branch unassign)
   var assigned = {};
   try {
-    var r    = await sf("deployed_assigned?select=sn,source,model,agent_id,operation" +
-                        "&branch_id=eq." + SUPA_BRANCH.id + "&limit=5000");
+    var r    = await sf("deployed_assigned?select=sn,source,model,agent_id,operation,branch_id" +
+                        "&limit=5000");
     var rows = await r.json();
     rows.forEach(function(row) {
       var op = (row.operation || "").toLowerCase();
@@ -10857,9 +10866,15 @@ async function uaValidateBulk() {
     seen[sn] = true;
     var hit = assigned[sn];
     if (hit) {
-      UA.bulkGood.push({ sn: sn, source: hit.source || "", model: hit.model || "", agentId: hit.agent_id || "" });
+      // Resolve originating branch name
+      var origBranchName = "";
+      if (hit.branch_id && ALL_BRANCHES && ALL_BRANCHES.length) {
+        var brHit = ALL_BRANCHES.find(function(b) { return b.id === hit.branch_id; });
+        if (brHit) origBranchName = brHit.name;
+      }
+      UA.bulkGood.push({ sn: sn, source: hit.source || "", model: hit.model || "", agentId: hit.agent_id || "", origBranchId: hit.branch_id || "", origBranchName: origBranchName });
       html += "<div class='bres-row bres-ok'><span class='bres-sn'>" + escHtml(sn) + "</span>" +
-        "<span class='bres-msg'>✓ Assigned" + (hit.agent_id ? " · " + hit.agent_id : "") + "</span></div>";
+        "<span class='bres-msg'>✓ Assigned" + (hit.agent_id ? " · " + hit.agent_id : "") + (origBranchName ? " · 📍 " + origBranchName : "") + "</span></div>";
     } else {
       html += "<div class='bres-row bres-err'><span class='bres-sn'>" + escHtml(sn) + "</span>" +
         "<span class='bres-msg'>✗ Not found in assigned POSs</span></div>";
@@ -10867,6 +10882,16 @@ async function uaValidateBulk() {
   });
   html += "<div class='bres-summary'>" + UA.bulkGood.length + " / " + sns.length + " valid assigned POSs</div>";
   res.innerHTML = html;
+}
+
+// Helper: map a source stock table name to the current branch's equivalent
+function uaMapSourceToBranchTbl(source, branchTbls) {
+  if (!source) return branchTbls.bn;
+  if (source.includes("_rbn_")) return branchTbls.rbn;
+  if (source.includes("_rp_"))  return branchTbls.rp;
+  if (source.includes("_rt_"))  return branchTbls.rt;
+  if (source.includes("_ft_"))  return branchTbls.ft;
+  return branchTbls.bn;
 }
 
 async function uaSubmit() {
@@ -10891,10 +10916,12 @@ async function uaSubmit() {
         var row = document.getElementById("ua-row-" + idx);
         if (sn && inp.dataset.validatedSn === sn)
           items.push({
-            sn:      sn,
-            source:  row ? row.dataset.source  || "" : "",
-            model:   row ? row.dataset.model   || "" : "",
-            agentId: row ? row.dataset.agentId || "" : ""
+            sn:           sn,
+            source:       row ? row.dataset.source         || "" : "",
+            model:        row ? row.dataset.model          || "" : "",
+            agentId:      row ? row.dataset.agentId        || "" : "",
+            origBranchId: row ? row.dataset.origBranchId   || "" : "",
+            origBranchName: row ? row.dataset.origBranchName || "" : ""
           });
       });
     }
@@ -10902,6 +10929,22 @@ async function uaSubmit() {
     if (!items.length) {
       unlockSubmit("ua-sub-btn", "↩ Confirm Unassign");
       return alert("No valid Assigned POSs entered.");
+    }
+
+    // ── Cross-branch warning ──
+    var crossBranchItems = items.filter(function(i) {
+      return i.origBranchId && i.origBranchId !== SUPA_BRANCH.id;
+    });
+    if (crossBranchItems.length) {
+      var msg = "⚠ Warning: The following POS(s) were assigned from another branch:\n\n" +
+        crossBranchItems.map(function(i) {
+          return i.sn + " (from " + (i.origBranchName || i.origBranchId) + ")";
+        }).join("\n") +
+        "\n\nDo you want to continue unassigning?";
+      if (!confirm(msg)) {
+        unlockSubmit("ua-sub-btn", "↩ Confirm Unassign");
+        return;
+      }
     }
 
     var sns      = items.map(function(i) { return i.sn; });
@@ -10917,20 +10960,30 @@ async function uaSubmit() {
     await Promise.all(items.map(async function(item) {
       var enc = encodeURIComponent(item.sn);
       try {
-        // 1. Delete from deployed_assigned
+        // 1. Delete from deployed_assigned at the ORIGINAL branch
+        var origBranchId = item.origBranchId || branchId;
         await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + enc +
-          "&branch_id=eq." + branchId, { method: "DELETE", headers: H });
+          "&branch_id=eq." + origBranchId, { method: "DELETE", headers: H });
 
-        // 2. Restore status to Available in source stock table
-        //    Source table is stored at assignment time; default to stock_bn if missing
-        var srcTbl = item.source || t.bn;
-        await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, {
-          method:  "PATCH",
-          headers: HJ,
-          body:    JSON.stringify({ status: "Available" })
-        });
+        // 2. Add to current officer's branch inventory (regardless of original branch)
+        var srcTbl = uaMapSourceToBranchTbl(item.source, t);
+        try {
+          // Try PATCH first (if SN already exists in current branch stock)
+          await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, {
+            method:  "PATCH",
+            headers: HJ,
+            body:    JSON.stringify({ status: "Available" })
+          });
+        } catch (patchErr) {
+          // If PATCH fails, try POST to insert the SN into current branch stock
+          await fetch(SUPA_URL + "/rest/v1/" + srcTbl, {
+            method:  "POST",
+            headers: HJ,
+            body:    JSON.stringify({ sn: item.sn, model: item.model || "", status: "Available" })
+          });
+        }
 
-        // 3. Log to daily_operations
+        // 3. Log to daily_operations under current officer's branch
         fetch(SUPA_URL + "/rest/v1/daily_operations", {
           method:  "POST",
           headers: HJ,
@@ -10940,7 +10993,8 @@ async function uaSubmit() {
             model:     item.model || null,
             officer:   off,
             branch_id: branchId,
-            reason:    (agent ? "MS/BD: " + agent + " · " : "") + (reason || "Unassigned"),
+            reason:    (agent ? "MS/BD: " + agent + " · " : "") + (reason || "Unassigned") +
+                       (item.origBranchName ? " [orig: " + item.origBranchName + "]" : ""),
             date:      new Date().toISOString().split("T")[0],
             time:      new Date().toTimeString().split(" ")[0]
           })
@@ -10965,13 +11019,15 @@ async function uaSubmit() {
           return "<div style='display:flex;justify-content:space-between;align-items:center;" +
             "padding:5px 0;border-bottom:1px solid var(--border2);'>" +
             "<span style='font-size:10px;color:var(--muted);font-weight:600;'>SN</span>" +
-            "<span class='sn-tag' style='color:var(--sky);border-color:rgba(56,189,248,.25);'>" + escHtml(it.sn) + "</span></div>";
+            "<span class='sn-tag' style='color:var(--sky);border-color:rgba(56,189,248,.25);'>" + escHtml(it.sn) + "</span>" +
+            (it.origBranchName ? "<span style='font-size:10px;color:var(--amber);'>📍 " + escHtml(it.origBranchName) + "</span>" : "") +
+            "</div>";
         }).join("") +
       "</div>" +
       "<div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div>" +
       (agent  ? "<div class='ss-row'><span class='ss-key'>MS/BD Code</span><span class='ss-val'>" + escHtml(agent) + "</span></div>" : "") +
       (reason ? "<div class='ss-row'><span class='ss-key'>Reason</span><span class='ss-val'>" + escHtml(reason) + "</span></div>" : "") +
-      "<div class='ss-row'><span class='ss-key'>Stock Status</span><span class='ss-val' style='color:var(--green2);font-weight:800;'>✓ Returned to Available</span></div>" +
+      "<div class='ss-row'><span class='ss-key'>Stock Status</span><span class='ss-val' style='color:var(--green2);font-weight:800;'>✓ Added to " + escHtml(SUPA_BRANCH.name || "branch") + " inventory</span></div>" +
       "</div>";
 
     if (errors.length) sumHtml +=
