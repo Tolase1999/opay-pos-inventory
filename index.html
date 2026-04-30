@@ -458,6 +458,7 @@ select.input{cursor:pointer;background:#fff;}
 .dm-tab.t-perf.active{color:var(--teal);}
 .dm-tab.t-anom.active{color:var(--rose);}
 .dm-tab.t-tools.active{color:var(--amber);}
+.dm-tab.t-su{} .dm-tab.t-su.active{color:var(--sky);}
 .dm-sub{display:none;}
 .dm-sub.active{display:block;}
 
@@ -1633,7 +1634,7 @@ async function dmBoot() {
   var y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0');
   var firstDay = y+'-'+m+'-01';
   var lastDay  = new Date(y,now.getMonth()+1,0).toISOString().split('T')[0];
-  ['dm-swap','dm-issue','dm-ops','dm-perf','dm-anom','dm-ratio','dm-officer'].forEach(function(pfx){
+  ['dm-swap','dm-issue','dm-ops','dm-perf','dm-anom','dm-ratio','dm-officer','dm-su'].forEach(function(pfx){
     var f=document.getElementById(pfx+'-from'), t=document.getElementById(pfx+'-to');
     if(f && !f.value) f.value=firstDay;
     if(t && !t.value) t.value=lastDay;
@@ -3352,6 +3353,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE broadcast_messages;</pre>
         <button type="button" class="dm-tab t-perf"   onclick="dmTab('perf',this)">📈 Performance</button>
         <button type="button" class="dm-tab t-anom"   onclick="dmTab('anom',this)">⚠️ Anomalies</button>
         <button type="button" class="dm-tab t-tools"  onclick="dmTab('tools',this)">🛠 Data Tools</button>
+        <button type="button" class="dm-tab t-su"     onclick="dmTab('su',this)">📦 Stock Usage</button>
       </div>
 
       <!-- ── TAB 1: SWAP RANKING ──────────────────────────────────────── -->
@@ -3548,6 +3550,56 @@ ALTER PUBLICATION supabase_realtime ADD TABLE broadcast_messages;</pre>
             </div>
             <div id="dm-officer-result" style="margin-top:4px;"></div>
             <div id="dm-ratio-result" style="margin-top:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TAB 8: STOCK USAGE ──────────────────────────────────────────── -->
+      <div class="dm-sub" id="dm-sub-su">
+        <div class="card">
+          <div class="card-header adm"><div class="card-icon adm">📦</div><div><h2>Stock Usage</h2><p>All POS operations with accurate counts — click any card or use filters to drill in</p></div></div>
+          <div class="card-body">
+            <div class="dm-date-row" style="flex-wrap:wrap;gap:8px;">
+              <div class="dm-field"><label>From</label><input type="date" class="dm-date-inp" id="dm-su-from"></div>
+              <div class="dm-field"><label>To</label><input type="date" class="dm-date-inp" id="dm-su-to"></div>
+              <button class="dm-btn dm-btn-primary" onclick="dmLoadStockUsage()">Load</button>
+              <button class="dm-btn dm-btn-secondary" onclick="dmExportStockUsage()">⬇ CSV Export</button>
+            </div>
+            <div class="dm-kpi-row" id="su-summary-cards" style="flex-wrap:wrap;gap:10px;margin-top:14px;"></div>
+            <div id="su-detail-view" style="display:none;margin-top:18px;">
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:12px;">
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  <label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;">Search SN</label>
+                  <input class="dm-search-inp" id="su-filter-sn" placeholder="Type SN to filter…" oninput="this.value=this.value.toUpperCase();suApplyFilters()" style="width:200px;height:34px;font-size:12px;font-family:monospace;">
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  <label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;">Operation</label>
+                  <select class="dm-sel" id="su-filter-op" onchange="suApplyFilters()" style="height:34px;min-width:180px;">
+                    <option value="">All Operations</option>
+                    <option value="Issue">🚀 Issue</option>
+                    <option value="Assign">📋 Assign</option>
+                    <option value="Swap (new out)">🔄 Swap (New Out)</option>
+                    <option value="Swap (faulty in)">🔁 Swap (Faulty In)</option>
+                    <option value="Return">↩ Return</option>
+                    <option value="ATFS">⚡ ATFS</option>
+                    <option value="Unassign">↩ Unassign</option>
+                    <option value="Receive Stock">📥 Receive Stock</option>
+                  </select>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:4px;">
+                  <label style="font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;">Branch</label>
+                  <select class="dm-sel" id="su-filter-branch" onchange="suApplyFilters()" style="height:34px;min-width:170px;">
+                    <option value="">All Branches</option>
+                  </select>
+                </div>
+                <button class="dm-btn dm-btn-secondary" onclick="suClearFilters()" style="height:34px;align-self:flex-end;">✕ Clear Filters</button>
+                <button class="dm-btn dm-btn-secondary" onclick="admSUBackToSummary()" style="height:34px;align-self:flex-end;">↩ Back to Cards</button>
+                <span id="su-filter-count" style="font-size:11px;color:var(--muted);font-weight:700;align-self:flex-end;padding-bottom:4px;"></span>
+              </div>
+              <div style="font-size:13px;font-weight:800;color:var(--text1);margin-bottom:8px;" id="su-detail-title"></div>
+              <div id="su-detail-table-wrap" style="overflow-x:auto;"></div>
+            </div>
+            <div id="dm-su-result"></div>
           </div>
         </div>
       </div>
@@ -4848,7 +4900,7 @@ async function pushOp(payload) {
       if (payload.faultySn) {
         var tFt = branchTables(suffix).ft;
         stockCalls.push(post(tFt, { sn: payload.faultySn, model: payload.faultyModel || null, source: "Field (Issued)", reason: "Swapped out", officer: officer, branch_id: branchId, status: "Faulty" }));
-        logCalls.push(logDaily("Swap (faulty in)", payload.faultySn, null, {
+        logCalls.push(logDaily("Swap (faulty in)", payload.faultySn, payload.faultyModel || null, {
           reason: payload.swapType ? "SwapType: " + payload.swapType : null
         }));
       }
@@ -4860,7 +4912,7 @@ async function pushOp(payload) {
         var swapOutReason = [];
         if (payload.merchantId) swapOutReason.push(APP_CONFIG.fieldCustomer + ": " + payload.merchantId);
         if (payload.swapType)   swapOutReason.push("SwapType: " + payload.swapType);
-        logCalls.push(logDaily("Swap (new out)", payload.replacementSn, null, {
+        logCalls.push(logDaily("Swap (new out)", payload.replacementSn, payload.replacementModel || null, {
           reason: swapOutReason.length ? swapOutReason.join(" · ") : null
         }));
       }
@@ -12530,6 +12582,286 @@ function issuedBreakdownExportCSV() {
   link.setAttribute("href", url);
   link.setAttribute("download", "issued_breakdown_" + new Date().toISOString().split("T")[0] + ".csv");
   link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  STOCK USAGE TAB — Accurate counts + SN/Op/Branch filters
+//  Fix: swap logDaily now passes model; historical nulls resolved via
+//       cross-reference of all loaded ops for the same SN
+// ════════════════════════════════════════════════════════════════════════
+
+var _suAllOps   = [];   // raw rows from daily_operations
+var _suFiltered = [];   // rows currently shown in table
+var _suSnModel  = {};   // SN → best known model (built at load time)
+
+// ── Build SN→model map from all loaded ops ────────────────────────────
+// Swaps historically had null model; we resolve it from any other op
+// recorded for the same SN (issue, assign, receive, etc.)
+function _suBuildSnModelMap(ops) {
+  var map = {};
+  // First pass: collect every non-null model we see
+  ops.forEach(function(op) {
+    if (op.sn && op.model) map[op.sn] = op.model;
+  });
+  return map;
+}
+
+// ── Load from Supabase ────────────────────────────────────────────────
+async function dmLoadStockUsage() {
+  var result = document.getElementById('dm-su-result');
+  var cards  = document.getElementById('su-summary-cards');
+  var detail = document.getElementById('su-detail-view');
+  if (result) result.innerHTML = "<div class='dm-loading'>Loading stock usage data…</div>";
+  if (cards)  cards.innerHTML  = '';
+  if (detail) detail.style.display = 'none';
+
+  try {
+    var dateQ = dmDateFilter('dm-su-from', 'dm-su-to');
+    var r     = await sf('daily_operations?select=*&order=date.desc,time.desc' + dateQ);
+    var data  = await r.json() || [];
+    _suAllOps  = data;
+    _suSnModel = _suBuildSnModelMap(data);
+
+    if (!data.length) {
+      if (result) result.innerHTML = "<div class='dm-empty'>No operations found for the selected date range.</div>";
+      return;
+    }
+    if (result) result.innerHTML = '';
+
+    // Populate branch dropdown from data
+    var branchSel = document.getElementById('su-filter-branch');
+    if (branchSel) {
+      var seen = {}, bMap = {};
+      ALL_BRANCHES.forEach(function(b){ bMap[b.id] = b.name; });
+      data.forEach(function(op){ if (op.branch_id) seen[op.branch_id] = bMap[op.branch_id] || op.branch_id; });
+      var opts = '<option value="">All Branches</option>';
+      Object.keys(seen).sort(function(a, b){ return (seen[a]||a).localeCompare(seen[b]||b); })
+        .forEach(function(id){ opts += '<option value="'+escHtml(id)+'">'+escHtml(seen[id])+'</option>'; });
+      branchSel.innerHTML = opts;
+    }
+
+    // Count using dmCatOp — same logic as every other DM tab
+    var counts = { issue:0, assign:0, swap_out:0, swap_in:0, ret:0, atfs:0, unassign:0, receive:0 };
+    data.forEach(function(op) {
+      var cat = dmCatOp(op.operation);
+      var raw = (op.operation||'').toLowerCase();
+      if      (cat === 'issue')    counts.issue++;
+      else if (cat === 'assign')   counts.assign++;
+      else if (cat === 'unassign') counts.unassign++;
+      else if (cat === 'atfs')     counts.atfs++;
+      else if (cat === 'receive')  counts.receive++;
+      else if (cat === 'ret')      counts.ret++;
+      else if (cat === 'swap') {
+        if   (raw.includes('new out')) counts.swap_out++;
+        else                           counts.swap_in++;
+      }
+    });
+
+    var cardDefs = [
+      { key:'Issue',             icon:'🚀', label:'Issued',          cnt:counts.issue,    color:'var(--sky)' },
+      { key:'Swap (new out)',    icon:'🔄', label:'Swap Out',         cnt:counts.swap_out, color:'var(--green2)' },
+      { key:'Swap (faulty in)', icon:'🔁', label:'Swap Faulty In',   cnt:counts.swap_in,  color:'var(--orange)' },
+      { key:'Return',            icon:'↩', label:'Returns',          cnt:counts.ret,      color:'var(--amber)' },
+      { key:'Assign',            icon:'📋', label:'Assigned',         cnt:counts.assign,   color:'#9b59b6' },
+      { key:'Unassign',          icon:'↩', label:'Unassigned',       cnt:counts.unassign, color:'var(--muted)' },
+      { key:'ATFS',              icon:'⚡', label:'ATFS',             cnt:counts.atfs,     color:'var(--rose)' },
+      { key:'Receive Stock',     icon:'📥', label:'Received Stock',   cnt:counts.receive,  color:'var(--sky)' }
+    ];
+
+    if (cards) {
+      cards.innerHTML = cardDefs.map(function(d) {
+        return "<div class='dm-kpi' style='cursor:pointer;transition:transform .15s;'" +
+          " onmouseenter=\"this.style.transform='translateY(-2px)'\"" +
+          " onmouseleave=\"this.style.transform=''\"" +
+          " onclick='suShowByOp(\""+d.key+"\")'>" +
+          "<div class='dm-kpi-accent' style='background:"+d.color+";'></div>" +
+          "<div class='dm-kpi-lbl'>"+d.icon+"  "+escHtml(d.label)+"</div>" +
+          "<div class='dm-kpi-num' style='color:"+d.color+";'>"+d.cnt+"</div>" +
+          "<div class='dm-kpi-sub'>Click to drill in</div>" +
+          "</div>";
+      }).join('');
+    }
+
+  } catch(e) {
+    if (result) result.innerHTML = "<div class='dm-empty' style='color:var(--rose);'>Error: "+escHtml(e.message||String(e))+"</div>";
+  }
+}
+
+// ── Click a summary card ──────────────────────────────────────────────
+function suShowByOp(opValue) {
+  var opSel = document.getElementById('su-filter-op');
+  var snSel = document.getElementById('su-filter-sn');
+  var brSel = document.getElementById('su-filter-branch');
+  if (opSel) opSel.value = opValue;
+  if (snSel) snSel.value = '';
+  if (brSel) brSel.value = '';
+  var iconMap = {
+    'Issue':'🚀 Issued POSs', 'Assign':'📋 Assigned POSs',
+    'Swap (new out)':'🔄 Swap (New Out)', 'Swap (faulty in)':'🔁 Swap (Faulty In)',
+    'Return':'↩ Returns', 'ATFS':'⚡ ATFS', 'Unassign':'↩ Unassigned',
+    'Receive Stock':'📥 Received Stock'
+  };
+  var titleEl = document.getElementById('su-detail-title');
+  if (titleEl) titleEl.textContent = iconMap[opValue] || opValue;
+  var detail = document.getElementById('su-detail-view');
+  if (detail) detail.style.display = 'block';
+  suApplyFilters();
+}
+
+// ── Apply all three filters and re-render ─────────────────────────────
+function suApplyFilters() {
+  var snVal = ((document.getElementById('su-filter-sn') ||{}).value || '').toUpperCase();
+  var opVal =  (document.getElementById('su-filter-op') ||{}).value || '';
+  var brVal =  (document.getElementById('su-filter-branch')||{}).value || '';
+
+  _suFiltered = _suAllOps.filter(function(op) {
+    if (snVal && !(op.sn||'').toUpperCase().includes(snVal)) return false;
+    if (opVal && (op.operation||'').toLowerCase() !== opVal.toLowerCase()) return false;
+    if (brVal && op.branch_id !== brVal) return false;
+    return true;
+  });
+
+  var countEl = document.getElementById('su-filter-count');
+  if (countEl) countEl.textContent = _suFiltered.length + ' record' + (_suFiltered.length===1?'':'s');
+
+  var detail = document.getElementById('su-detail-view');
+  if (detail && detail.style.display === 'none') detail.style.display = 'block';
+
+  suRenderTable(_suFiltered);
+}
+
+// ── Render detail table ───────────────────────────────────────────────
+// POS Type: use op.model first; fall back to _suSnModel[op.sn] which
+// holds any model seen for that SN across all loaded operations.
+// This fixes historical swap records where logDaily passed null.
+function suRenderTable(rows) {
+  var wrap = document.getElementById('su-detail-table-wrap');
+  if (!wrap) return;
+
+  var branchMap = {};
+  ALL_BRANCHES.forEach(function(b){ branchMap[b.id] = b.name; });
+
+  if (!rows.length) {
+    wrap.innerHTML = "<div class='ops-empty'>No records match the current filters.</div>";
+    return;
+  }
+
+  var tableRows = rows.map(function(op) {
+    var reason = op.reason || '';
+    var opLow  = (op.operation||'').toLowerCase();
+
+    // ── POS Type: op.model → cross-ref fallback → '—'
+    var posType = op.model || _suSnModel[op.sn] || '—';
+
+    // ── Target (MID / BD)
+    var midM = reason.match(/MERCHANT\/AGG ID:\s*([^\s·|]+)/i) || reason.match(/MID:\s*([^\s·|]+)/i);
+    var bdM  = reason.match(/MS\/BD CODE:\s*([^\s·|]+)/i)      || reason.match(/BD CODE:\s*([^\s·|]+)/i);
+    var target = midM ? 'MID: '+midM[1] : bdM ? 'BD: '+bdM[1] : '—';
+
+    // ── Stock Source / Destination
+    var src = '—', dst = '—';
+    if (opLow === 'issue') {
+      src = reason.includes('R&R Brand New')  ? 'R&R Brand New'
+          : reason.includes('Repaired')        ? 'Repaired Stock'
+          : reason.includes('Return Stock')    ? 'Return Stock'
+          : reason.includes('Assigned POS')    ? 'Assigned (re-issued)'
+          : 'Brand New Stock';
+      dst = 'Deployed (Issued)';
+    } else if (opLow === 'assign') {
+      src = reason.includes('R&R Brand New') ? 'R&R Brand New'
+          : reason.includes('Repaired')      ? 'Repaired Stock'
+          : 'Brand New Stock';
+      dst = 'Assigned to Agent';
+    } else if (opLow === 'swap (new out)') {
+      src = reason.includes('Assigned POS') ? 'Assigned POS (reused)' : 'Brand New / Repaired';
+      dst = 'Deployed (Swap Replacement)';
+    } else if (opLow === 'swap (faulty in)') {
+      src = 'Field (from Merchant)';
+      dst = 'Moved to Faulty';
+    } else if (opLow === 'unassign') {
+      src = 'Assigned (returned from Agent)';
+      dst = 'Returned to Available Stock';
+    } else if (opLow === 'return') {
+      var cond = _parseReturnCond(reason);
+      src = 'Field (from Merchant)';
+      dst = cond==='faulty'  ? 'Moved to Faulty (R&R)'
+          : cond==='working' ? 'Moved to R&R Brand New'
+          : 'Moved to R&R Working Good';
+    } else if (opLow === 'atfs') {
+      src = 'Office Stock';
+      dst = 'Moved to Faulty (ATFS)';
+    } else if (opLow.includes('receive')) {
+      src = 'External (Supplier / Transfer)';
+      dst = (op.operation||'').includes('Brand New') ? 'Added to Brand New'
+          : (op.operation||'').includes('Repaired')  ? 'Added to Repaired'
+          : (op.operation||'').includes('Faulty')    ? 'Added to Faulty'
+          : 'Added to Stock';
+    }
+
+    return '<tr>'+
+      '<td style="font-size:11px;"><span class="sn-tag">'+escHtml(op.sn||'—')+'</span></td>'+
+      '<td style="font-size:11px;">'+opChipHtml(op.operation, op.reason)+'</td>'+
+      '<td style="font-size:11px;color:var(--text2);font-weight:600;">'+escHtml(posType)+'</td>'+
+      '<td style="font-size:11px;"><span class="inv-stat" style="background:rgba(26,111,168,.1);color:var(--sky);">'+escHtml(src)+'</span></td>'+
+      '<td style="font-size:11px;"><span class="inv-stat" style="background:rgba(64,145,108,.1);color:var(--green2);">'+escHtml(dst)+'</span></td>'+
+      '<td style="font-size:11px;">'+escHtml(branchMap[op.branch_id]||op.branch_id||'—')+'</td>'+
+      '<td style="font-size:11px;color:var(--sky);">'+escHtml(op.officer||'—')+'</td>'+
+      '<td style="font-size:11px;color:var(--amber);">'+escHtml(target)+'</td>'+
+      '<td style="font-size:11px;white-space:nowrap;">'+escHtml(op.date||'—')+' '+escHtml((op.time||'').substring(0,5))+'</td>'+
+      '</tr>';
+  }).join('');
+
+  wrap.innerHTML =
+    '<table class="ops-table">'+
+      '<thead><tr>'+
+        '<th>Serial Number</th><th>Operation</th><th>POS Type</th>'+
+        '<th>Stock Source</th><th>Stock Destination</th>'+
+        '<th>Branch</th><th>Officer</th><th>Target</th><th>Date / Time</th>'+
+      '</tr></thead>'+
+      '<tbody>'+tableRows+'</tbody>'+
+    '</table>';
+}
+
+// ── Clear filters ─────────────────────────────────────────────────────
+function suClearFilters() {
+  ['su-filter-sn','su-filter-op','su-filter-branch'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  var titleEl = document.getElementById('su-detail-title');
+  if (titleEl) titleEl.textContent = 'All Operations';
+  suApplyFilters();
+}
+
+function admSUBackToSummary() {
+  var detail = document.getElementById('su-detail-view');
+  if (detail) detail.style.display = 'none';
+  ['su-filter-sn','su-filter-op','su-filter-branch'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+}
+
+// ── CSV Export ────────────────────────────────────────────────────────
+function dmExportStockUsage() {
+  var rows = _suFiltered.length ? _suFiltered : _suAllOps;
+  if (!rows.length) { alert('No data loaded. Click Load first.'); return; }
+  var branchMap = {};
+  ALL_BRANCHES.forEach(function(b){ branchMap[b.id] = b.name; });
+  var csv = 'SN,Operation,POS Type,Branch,Officer,Date,Time,Reason\n';
+  rows.forEach(function(op){
+    var posType = op.model || _suSnModel[op.sn] || '';
+    csv += '"'+(op.sn||'')+'","'+(op.operation||'')+'","'+posType+'","'+
+      (branchMap[op.branch_id]||op.branch_id||'')+'","'+(op.officer||'')+'","'+
+      (op.date||'')+'","'+((op.time||'').substring(0,5))+'","'+
+      (op.reason||'').replace(/"/g,"'")+'"\n';
+  });
+  var blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var link = document.createElement('a');
+  link.setAttribute('href', URL.createObjectURL(blob));
+  link.setAttribute('download','stock_usage_'+new Date().toISOString().split('T')[0]+'.csv');
+  link.style.visibility='hidden';
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
