@@ -2734,9 +2734,22 @@ async function dmLoadSwapRatio() {
         </div>
       </div>
 
-    </div>
+      <div class="nav-group" id="ng-adm-settings">
+        <div class="nav-group-hdr" onclick="navToggle('ng-adm-settings')"><span class="nav-group-hdr-icon">⚙️</span><span class="nav-group-hdr-title">System Settings</span><span class="nav-group-chev">›</span></div>
+        <div class="nav-group-body">
+          <div class="nav-item adm" onclick="showPanel('adm-settings');admSettingsBoot()">
+            <div class="nav-icon" style="background:rgba(181,131,74,.1);color:var(--amber);">⚙️</div>
+            <div>
+              <div class="nav-title">System Settings</div>
+              <div class="nav-desc">Feature toggles &amp; admin controls</div>
+            </div>
+            <span id="cbu-nav-badge" style="display:none;margin-left:auto;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:800;background:rgba(64,145,108,.15);color:var(--green2);border:1px solid rgba(64,145,108,.25);">ON</span>
+          </div>
+        </div>
+      </div>
 
-    <!-- STOCK WIDGET - REMOVED COMPLETELY -->
+    </div>
+    <!-- END ADMIN NAV -->
 
     <div class="sidebar-footer"><div class="sidebar-footer-txt">OPay POS Inventory v1.0 · Role-Based</div></div>
   </div>
@@ -3083,6 +3096,102 @@ async function dmLoadSwapRatio() {
     <div class="panel" id="panel-adm-branches"><div class="page-label"><div class="op-chip adm">🏢 Assign Branches</div><div class="crumb">→ Link supervisors to branches</div></div><div class="card"><div class="card-header adm"><div class="card-icon adm">🏢</div><div><h2>Assign Branches to Supervisors</h2><p>Control which branches each supervisor oversees</p></div></div><div class="card-body"><div class="fg"><div class="fl"><span>Select Supervisor</span></div><select class="input" id="adm-sup-select" onchange="admLoadSupBranches()"><option value="">Select a supervisor…</option></select></div><div id="adm-branch-assign-wrap" style="display:none"><div class="divider-row"><div class="divider-line"></div><span class="divider-lbl">Assign Branches</span><div class="divider-line"></div></div><div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Select all branches this supervisor should oversee.</div><div class="branch-assign-grid" id="adm-branch-checkboxes"></div><button class="sub-btn" onclick="admSaveBranchAssign()" style="margin-top:16px;">🏢 Save Branch Assignment</button><div id="adm-assign-msg" style="margin-top:10px;font-size:12px;font-weight:600;"></div></div></div></div></div>
 
     <div class="panel" id="panel-adm-staff"><div class="page-label"><div class="op-chip adm">👥 All Staff</div><div class="crumb">→ Manage roles &amp; promotions</div></div><div class="card"><div class="card-header adm"><div class="card-icon adm">👥</div><div><h2>Staff Management</h2><p>All officers and supervisors — view city, branch, and change roles</p></div></div><div class="card-body"><div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;"><select class="input" id="staff-filter-role" style="width:140px;padding:6px 10px;" onchange="admRenderStaff()"><option value="">All Roles</option><option value="Officer">👮 Officers</option><option value="Supervisor">👔 Supervisors</option></select><select class="input" id="staff-filter-city" style="width:140px;padding:6px 10px;" onchange="admRenderStaff()"><option value="">🌆 All Cities</option></select><select class="input" id="staff-filter-branch" style="width:160px;padding:6px 10px;" onchange="admRenderStaff()"><option value="">🏢 All Branches</option></select><input class="input ed-search" id="staff-search" placeholder="Search by name…" oninput="admRenderStaff()" style="flex:1;min-width:140px;"><button class="act-btn act-edit" onclick="admLoadStaff()" style="padding:6px 14px;">↺ Refresh</button><button class="act-btn" style="padding:6px 14px;color:var(--green2);border-color:rgba(16,185,129,.4);" onclick="admShowCreateOfficer()">+ Create Officer</button></div><div id="adm-create-officer-form" style="display:none;background:var(--bg3);border:1.5px solid rgba(16,185,129,.25);border-radius:12px;padding:16px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:var(--green2);margin-bottom:12px;">➕ Create New Officer / Supervisor</div><div class="form-grid" style="margin-bottom:12px;"><div class="fg" style="margin:0;"><div class="fl"><span>Full Name</span></div><input class="input" id="create-off-name" placeholder="e.g. Amina Hassan"></div><div class="fg" style="margin:0;"><div class="fl"><span>Password</span></div><div style="display:flex;gap:8px;align-items:center;"><input class="input" id="create-off-pass" placeholder="Set a password" type="text" style="flex:1;"><button class="bval-btn" onclick="admGenPassword()" style="white-space:nowrap;">🎲 Generate</button></div></div></div><div class="form-grid" style="margin-bottom:12px;"><div class="fg" style="margin:0;"><div class="fl"><span>Role</span></div><select class="input" id="create-off-role"><option value="Officer">👮 Officer</option><option value="Supervisor">👔 Supervisor</option></select></div><div class="fg" style="margin:0;"><div class="fl"><span>Branch</span></div><select class="input" id="create-off-branch"><option value="">Select branch…</option></select></div></div><div id="adm-create-off-msg" style="font-size:11px;font-weight:700;min-height:18px;margin-bottom:8px;"></div><div style="display:flex;gap:8px;"><button class="sub-btn" id="create-off-btn" onclick="admCreateOfficer()" style="padding:10px 24px;">✓ Create Account</button><button class="act-btn act-edit" onclick="document.getElementById('adm-create-officer-form').style.display='none'">Cancel</button></div></div><div id="staff-count" style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px;"></div><div id="staff-table-wrap"><div class="ops-empty">Click Refresh to load staff.</div></div></div></div></div>
+
+    <!-- ═══════════════════ ADMIN SYSTEM SETTINGS PANEL ═══════════════════ -->
+    <div class="panel" id="panel-adm-settings">
+      <div class="page-label">
+        <div class="op-chip adm">⚙️ System Settings</div>
+        <div class="crumb">→ Admin-only system-wide toggles</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header adm">
+          <div class="card-icon adm">⚙️</div>
+          <div>
+            <h2>System Settings</h2>
+            <p>Control system-wide features. Changes take effect immediately for all users on this device.</p>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <!-- ── Cross-Branch Unassign Toggle ─────────────────────────────── -->
+          <div style="border:2px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:18px;background:var(--surface);transition:border-color .25s;" id="cbu-setting-card">
+
+            <!-- Header row -->
+            <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+              <div style="flex:1;min-width:200px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+                  <span style="font-size:20px;">🔀</span>
+                  <span style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--text);">Cross-Branch Unassign</span>
+                  <span id="cbu-status-badge" style="padding:2px 10px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:.5px;"></span>
+                </div>
+                <p style="font-size:12px;color:var(--muted);line-height:1.7;margin:0;">
+                  When <strong style="color:var(--green2);">ON</strong> — an officer can unassign a POS that was originally assigned from <em>another branch</em>. The system will:
+                </p>
+                <ul style="font-size:11px;color:var(--text2);margin:8px 0 0 18px;line-height:2;">
+                  <li>Delete the SN from the <strong>assigned (original) branch's</strong> deployed records</li>
+                  <li>Remove the SN from the <strong>original branch's</strong> stock table</li>
+                  <li>Add the SN to the <strong>unassigning officer's branch</strong> stock as Available</li>
+                  <li>Invalidate caches for <strong>both branches</strong> in real-time</li>
+                  <li>Log the operation noting the cross-branch origin</li>
+                </ul>
+                <p style="font-size:12px;color:var(--muted);line-height:1.7;margin:8px 0 0;">
+                  When <strong style="color:var(--rose);">OFF</strong> — cross-branch SNs are <strong>blocked</strong>. Officers must unassign from the SN's home branch only.
+                </p>
+              </div>
+
+              <!-- Toggle switch -->
+              <div style="display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;padding-top:4px;">
+                <div id="cbu-toggle-wrap"
+                     onclick="admToggleCrossBranchUnassign()"
+                     style="width:68px;height:34px;border-radius:17px;cursor:pointer;position:relative;transition:background .25s,box-shadow .25s;border:2px solid transparent;"
+                     title="Click to toggle">
+                  <div id="cbu-toggle-knob"
+                       style="position:absolute;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:left .25s;"></div>
+                </div>
+                <span id="cbu-toggle-label" style="font-size:10px;font-weight:800;letter-spacing:.5px;"></span>
+              </div>
+            </div>
+
+            <!-- Activity log line -->
+            <div id="cbu-activity-log" style="margin-top:16px;padding:10px 14px;border-radius:9px;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--muted);display:none;"></div>
+
+            <!-- Action buttons -->
+            <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;">
+              <button id="cbu-on-btn"
+                      onclick="admSetCrossBranchUnassign(true)"
+                      style="padding:10px 22px;border-radius:10px;border:2px solid rgba(64,145,108,.4);background:rgba(64,145,108,.07);color:var(--green2);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;">
+                ✅ Enable Cross-Branch Unassign
+              </button>
+              <button id="cbu-off-btn"
+                      onclick="admSetCrossBranchUnassign(false)"
+                      style="padding:10px 22px;border-radius:10px;border:2px solid rgba(192,57,43,.35);background:rgba(192,57,43,.06);color:var(--rose);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;">
+                ⛔ Disable Cross-Branch Unassign
+              </button>
+            </div>
+          </div>
+
+          <!-- ── Info note ─────────────────────────────────────────────────── -->
+          <div style="padding:12px 16px;background:rgba(26,111,168,.06);border:1.5px solid rgba(26,111,168,.18);border-radius:10px;font-size:11px;color:var(--sky);line-height:1.75;">
+            🌐 <strong>Global setting — stored in the database.</strong> When you toggle this, the change applies to <strong>every officer on every device</strong> within ~60 seconds. No action needed on individual devices.<br><br>
+            ⚠️ <strong>One-time setup required:</strong> Run the SQL below in your Supabase SQL Editor if you haven't already:
+            <pre style="margin:8px 0 0;padding:10px 12px;background:rgba(0,0,0,.18);border-radius:8px;font-size:10px;color:#A7E3C0;font-family:monospace;white-space:pre-wrap;line-height:1.7;">CREATE TABLE IF NOT EXISTS app_settings (
+  key        text PRIMARY KEY,
+  value      text NOT NULL DEFAULT 'false',
+  updated_by text,
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "anon_rw" ON app_settings FOR ALL USING (true) WITH CHECK (true);
+INSERT INTO app_settings (key, value)
+  VALUES ('cross_branch_unassign', 'false')
+  ON CONFLICT (key) DO NOTHING;</pre>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- END ADMIN SYSTEM SETTINGS PANEL -->
 
     <div class="panel" id="panel-stock-inv">
       <div class="page-label"><div class="op-chip inv">🔍 Stock Inventory</div><div class="crumb">→ Browse SNs by branch &amp; category</div></div>
@@ -3649,7 +3758,11 @@ var APP_CONFIG = {
 // Converts raw JS/network/DB errors into plain language for officers.
 // Technical details are logged to the console only; never shown to users.
 function friendlyErr(e) {
-  var m = (e && (friendlyErr(e) || e.toString())) || "";
+  var m = "";
+  if (!e) m = "";
+  else if (typeof e === "string") m = e;
+  else if (e && typeof e.message === "string") m = e.message;
+  else { try { m = String(e); } catch(_) { m = ""; } }
   var ml = m.toLowerCase();
   if (!m || ml === "[object object]") return "Something went wrong — please try again.";
   if (ml.indexOf("failed to fetch") !== -1 ||
@@ -3686,6 +3799,55 @@ var SUPA_BRANCH = null;
 var SUPA_OFFICER = null;
 var STOCK_IV = null;
 var ALL_BRANCHES = [];
+
+// ── Cross-Branch Unassign Feature Flag ────────────────────────────────────
+// Stored in Supabase `app_settings` table (key = "cross_branch_unassign").
+// Local in-memory cache (_CBU_CACHE) is refreshed every 60 s so changes
+// made by an admin on any device propagate to all officers within a minute.
+// localStorage is NO longer used — DB is the single source of truth.
+var CROSS_BRANCH_UNASSIGN_ENABLED = false;   // live in-memory value
+var _CBU_CACHE = { value: false, fetchedAt: 0, fetching: false };
+var _CBU_TTL   = 60000; // ms — re-fetch from DB every 60 s
+
+// Read from DB (with cache). Returns a Promise<boolean>.
+async function getCrossBranchUnassign() {
+  var now = Date.now();
+  if (!_CBU_CACHE.fetching && (now - _CBU_CACHE.fetchedAt) > _CBU_TTL) {
+    _CBU_CACHE.fetching = true;
+    try {
+      var res  = await sf("app_settings?select=value&key=eq.cross_branch_unassign&limit=1");
+      var rows = await res.json();
+      var val  = Array.isArray(rows) && rows.length ? rows[0].value === "true" : false;
+      _CBU_CACHE.value     = val;
+      _CBU_CACHE.fetchedAt = Date.now();
+      CROSS_BRANCH_UNASSIGN_ENABLED = val;
+    } catch (e) {
+      // Network error — fall back to last known value
+    } finally {
+      _CBU_CACHE.fetching = false;
+    }
+  }
+  return _CBU_CACHE.value;
+}
+
+// Write to DB and immediately update the in-memory cache.
+async function setCrossBranchUnassign(val) {
+  var strVal = val ? "true" : "false";
+  // Upsert — works whether the row exists or not
+  await fetch(SUPA_URL + "/rest/v1/app_settings", {
+    method:  "POST",
+    headers: Object.assign(authHJ(), { "Prefer": "resolution=merge-duplicates" }),
+    body:    JSON.stringify({
+      key:        "cross_branch_unassign",
+      value:      strVal,
+      updated_by: SUPA_OFFICER ? SUPA_OFFICER.full_name : "Admin",
+      updated_at: new Date().toISOString()
+    })
+  });
+  _CBU_CACHE.value     = !!val;
+  _CBU_CACHE.fetchedAt = Date.now();
+  CROSS_BRANCH_UNASSIGN_ENABLED = !!val;
+}
 
 function asset() { return APP_CONFIG.asset; }
 function assets() { return APP_CONFIG.assetPlural; }
@@ -4066,7 +4228,7 @@ var NAV_GROUP_MAP = {
   "adm-staff":"ng-adm-staff","sup-ops":"ng-adm-staff",
   "adm-kpi":"ng-adm-rep","adm-analytics":"ng-adm-rep","adm-broadcast":"ng-adm-rep",
   "adm-approvals":"ng-adm-stk","adm-stock-pending":"ng-adm-stk",
-  "adm-branches":"ng-adm-stk","create-branch":"ng-adm-stk","adm-datamachine":"ng-adm-datamachine"
+  "adm-branches":"ng-adm-stk","create-branch":"ng-adm-stk","adm-datamachine":"ng-adm-datamachine","adm-settings":"ng-adm-settings"
 };
 
 function clearAllForms() {
@@ -4196,12 +4358,6 @@ async function cacheFetch(suffix) {
 }
 
 // Cache size guard: logs warning if branch stock exceeds fetch limit
-function _cacheWarnIfTruncated(suffix, tableName, fetchedCount) {
-  if (fetchedCount >= 5000) {
-    console.warn("[OPayPOS] Cache may be truncated for", tableName, "— fetched", fetchedCount, "rows (limit=5000). SNs beyond limit won't validate correctly.");
-  }
-}
-
 function cacheInvalidate(suffix) { delete BRANCH_CACHE[suffix]; }
 
 // Warn in console if stock cache may be truncated (branch has >5000 SNs in one category)
@@ -4606,35 +4762,67 @@ async function doLogin() {
   var btn = document.getElementById("li-btn");
   btn.disabled = true; btn.textContent = "Verifying…";
   authMsg("li", "inf", "Checking credentials…");
-  var hashed = await sha256(pass);
+
+  // Hash password and fire the officers query in parallel — saves one round-trip
+  var hashed;
+  var officersFetch;
   try {
-    // can_add_stock fetched separately so a missing column never blocks login
-    var query = "officers?select=id,full_name,password_hash,status,role,branch_id&full_name=ilike." + encodeURIComponent(name);
-    var res = await sf(query);
+    // Start both at the same time: sha256 (CPU) + DB query (network) overlap
+    var hashPromise = sha256(pass);
+    // Include can_add_stock in the main query — eliminates the separate 2nd query
+    var query = "officers?select=id,full_name,password_hash,status,role,branch_id,can_add_stock" +
+                "&full_name=ilike." + encodeURIComponent(name);
+    officersFetch = sf(query);
+    hashed = await hashPromise;
+  } catch (e) {
+    authMsg("li", "err", "Hashing error — please retry.");
+    btn.disabled = false; btn.textContent = "Sign In →"; return;
+  }
+
+  try {
+    var res      = await officersFetch;
     var officers = await res.json();
+
     if (!Array.isArray(officers)) {
-      var errMsg = (officers && "Something went wrong — please try again.") ? "Something went wrong — please try again." : "Server unavailable — please try again in a moment.";
-      authMsg("li", "err", errMsg); btn.disabled = false; btn.textContent = "Sign In →"; return;
+      authMsg("li", "err", "Something went wrong — please try again.");
+      btn.disabled = false; btn.textContent = "Sign In →"; return;
     }
-    if (!officers.length) { authMsg("li", "err", "No account found with that name."); btn.disabled = false; btn.textContent = "Sign In →"; return; }
+    if (!officers.length) {
+      authMsg("li", "err", "No account found with that name.");
+      btn.disabled = false; btn.textContent = "Sign In →"; return;
+    }
     var match = officers.find(function(o) { return o.password_hash === hashed; });
-    if (!match) { authMsg("li", "err", "Incorrect password."); btn.disabled = false; btn.textContent = "Sign In →"; return; }
-    if (match.status === "Pending") { authMsg("li", "inf", "Your account is awaiting approval."); btn.disabled = false; btn.textContent = "Sign In →"; return; }
-    if (match.status !== "Approved") { authMsg("li", "err", "Your account has been disabled."); btn.disabled = false; btn.textContent = "Sign In →"; return; }
-    // Fetch can_add_stock separately — ignored gracefully if column doesn't exist yet
-    var canAddStock = false;
-    try {
-      var casRes = await sf("officers?select=can_add_stock&id=eq." + match.id);
-      var casData = await casRes.json();
-      if (Array.isArray(casData) && casData.length) canAddStock = casData[0].can_add_stock === true;
-    } catch (_e) {}
-    var brRes = await sf("branches?select=id,name,code,table_suffix,city&id=eq." + match.branch_id);
+    if (!match) {
+      authMsg("li", "err", "Incorrect password.");
+      btn.disabled = false; btn.textContent = "Sign In →"; return;
+    }
+    if (match.status === "Pending") {
+      authMsg("li", "inf", "Your account is awaiting approval.");
+      btn.disabled = false; btn.textContent = "Sign In →"; return;
+    }
+    if (match.status !== "Approved") {
+      authMsg("li", "err", "Your account has been disabled.");
+      btn.disabled = false; btn.textContent = "Sign In →"; return;
+    }
+
+    // can_add_stock is now in the main query result — no extra round-trip needed
+    var canAddStock = match.can_add_stock === true;
+
+    // Fetch branch data (one query, already running)
+    var brRes    = await sf("branches?select=id,name,code,table_suffix,city&id=eq." + match.branch_id);
     var branches = await brRes.json();
-    var branch = (Array.isArray(branches) && branches[0]) || { name: "Unknown", code: "—", id: match.branch_id };
-    var session = { id: match.id, full_name: match.full_name, role: match.role, branch_id: match.branch_id, branch: branch, can_add_stock: canAddStock, loginAt: new Date().toISOString() };
+    var branch   = (Array.isArray(branches) && branches[0]) || { name: "Unknown", code: "—", id: match.branch_id };
+
+    var session = {
+      id: match.id, full_name: match.full_name, role: match.role,
+      branch_id: match.branch_id, branch: branch,
+      can_add_stock: canAddStock, loginAt: new Date().toISOString()
+    };
     try { localStorage.setItem(SESSION_KEY, JSON.stringify(session)); } catch (e) {}
     enterApp(session);
-  } catch (e) { authMsg("li", "err", "Connection unstable — please try again."); }
+  } catch (e) {
+    authMsg("li", "err", "Connection unstable — please try again.");
+  }
   btn.disabled = false; btn.textContent = "Sign In →";
 }
 
@@ -4726,7 +4914,34 @@ function doLogout() {
 }
 
 function checkSession() {
-  try { var raw = localStorage.getItem(SESSION_KEY); if (!raw) return false; var s = JSON.parse(raw); if (!s || !s.id) return false; enterApp(s); sf("officers?select=status&id=eq." + s.id).then(function(r) { return r.json(); }).then(function(rows) { if (!rows || !rows.length || rows[0].status !== "Approved") { alert("Your account has been disabled or removed. You will be logged out."); doLogout(); } }).catch(function() { }); return true; } catch (e) { return false; }
+  try {
+    var raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return false;
+    var s = JSON.parse(raw);
+    if (!s || !s.id) return false;
+
+    // Enter the app immediately from cached session — no blocking DB call
+    enterApp(s);
+
+    // Silently validate in the background; log out only if account is disabled
+    sf("officers?select=status,can_add_stock&id=eq." + s.id)
+      .then(function(r) { return r.json(); })
+      .then(function(rows) {
+        if (!rows || !rows.length || rows[0].status !== "Approved") {
+          alert("Your account has been disabled or removed. You will be logged out.");
+          doLogout();
+        } else {
+          // Sync can_add_stock in case it changed since last login
+          if (SUPA_OFFICER) {
+            SUPA_OFFICER.can_add_stock = rows[0].can_add_stock === true;
+            try { localStorage.setItem(SESSION_KEY, JSON.stringify(SUPA_OFFICER)); } catch (e) {}
+          }
+        }
+      })
+      .catch(function() { /* network hiccup — stay logged in */ });
+
+    return true;
+  } catch (e) { return false; }
 }
 
 // ════════════════════════════════════════════════════════════
@@ -5523,7 +5738,6 @@ async function sSubmit() {
 
 function sEdit() { if (OP_LOG.length) { var last = OP_LOG[OP_LOG.length - 1]; if (last && last.typeKey === "swp") _EDIT_OP.s = last; } document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; }
 function sNew() { delete _EDIT_OP.s; document.getElementById("s-form").style.display = ""; document.getElementById("s-success").style.display = "none"; sClear(); }
-function sClear() { S.swapType = null; document.querySelectorAll(".swap-type-btn").forEach(function(b) { b.classList.remove("active"); }); var errEl = document.getElementById("s-type-err"); if (errEl) errEl.style.display = "none"; ["s-f-faulty","s-f-replace","s-f-cust","s-f-tid","s-f-agent"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; }); var sfm = document.getElementById("s-f-faulty-model"); if (sfm) sfm.value = ""; }
 
 // ════════════════════════════════════════════════════════════
 //  return.js - with DYNAMIC BULK ROWS
@@ -5666,7 +5880,6 @@ async function rSubmit() {
 
 function rEdit() { document.getElementById("r-form").style.display = ""; document.getElementById("r-success").style.display = "none"; }
 function rNew() { document.getElementById("r-form").style.display = ""; document.getElementById("r-success").style.display = "none"; rClear(); }
-function rClear() { document.getElementById("r-f-merchant").value = ""; var rTid = document.getElementById("r-f-tid"); if (rTid) rTid.value = ""; document.getElementById("r-f-reason").value = ""; var rMod = document.getElementById("r-f-model"); if (rMod) rMod.value = ""; document.getElementById("r-sn-rows").innerHTML = ""; document.getElementById("r-bulk-paste-area").value = ""; R_BULK_ROWS = []; rRenderBulkRows(); R.snCount = 0; R.bulkGood = []; document.querySelectorAll("#panel-ret .toggle-btn").forEach(function(b) { b.classList.remove("active"); }); R.condition = "normal"; document.querySelector("#panel-ret .toggle-btn").classList.add("active"); rAddRow(); }
 
 // ════════════════════════════════════════════════════════════
 //  atfs.js - with DYNAMIC BULK ROWS
@@ -5741,7 +5954,6 @@ async function atSubmit() {
 
 function atEdit() { document.getElementById("at-form").style.display = ""; document.getElementById("at-success").style.display = "none"; }
 function atNew() { document.getElementById("at-form").style.display = ""; document.getElementById("at-success").style.display = "none"; atClear(); }
-function atClear() { document.getElementById("at-f-reason").value = ""; document.getElementById("at-sn-rows").innerHTML = ""; document.getElementById("at-bulk-paste-area").value = ""; AT_BULK_ROWS = []; atRenderBulkRows(); AT.snCount = 0; AT.bulkGood = []; document.querySelectorAll("#panel-atfs .toggle-btn").forEach(function(b) { b.classList.remove("active"); }); AT.origin = null; atAddRow(); }
 
 // ════════════════════════════════════════════════════════════
 //  receive.js - with DYNAMIC BULK ROWS
@@ -5775,7 +5987,6 @@ function rcvClearBulkRows() { RCV_BULK_ROWS = []; document.getElementById("rcv-b
 async function rcvSubmit() { if (!lockSubmit("rcv-sub-btn")) return; try { var cat = RCV.category; var off = (document.getElementById("rcv-officer") || {}).value || ""; var supplier = (document.getElementById("rcv-supplier") || {}).value || ""; var model = (document.getElementById("rcv-model") || {}).value || ""; off = off.trim(); supplier = supplier.trim(); model = model.trim(); if (!model) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Please select a POS type."); } if (!cat) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Select a stock category."); } if (!off) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Officer name required."); } if (!supplier) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Supplier required."); } var targetBranchId = SUPA_BRANCH.id; var suffix = SUPA_BRANCH.table_suffix || "hq"; var targetName = SUPA_BRANCH.name; if (SUPA_OFFICER.role === "Admin") { var sel = document.getElementById("rcv-branch-select"); if (!sel || !sel.value) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Select a target branch."); } targetBranchId = sel.value; var opt = sel.options[sel.selectedIndex]; suffix = safeSuffix(opt.dataset.suffix, "hq"); targetName = opt.dataset.name || opt.textContent; } else { var sel2 = document.getElementById("rcv-sup-branch-select"); if (sel2 && sel2.value) { targetBranchId = sel2.value; var opt2 = sel2.options[sel2.selectedIndex]; suffix = safeSuffix(opt2.dataset.suffix, suffix); targetName = opt2.textContent; } } var sns = []; if (RCV.mode === "bulk") { if (!RCV_BULK_ROWS.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Validate SNs first."); } sns = RCV_BULK_ROWS.filter(function(r) { return r.valid; }).map(function(r) { return r.sn; }); } else if (RCV.mode === "csv") { if (!RCV.bulkGood.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("Validate SNs first."); } sns = RCV.bulkGood; } else { document.querySelectorAll("input[id^='rcv-sn-']").forEach(function(inp) { var idx = inp.id.replace("rcv-sn-", ""); var st = document.getElementById("rcv-st-" + idx); var v = inp.value.trim().toUpperCase(); if (v && st && st.className.includes("ok")) sns.push(v); }); if (!sns.length) { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("No validated SNs. Enter SNs and wait for ✓ check."); } } if (!suffix || suffix === "null" || suffix === "undefined") { unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("This branch has no table suffix configured in the database."); } var table = cat === "Brand New" ? "stock_bn_" + suffix : cat === "Repaired" ? "stock_rp_" + suffix : cat === "Faulty" ? "stock_ft_" + suffix : "stock_rt_" + suffix; var isFaulty = cat === "Faulty"; var rows = sns.map(function(sn) { var row = { sn: sn, model: model || null, branch_id: targetBranchId, officer: off || null }; if (isFaulty) { row.status = "Faulty"; row.source = "Received"; row.reason = supplier ? "Received from: " + supplier : "Received as faulty"; } else { row.status = "Available"; } return row; }); setConn("loading", "Saving " + sns.length + " " + assets() + "…"); setConn("loading", "Checking for duplicates…"); var cache2 = await cacheFetch(suffix); var dupConflicts = []; if (cache2) { var allExist = {}; (cache2.rbn||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.bn||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.rp||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.rt||[]).forEach(function(r){allExist[r.sn]=1;}); (cache2.faulty||[]).forEach(function(r){allExist[r.sn]=1;}); dupConflicts = sns.filter(function(sn){return allExist[sn];}); } if (dupConflicts.length) { setConn("err", "Duplicate SNs"); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("⚠ " + dupConflicts.length + " SN(s) already exist in this branch's stock:\n\n" + dupConflicts.slice(0,10).join(", ") + (dupConflicts.length > 10 ? "\n…and " + (dupConflicts.length-10) + " more" : "") + "\n\nRemove them and retry."); } setConn("loading", "Saving " + sns.length + " " + assets() + " in batches…"); var H2 = authH(); var batchErrs = await batchPost(SUPA_URL + "/rest/v1/" + table, rows, H2, 500); if (batchErrs.length) { setConn("err", "Partial errors"); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); return alert("⚠ Some batches failed:\n" + batchErrs.join("\n")); } setConn("ok", "Saved!"); recordOp({ type: "Receive Stock", typeKey: "rcv", sns: sns, officer: off, category: cat, supplier: supplier }); document.getElementById("rcv-suc-summary").innerHTML = ssSummary(sns, off, cat + " → " + targetName + " · " + supplier, assets() + " Received"); document.getElementById("rcv-form").style.display = "none"; document.getElementById("rcv-success").style.display = "block"; debouncedFetchLiveStock(); cacheInvalidate(suffix); var logRows2 = sns.map(function(sn){ return { operation: "Receive Stock (" + cat + ")", sn: sn, model: model || null, officer: off, branch_id: targetBranchId, reason: "Source: " + supplier, date: new Date().toISOString().split("T")[0], time: new Date().toTimeString().split(" ")[0] }; }); batchPost(SUPA_URL + "/rest/v1/daily_operations", logRows2, H2, 200).catch(function(){}); setTimeout(function(){ setConn("ok","Connected ✓"); }, 3000); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); } catch (e) { setConn("err", friendlyErr(e)); alert("" + friendlyErr(e)); unlockSubmit("rcv-sub-btn", "📥 Confirm Stock Receipt"); } }
 
 function rcvNew() { document.getElementById("rcv-form").style.display = ""; document.getElementById("rcv-success").style.display = "none"; rcvClear(); }
-function rcvClear() { document.getElementById("rcv-officer").value = SUPA_OFFICER ? SUPA_OFFICER.full_name : ""; document.getElementById("rcv-supplier").value = ""; document.getElementById("rcv-model").value = ""; var csvInfo = document.getElementById("rcv-csv-info"); var csvRes = document.getElementById("rcv-csv-results"); if (csvInfo) csvInfo.innerHTML = ""; if (csvRes) csvRes.innerHTML = ""; RCV.csvData = []; document.getElementById("rcv-sn-rows").innerHTML = ""; document.getElementById("rcv-bulk-paste-area").value = ""; RCV_BULK_ROWS = []; rcvRenderBulkRows(); RCV.snCount = 0; RCV.bulkGood = []; RCV.category = null; document.querySelectorAll("#panel-rcv .toggle-btn").forEach(function(b) { b.classList.remove("active"); }); rcvAddRow(); }
 
 function rcvCsvDrop(e) { e.preventDefault(); document.getElementById("rcv-csv-dropzone").style.borderColor = "rgba(34,197,94,.35)"; var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (file) rcvParseCsv(file); }
 function rcvCsvLoad(input) { var file = input && input.files && input.files[0]; if (file) rcvParseCsv(file); input.value = ""; }
@@ -5785,33 +5996,6 @@ function rcvParseCsv(file) { var infoEl = document.getElementById("rcv-csv-info"
 //  unassign.js - with DYNAMIC BULK ROWS
 // ════════════════════════════════════════════════════════════
 
-var UA = { mode: "single", bulkGood: [], snCount: 0 };
-var UA_BULK_ROWS = [];
-
-function uaBoot() { UA.snCount = 0; uaAddRow(); }
-function uaAddRow() { UA.snCount++; var idx = UA.snCount; var row = document.createElement("div"); row.className = "sn-row"; row.id = "ua-row-" + idx; row.innerHTML = "<input class='sn-inp' id='ua-sn-" + idx + "' placeholder='POS-" + String(idx).padStart(5,"0") + "' oninput=\"this.value=this.value.toUpperCase();document.getElementById('ua-st-" + idx + "').className='sn-status empty';document.getElementById('ua-st-" + idx + "').textContent='—'\" onblur='uaValidateSN(" + idx + ")'><span class='sn-status empty' id='ua-st-" + idx + "'>—</span><button class='scan-btn' onclick=\"scanOpen('ua-sn-" + idx + "','ua'," + idx + ",null)\">📷</button><button class='remove-btn' onclick=\"document.getElementById('ua-row-" + idx + "').remove()\">×</button>"; document.getElementById("ua-sn-rows").appendChild(row); }
-async function uaValidateSN(idx) { var inp = document.getElementById("ua-sn-" + idx); var st = document.getElementById("ua-st-" + idx); var row = document.getElementById("ua-row-" + idx); if (!inp || !st) return; var sn = (inp.value || "").trim().toUpperCase(); if (!sn) { st.className = "sn-status empty"; st.textContent = "—"; return; } st.className = "sn-status"; st.textContent = "…"; try { var res = await sf("deployed_assigned?select=sn,source,model,operation,agent_id,officer&sn=eq." + encodeURIComponent(sn) + "&branch_id=eq." + SUPA_BRANCH.id); var rows = await res.json(); if (!Array.isArray(rows) || !rows.length) { st.className = "sn-status err"; st.textContent = "✗ Not found in assigned POSs"; return; } var r = rows[0]; var op = (r.operation || "").toLowerCase(); if (op.includes("deploy") || op.includes("issue")) { st.className = "sn-status err"; st.textContent = "✗ Issued (not Assigned) — use Return instead"; return; } var isOtherOfficer = r.officer && r.officer !== SUPA_OFFICER.full_name; st.className = "sn-status ok"; st.textContent = "✓ Assigned" + (r.agent_id ? " · " + r.agent_id : "") + (r.model ? " · " + r.model : "") + (isOtherOfficer ? " · 👤 " + r.officer : ""); row.dataset.source = r.source || ""; row.dataset.model = r.model || ""; row.dataset.agentId = r.agent_id || ""; row.dataset.assignedOfficer = r.officer || ""; inp.dataset.validatedSn = sn; } catch (e) { st.className = "sn-status err"; st.textContent = "✗ " + friendlyErr(e); } }
-
-function uaSetMode(m) {
-  UA.mode = m;
-  document.getElementById("ua-single-mode").style.display = m === "single" ? "" : "none";
-  document.getElementById("ua-bulk-mode").style.display = m === "bulk" ? "" : "none";
-  if (m === "bulk") { UA_BULK_ROWS = []; uaRenderBulkRows(); }
-  document.querySelectorAll("#panel-unassign .mode-btn").forEach(function(b) { b.classList.toggle("active", (m === "single" && b.textContent.includes("Single")) || (m === "bulk" && b.textContent.includes("Bulk"))); });
-}
-
-async function uaParseAndValidate() { var rawText = document.getElementById("ua-bulk-area").value || ""; var sns = rawText.split(/[\n,]+/).map(function(s) { return s.trim().toUpperCase(); }).filter(Boolean); if (!sns.length) { alert("Paste at least one SN first."); return; } var container = document.getElementById("ua-bulk-results"); container.innerHTML = "<div style='padding:20px; text-align:center;'>Validating " + sns.length + " SNs...</div>"; var assigned = {}; try { var r = await sf("deployed_assigned?select=sn,source,model,agent_id,operation,officer&branch_id=eq." + SUPA_BRANCH.id + "&limit=5000"); var rows = await r.json(); rows.forEach(function(row) { var op = (row.operation || "").toLowerCase(); if (!op.includes("deploy") && !op.includes("issue")) assigned[row.sn] = row; }); } catch (e) {} UA_BULK_ROWS = sns.map(function(sn) { var hit = assigned[sn]; var isOtherOfficer = hit && hit.officer && hit.officer !== SUPA_OFFICER.full_name; return { sn: sn, valid: !!hit, msg: hit ? "✓ Assigned" + (hit.agent_id ? " · " + hit.agent_id : "") + (isOtherOfficer ? " · 👤 " + hit.officer : "") : "✗ Not found in assigned POSs", source: hit ? hit.source || "" : "", model: hit ? hit.model || "" : "", agentId: hit ? hit.agent_id || "" : "", assignedOfficer: hit ? hit.officer || "" : "" }; }); uaRenderBulkRows(); }
-
-function uaRenderBulkRows() { var container = document.getElementById("ua-bulk-results"); var summaryEl = document.getElementById("ua-bulk-summary-wrap"); if (!container) return; if (!UA_BULK_ROWS.length) { container.innerHTML = "<div style='padding:20px; text-align:center; color:var(--muted);'>No SNs loaded. Paste and validate.</div>"; if (summaryEl) summaryEl.innerHTML = ""; return; } var validRows = UA_BULK_ROWS.filter(function(r) { return r.valid; }); var invalidRows = UA_BULK_ROWS.filter(function(r) { return !r.valid; }); container.innerHTML = UA_BULK_ROWS.map(function(row, idx) { return "<div class='sn-row' data-idx='" + idx + "' style='border-left: 3px solid " + (row.valid ? "var(--green2)" : "var(--rose)") + ";'><input class='sn-inp' value='" + escHtml(row.sn) + "' onchange='uaUpdateSn(" + idx + ", this.value)' style='flex:2; font-weight:" + (row.valid ? "normal" : "bold") + "; color:" + (row.valid ? "var(--text)" : "var(--rose)") + ";'><span class='sn-status " + (row.valid ? "ok" : "err") + "' style='flex:1; text-align:center;'>" + row.msg + "</span><button class='remove-btn' onclick='uaRemoveBulkRow(" + idx + ")'>×</button></div>"; }).join(""); if (summaryEl) { summaryEl.innerHTML = "<div style='display:flex; justify-content:space-between; align-items:center;'><span>✅ <strong>" + validRows.length + "</strong> valid assigned SNs | ❌ <strong>" + invalidRows.length + "</strong> invalid | 📦 <strong>" + UA_BULK_ROWS.length + "</strong> total</span><button class='act-btn act-del' onclick='uaRemoveAllInvalid()' style='padding:4px 12px; font-size:11px;' " + (invalidRows.length === 0 ? "disabled" : "") + ">Remove All Invalid</button></div>" + (validRows.length > 0 ? "<div style='margin-top:8px; font-size:11px; color:var(--green2);'>Ready to unassign " + validRows.length + " POS" + (validRows.length === 1 ? "" : "s") + "</div>" : "<div style='margin-top:8px; font-size:11px; color:var(--rose);'>No valid assigned SNs. Please check and try again.</div>"); } var subBtn = document.getElementById("ua-sub-btn"); if (subBtn) { subBtn.disabled = validRows.length === 0; subBtn.textContent = validRows.length > 0 ? "↩ Unassign " + validRows.length + " POS" + (validRows.length === 1 ? "" : "s") : "↩ Confirm Unassign"; } }
-
-function uaUpdateSn(idx, newSn) { if (idx >= 0 && idx < UA_BULK_ROWS.length) { var newSnUpper = newSn.trim().toUpperCase(); if (newSnUpper !== UA_BULK_ROWS[idx].sn) { sf("deployed_assigned?select=sn,source,model,agent_id,operation,officer&sn=eq." + encodeURIComponent(newSnUpper) + "&branch_id=eq." + SUPA_BRANCH.id).then(function(r) { return r.json(); }).then(function(rows) { var hit = rows && rows[0]; var op = (hit && hit.operation || "").toLowerCase(); var valid = hit && !op.includes("deploy") && !op.includes("issue"); var isOtherOfficer = valid && hit.officer && hit.officer !== SUPA_OFFICER.full_name; UA_BULK_ROWS[idx] = { sn: newSnUpper, valid: valid, msg: valid ? "✓ Assigned" + (hit.agent_id ? " · " + hit.agent_id : "") + (isOtherOfficer ? " · 👤 " + hit.officer : "") : "✗ Not found in assigned POSs", source: hit ? hit.source || "" : "", model: hit ? hit.model || "" : "", agentId: hit ? hit.agent_id || "" : "", assignedOfficer: hit ? hit.officer || "" : "" }; uaRenderBulkRows(); }); } } }
-function uaRemoveBulkRow(idx) { if (idx >= 0 && idx < UA_BULK_ROWS.length) { UA_BULK_ROWS.splice(idx, 1); uaRenderBulkRows(); } }
-function uaRemoveAllInvalid() { UA_BULK_ROWS = UA_BULK_ROWS.filter(function(r) { return r.valid; }); uaRenderBulkRows(); }
-function uaClearBulkRows() { UA_BULK_ROWS = []; document.getElementById("ua-bulk-area").value = ""; uaRenderBulkRows(); }
-
-async function uaSubmit() { if (!lockSubmit("ua-sub-btn")) return; try { var off = SUPA_OFFICER.full_name; var agent = (document.getElementById("ua-f-agent").value || "").trim(); var reason = (document.getElementById("ua-f-reason").value || "").trim(); var items = []; if (UA.mode === "bulk") { if (!UA_BULK_ROWS.length) { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); return alert("Validate SNs first."); } items = UA_BULK_ROWS.filter(function(r) { return r.valid; }).map(function(r) { return { sn: r.sn, source: r.source, model: r.model, agentId: r.agentId, assignedOfficer: r.assignedOfficer || "" }; }); } else { document.querySelectorAll("input[id^='ua-sn-']").forEach(function(inp) { var sn = (inp.value || "").trim().toUpperCase(); var idx = inp.id.replace("ua-sn-", ""); var row = document.getElementById("ua-row-" + idx); if (sn && inp.dataset.validatedSn === sn) items.push({ sn: sn, source: row ? row.dataset.source || "" : "", model: row ? row.dataset.model || "" : "", agentId: row ? row.dataset.agentId || "" : "", assignedOfficer: row ? row.dataset.assignedOfficer || "" : "" }); }); } if (!items.length) { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); return alert("No valid Assigned POSs entered."); } var otherOfficerItems = items.filter(function(i) { return i.assignedOfficer && i.assignedOfficer !== off; }); if (otherOfficerItems.length) { var msg = "⚠ Warning: The following POS(s) were assigned by another officer(s):\n\n" + otherOfficerItems.map(function(i) { return i.sn + " (assigned by " + i.assignedOfficer + ")"; }).join("\n") + "\n\nDo you want to continue unassigning them?"; if (!confirm(msg)) { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); return; } } var sns = items.map(function(i) { return i.sn; }); var suffix = SUPA_BRANCH.table_suffix || "hq"; var branchId = SUPA_BRANCH.id; var t = branchTables(suffix); var H = authH(); var HJ = authHJ(); setConn("loading", "Unassigning " + items.length + " POS" + (items.length===1?"":"s") + "…"); var errors = []; await Promise.all(items.map(async function(item) { var enc = encodeURIComponent(item.sn); try { await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + enc + "&branch_id=eq." + branchId, { method: "DELETE", headers: H }); var srcTbl = item.source || t.bn; await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, { method: "PATCH", headers: HJ, body: JSON.stringify({ status: "Available" }) }); fetch(SUPA_URL + "/rest/v1/daily_operations", { method: "POST", headers: HJ, body: JSON.stringify({ operation: "Unassign", sn: item.sn, model: item.model || null, officer: off, branch_id: branchId, reason: (agent ? "MS/BD: " + agent + " · " : "") + (reason || "Unassigned"), date: new Date().toISOString().split("T")[0], time: new Date().toTimeString().split(" ")[0] }) }).catch(function(){}); } catch (e) { errors.push(item.sn + ": " + friendlyErr(e)); } })); cacheInvalidate(suffix); debouncedFetchLiveStock(); recordOp({ type: "Unassign", typeKey: "asg", sns: sns, officer: off, reason: reason }); setConn("ok", errors.length ? "Done with errors" : "Done ✓"); var sumHtml = "<div style='text-align:left;margin-top:12px;'><div class='ss-row'><span class='ss-key'>Operation</span><span class='ss-val'>↩ Unassigned</span></div><div class='ss-row'><span class='ss-key'>POSs</span><span class='ss-val ss-count'>" + items.length + "</span></div><div style='margin:8px 0;'>" + items.map(function(it) { return "<div style='display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2);'><span style='font-size:10px;color:var(--muted);font-weight:600;'>SN</span><span class='sn-tag' style='color:var(--sky);border-color:rgba(56,189,248,.25);'>" + escHtml(it.sn) + "</span></div>"; }).join("") + "</div><div class='ss-row'><span class='ss-key'>Officer</span><span class='ss-val'>" + escHtml(off) + "</span></div>" + (agent ? "<div class='ss-row'><span class='ss-key'>MS/BD Code</span><span class='ss-val'>" + escHtml(agent) + "</span></div>" : "") + (reason ? "<div class='ss-row'><span class='ss-key'>Reason</span><span class='ss-val'>" + escHtml(reason) + "</span></div>" : "") + "<div class='ss-row'><span class='ss-key'>Stock Status</span><span class='ss-val' style='color:var(--green2);font-weight:800;'>✓ Returned to Available</span></div></div>"; if (errors.length) sumHtml += "<div class='err-block'>⚠️ " + errors.length + " error(s):<br>" + errors.map(function(e){ return escHtml(e); }).join("<br>") + "</div>"; document.getElementById("ua-suc-summary").innerHTML = sumHtml; document.getElementById("ua-form").style.display = "none"; document.getElementById("ua-success").style.display = "block"; setTimeout(function(){ setConn("ok","Connected ✓"); }, 3000); } catch (e) { setConn("err", friendlyErr(e)); alert("" + friendlyErr(e)); } finally { unlockSubmit("ua-sub-btn", "↩ Confirm Unassign"); } }
-function uaClear() { document.getElementById("ua-f-agent").value = ""; document.getElementById("ua-f-reason").value = ""; document.getElementById("ua-sn-rows").innerHTML = ""; document.getElementById("ua-bulk-area").value = ""; UA_BULK_ROWS = []; uaRenderBulkRows(); UA.snCount = 0; UA.bulkGood = []; uaAddRow(); }
-function uaNew() { document.getElementById("ua-form").style.display = ""; document.getElementById("ua-success").style.display = "none"; uaClear(); }
 // ════════════════════════════════════════════════════════════
 //  LOW STOCK ALERTS PANEL
 // ════════════════════════════════════════════════════════════
@@ -10153,6 +10337,9 @@ async function pastOpsExport() {
 
 // ── Clear functions for all operations ────────────────────────────────
 function sClear() {
+  S.swapType = null;
+  document.querySelectorAll(".swap-type-btn").forEach(function(b) { b.classList.remove("active"); });
+  var errEl = document.getElementById("s-type-err"); if (errEl) errEl.style.display = "none";
   ["s-f-faulty","s-f-replace","s-f-cust","s-f-tid","s-f-agent"].forEach(function(id) {
     var el = document.getElementById(id); if (el) el.value = "";
   });
@@ -10985,17 +11172,39 @@ async function uaSubmit() {
       return alert("No valid Assigned POSs entered.");
     }
 
-    // ── Cross-branch warning ──
+    // ── Cross-branch detection ──────────────────────────────────────────────
     var crossBranchItems = items.filter(function(i) {
       return i.origBranchId && i.origBranchId !== SUPA_BRANCH.id;
     });
+
+    var isCrossBranchEnabled = await getCrossBranchUnassign();
+
     if (crossBranchItems.length) {
-      var msg = "⚠ Warning: The following POS(s) were assigned from another branch:\n\n" +
+      if (!isCrossBranchEnabled) {
+        // Cross-branch unassign is DISABLED — block the operation
+        unlockSubmit("ua-sub-btn", "↩ Confirm Unassign");
+        alert(
+          "⛔ Cross-Branch Unassign is currently DISABLED.\n\n" +
+          "The following POS(s) belong to another branch and cannot be unassigned here:\n\n" +
+          crossBranchItems.map(function(i) {
+            return "• " + i.sn + " (from " + (i.origBranchName || i.origBranchId) + ")";
+          }).join("\n") +
+          "\n\nAsk your Admin to enable Cross-Branch Unassign, or perform this action from the originating branch."
+        );
+        return;
+      }
+      // Cross-branch unassign is ENABLED — confirm before proceeding
+      var crossMsg = "⚠️ Cross-Branch Unassign is ENABLED.\n\n" +
+        "The following POS(s) were assigned from another branch:\n\n" +
         crossBranchItems.map(function(i) {
-          return i.sn + " (from " + (i.origBranchName || i.origBranchId) + ")";
+          return "• " + i.sn + " (from " + (i.origBranchName || i.origBranchId) + ")";
         }).join("\n") +
-        "\n\nDo you want to continue unassigning?";
-      if (!confirm(msg)) {
+        "\n\nThis will:\n" +
+        "  1. Remove the SN from the original branch's assigned records\n" +
+        "  2. Remove the SN from the original branch's stock\n" +
+        "  3. Add the SN to YOUR branch's stock as Available\n\n" +
+        "Continue?";
+      if (!confirm(crossMsg)) {
         unlockSubmit("ua-sub-btn", "↩ Confirm Unassign");
         return;
       }
@@ -11007,59 +11216,114 @@ async function uaSubmit() {
     var t        = branchTables(suffix);
     var H  = authH();
     var HJ = authHJ();
+    var extraSuffixesToInvalidate = [];  // collect other branches to invalidate cache
 
     setConn("loading", "Unassigning " + items.length + " POS" + (items.length===1?"":"s") + "…");
     var errors = [];
 
     await Promise.all(items.map(async function(item) {
       var enc = encodeURIComponent(item.sn);
+      var origBranchId = item.origBranchId || branchId;
+      var isCross = isCrossBranchEnabled && item.origBranchId && item.origBranchId !== branchId;
+
       try {
-        // 1. Delete from deployed_assigned at the ORIGINAL branch
-        var origBranchId = item.origBranchId || branchId;
+        // ── STEP 1: Delete from deployed_assigned at the ORIGINAL branch ──────
         await fetch(SUPA_URL + "/rest/v1/deployed_assigned?sn=eq." + enc +
           "&branch_id=eq." + origBranchId, { method: "DELETE", headers: H });
 
-        // 2. Add to current officer's branch inventory (regardless of original branch)
-        var srcTbl = uaMapSourceToBranchTbl(item.source, t);
-        // Check if SN already exists in current branch stock, then PATCH; otherwise POST
-        var existsRes = await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc + "&limit=1", { headers: H });
-        var existsRows = await existsRes.json();
-        if (existsRows && existsRows.length > 0) {
-          await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, {
-            method:  "PATCH",
-            headers: HJ,
-            body:    JSON.stringify({ status: "Available" })
-          });
-        } else {
-          await fetch(SUPA_URL + "/rest/v1/" + srcTbl, {
-            method:  "POST",
-            headers: HJ,
-            body:    JSON.stringify({ sn: item.sn, model: item.model || "", status: "Available" })
-          });
-        }
+        if (isCross) {
+          // ── CROSS-BRANCH PATH ─────────────────────────────────────────────
+          // Resolve the originating branch's table suffix from ALL_BRANCHES
+          var origBranchData = ALL_BRANCHES.find(function(b) { return b.id === origBranchId; });
+          var origSuffix = origBranchData ? (origBranchData.table_suffix || "hq") : "hq";
+          var origT = branchTables(origSuffix);
 
-        // 3. Log to daily_operations under current officer's branch
-        fetch(SUPA_URL + "/rest/v1/daily_operations", {
-          method:  "POST",
-          headers: HJ,
-          body:    JSON.stringify({
-            operation: "Unassign",
-            sn:        item.sn,
-            model:     item.model || null,
-            officer:   off,
-            branch_id: branchId,
-            reason:    (agent ? "MS/BD: " + agent + " · " : "") + (reason || "Unassigned") +
-                       (item.origBranchName ? " [orig: " + item.origBranchName + "]" : ""),
-            date:      new Date().toISOString().split("T")[0],
-            time:      new Date().toTimeString().split(" ")[0]
-          })
-        }).catch(function(){});
+          // STEP 2a: Remove (or mark unavailable) from ORIGINATING branch's stock table
+          //          so Branch A no longer shows this SN in their inventory
+          var origSrcTbl = uaMapSourceToBranchTbl(item.source, origT);
+          // Try to delete from originating branch's source stock table
+          await fetch(SUPA_URL + "/rest/v1/" + origSrcTbl + "?sn=eq." + enc, {
+            method: "DELETE", headers: H
+          }).catch(function(){});
+
+          // Track the orig branch suffix so we can invalidate its cache too
+          if (origSuffix && !extraSuffixesToInvalidate.includes(origSuffix)) {
+            extraSuffixesToInvalidate.push(origSuffix);
+          }
+
+          // STEP 2b: Add to CURRENT (unassigning) officer's branch stock as Available
+          var destTbl = uaMapSourceToBranchTbl(item.source, t);
+          var existsRes = await fetch(SUPA_URL + "/rest/v1/" + destTbl + "?sn=eq." + enc + "&limit=1", { headers: H });
+          var existsRows = await existsRes.json();
+          if (existsRows && existsRows.length > 0) {
+            await fetch(SUPA_URL + "/rest/v1/" + destTbl + "?sn=eq." + enc, {
+              method: "PATCH", headers: HJ,
+              body: JSON.stringify({ status: "Available" })
+            });
+          } else {
+            await fetch(SUPA_URL + "/rest/v1/" + destTbl, {
+              method: "POST", headers: HJ,
+              body: JSON.stringify({ sn: item.sn, model: item.model || null, status: "Available", officer: off })
+            });
+          }
+
+          // STEP 3: Log daily_operation at CURRENT branch, noting the cross-branch origin
+          fetch(SUPA_URL + "/rest/v1/daily_operations", {
+            method: "POST", headers: HJ,
+            body: JSON.stringify({
+              operation: "Unassign",
+              sn:        item.sn,
+              model:     item.model || null,
+              officer:   off,
+              branch_id: branchId,
+              reason:    (agent ? "MS/BD: " + agent + " · " : "") +
+                         (reason || "Cross-Branch Unassign") +
+                         " [cross-branch from: " + (item.origBranchName || origBranchId) + "]",
+              date: new Date().toISOString().split("T")[0],
+              time: new Date().toTimeString().split(" ")[0]
+            })
+          }).catch(function(){});
+
+        } else {
+          // ── SAME-BRANCH PATH (original logic) ────────────────────────────
+          // STEP 2: Update status to Available in the same branch's source stock
+          var srcTbl = uaMapSourceToBranchTbl(item.source, t);
+          var existsRes2 = await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc + "&limit=1", { headers: H });
+          var existsRows2 = await existsRes2.json();
+          if (existsRows2 && existsRows2.length > 0) {
+            await fetch(SUPA_URL + "/rest/v1/" + srcTbl + "?sn=eq." + enc, {
+              method: "PATCH", headers: HJ,
+              body: JSON.stringify({ status: "Available" })
+            });
+          } else {
+            await fetch(SUPA_URL + "/rest/v1/" + srcTbl, {
+              method: "POST", headers: HJ,
+              body: JSON.stringify({ sn: item.sn, model: item.model || null, status: "Available" })
+            });
+          }
+          // STEP 3: Log daily_operation
+          fetch(SUPA_URL + "/rest/v1/daily_operations", {
+            method: "POST", headers: HJ,
+            body: JSON.stringify({
+              operation: "Unassign",
+              sn:        item.sn,
+              model:     item.model || null,
+              officer:   off,
+              branch_id: branchId,
+              reason:    (agent ? "MS/BD: " + agent + " · " : "") + (reason || "Unassigned"),
+              date: new Date().toISOString().split("T")[0],
+              time: new Date().toTimeString().split(" ")[0]
+            })
+          }).catch(function(){});
+        }
       } catch (e) {
         errors.push(item.sn + ": " + friendlyErr(e));
       }
     }));
 
+    // Invalidate cache for current branch AND any originating branches touched
     cacheInvalidate(suffix);
+    extraSuffixesToInvalidate.forEach(function(s) { cacheInvalidate(s); });
     debouncedFetchLiveStock();
     recordOp({ type: "Unassign", typeKey: "asg", sns: sns, officer: off, reason: reason });
     setConn("ok", errors.length ? "Done with errors" : "Done ✓");
@@ -12866,9 +13130,155 @@ function dmExportStockUsage() {
   link.click();
   document.body.removeChild(link);
 }
-</script>
 
-    
+// ════════════════════════════════════════════════════════════════════════════
+//  ADMIN SYSTEM SETTINGS — Cross-Branch Unassign
+// ════════════════════════════════════════════════════════════════════════════
+
+function admSettingsBoot() {
+  admRenderCrossBranchSetting();        // render with cached/default value first
+  getCrossBranchUnassign().then(function() {
+    admRenderCrossBranchSetting();      // re-render once DB value is loaded
+  });
+}
+
+function admRenderCrossBranchSetting() {
+  var enabled = CROSS_BRANCH_UNASSIGN_ENABLED;
+  var isLoaded = _CBU_CACHE.fetchedAt > 0;   // false until first DB fetch completes
+
+  var wrap  = document.getElementById("cbu-toggle-wrap");
+  var knob  = document.getElementById("cbu-toggle-knob");
+  var label = document.getElementById("cbu-toggle-label");
+  var badge = document.getElementById("cbu-status-badge");
+  var navBadge = document.getElementById("cbu-nav-badge");
+  var card  = document.getElementById("cbu-setting-card");
+
+  if (wrap) {
+    wrap.style.background  = enabled ? "var(--green2)" : "rgba(0,0,0,.12)";
+    wrap.style.boxShadow   = enabled ? "0 0 0 3px rgba(64,145,108,.2)" : "none";
+    wrap.style.borderColor = enabled ? "rgba(64,145,108,.4)" : "rgba(0,0,0,.12)";
+  }
+  if (knob) knob.style.left = enabled ? "36px" : "3px";
+  if (label) {
+    label.textContent = isLoaded ? (enabled ? "ENABLED" : "DISABLED") : "LOADING…";
+    label.style.color = isLoaded ? (enabled ? "var(--green2)" : "var(--muted)") : "var(--amber)";
+  }
+  if (badge) {
+    badge.textContent      = isLoaded ? (enabled ? "● ON" : "○ OFF") : "…";
+    badge.style.background = enabled ? "rgba(64,145,108,.12)" : "rgba(192,57,43,.08)";
+    badge.style.color      = enabled ? "var(--green2)" : "var(--rose)";
+    badge.style.border     = enabled ? "1px solid rgba(64,145,108,.3)" : "1px solid rgba(192,57,43,.2)";
+  }
+  if (card) {
+    card.style.borderColor = enabled ? "rgba(64,145,108,.4)" : "var(--border)";
+    card.style.background  = enabled ? "rgba(64,145,108,.025)" : "var(--surface)";
+  }
+
+  var onBtn  = document.getElementById("cbu-on-btn");
+  var offBtn = document.getElementById("cbu-off-btn");
+  if (onBtn) {
+    onBtn.style.background  = enabled ? "rgba(64,145,108,.18)" : "rgba(64,145,108,.07)";
+    onBtn.style.borderColor = enabled ? "var(--green2)" : "rgba(64,145,108,.4)";
+    onBtn.style.boxShadow   = enabled ? "0 0 0 3px rgba(64,145,108,.15)" : "none";
+    onBtn.disabled          = enabled;
+    onBtn.style.opacity     = enabled ? ".6" : "1";
+    onBtn.style.cursor      = enabled ? "default" : "pointer";
+  }
+  if (offBtn) {
+    offBtn.style.background  = !enabled ? "rgba(192,57,43,.12)" : "rgba(192,57,43,.06)";
+    offBtn.style.borderColor = !enabled ? "var(--rose)" : "rgba(192,57,43,.35)";
+    offBtn.style.boxShadow   = !enabled ? "0 0 0 3px rgba(192,57,43,.12)" : "none";
+    offBtn.disabled          = !enabled;
+    offBtn.style.opacity     = !enabled ? ".6" : "1";
+    offBtn.style.cursor      = !enabled ? "default" : "pointer";
+  }
+
+  // Activity log — shows last DB fetch time + local change history
+  var log = document.getElementById("cbu-activity-log");
+  if (log) {
+    var history = _getCbuHistory();
+    if (history.length) {
+      var last = history[history.length - 1];
+      log.style.display = "";
+      log.innerHTML =
+        "🌐 DB source · " +
+        (isLoaded ? ("Last synced: " + new Date(_CBU_CACHE.fetchedAt).toLocaleTimeString()) : "Fetching…") +
+        " &nbsp;|&nbsp; Last changed: <strong>" +
+        (last.action === "enable" ? "Enabled" : "Disabled") +
+        "</strong> by <strong>" + escHtml(last.by || "Admin") + "</strong> · " +
+        escHtml(last.ts) +
+        (history.length > 1 ? " &nbsp;|&nbsp; " + history.length + " changes total" : "");
+    } else if (isLoaded) {
+      log.style.display = "";
+      log.innerHTML = "🌐 DB source · Last synced: " + new Date(_CBU_CACHE.fetchedAt).toLocaleTimeString() + " · No changes recorded on this device yet.";
+    } else {
+      log.style.display = "none";
+    }
+  }
+
+  if (navBadge) navBadge.style.display = enabled ? "" : "none";
+}
+
+function admToggleCrossBranchUnassign() {
+  admSetCrossBranchUnassign(!getCrossBranchUnassign());
+}
+
+async function admSetCrossBranchUnassign(val) {
+  if (!SUPA_OFFICER || SUPA_OFFICER.role !== "Admin") {
+    alert("⛔ Only Admins can change this setting.");
+    return;
+  }
+  var action = val ? "enable" : "disable";
+  var confirmMsg = val
+    ? "✅ Enable Cross-Branch Unassign?\n\nOfficers on ALL devices will be able to unassign POSs from other branches. The POS will be transferred to the unassigning officer's branch inventory.\n\nContinue?"
+    : "⛔ Disable Cross-Branch Unassign?\n\nOfficers on ALL devices will no longer be able to unassign POSs assigned from other branches.\n\nContinue?";
+  if (!confirm(confirmMsg)) return;
+
+  // Show saving state
+  var log = document.getElementById("cbu-activity-log");
+  if (log) { log.style.display = ""; log.textContent = "⏳ Saving to database…"; }
+
+  try {
+    await setCrossBranchUnassign(val);
+    _logCbuHistory(action, SUPA_OFFICER ? SUPA_OFFICER.full_name : "Admin");
+    admRenderCrossBranchSetting();
+
+    if (log) {
+      log.style.background  = val ? "rgba(64,145,108,.1)" : "rgba(192,57,43,.07)";
+      log.style.borderColor = val ? "rgba(64,145,108,.25)" : "rgba(192,57,43,.2)";
+      log.style.color       = val ? "var(--green2)" : "var(--rose)";
+      setTimeout(function() {
+        if (log) { log.style.background = ""; log.style.borderColor = ""; log.style.color = "var(--muted)"; }
+      }, 2500);
+    }
+  } catch (e) {
+    var errMsg = "⚠️ Could not save to database.\n\nMake sure the `app_settings` table exists in Supabase.\n\nRun this SQL in your Supabase SQL Editor:\n\n" +
+      "CREATE TABLE IF NOT EXISTS app_settings (\n" +
+      "  key        text PRIMARY KEY,\n" +
+      "  value      text NOT NULL DEFAULT 'false',\n" +
+      "  updated_by text,\n" +
+      "  updated_at timestamptz DEFAULT now()\n" +
+      ");\n\n" +
+      "ALTER TABLE app_settings ENABLE ROW LEVEL SECURITY;\n" +
+      "CREATE POLICY \"anon_rw\" ON app_settings FOR ALL USING (true) WITH CHECK (true);\n\n" +
+      "INSERT INTO app_settings (key, value) VALUES ('cross_branch_unassign', 'false')\n" +
+      "ON CONFLICT (key) DO NOTHING;";
+    alert(errMsg);
+    if (log) { log.style.display = ""; log.textContent = "❌ Save failed — see alert for setup SQL."; log.style.color = "var(--rose)"; }
+  }
+}
+
+function _getCbuHistory() {
+  try { return JSON.parse(localStorage.getItem("opay_cbu_history") || "[]"); } catch(e) { return []; }
+}
+function _logCbuHistory(action, by) {
+  var h = _getCbuHistory();
+  h.push({ action: action, by: by, ts: new Date().toLocaleString() });
+  if (h.length > 20) h = h.slice(h.length - 20); // keep last 20 entries
+  localStorage.setItem("opay_cbu_history", JSON.stringify(h));
+}
+
+</script>
 
 </body>
 </html>
